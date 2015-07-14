@@ -41,6 +41,6 @@ setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
             # 'console_scripts': [
             #   'Assign_GUP=Assign_GUP.main:main', 
             # ],
-            'gui_scripts': ['Assign_GUP=Assign_GUP.Assign_GUP:main'],
+            'gui_scripts': ['Assign_GUP=Assign_GUP.assign_gup:main'],
       },
   )

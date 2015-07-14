@@ -13,7 +13,11 @@ import glob
 def pick_latest_cycle():
     data_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
     path_list = map(os.path.basename, sorted(glob.glob(os.path.join(data_path, '*-*'))))
-    return path_list[-1]
+    if len(path_list) > 0:
+        cycle = path_list[-1]
+    else:
+        cycle = 'unknown'
+    return cycle
 
 
 #APS_review_cycle = '2015-1'

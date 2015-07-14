@@ -18,8 +18,9 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
+sys.path.insert(0, os.path.abspath('../../src'))
+import Assign_GUP
 sys.path.insert(0, os.path.abspath('../../src/Assign_GUP'))
-import Main
 
 ### -- ReadTheDocs configuration -----------------------------------------------------
 # https://docs.readthedocs.org/en/latest/faq.html#my-project-isn-t-building-with-autodoc
@@ -46,6 +47,7 @@ class Mock(object):
             return Mock()
 
 MOCK_MODULES = Assign_GUP.__requires__
+MOCK_MODULES.append('wx.grid')
 
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
@@ -74,7 +76,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'Assign_GUP'
 copyright = u'2011, Pete R. Jemian'
-copyright = Main.__copyright__
+copyright = Assign_GUP.__copyright__
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
