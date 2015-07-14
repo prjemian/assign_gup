@@ -16,7 +16,7 @@ __license__             = u'UChicago Argonne, LLC OPEN SOURCE LICENSE (see LICEN
 __url__                 = u'http://Assign_GUP.readthedocs.org'
 __download_url__        = u'https://github.com/prjemian/assign_gup.git'
 __keywords__            = ['APS', 'GUP', 'PRP']
-__requires__            = ['lxml']
+__requires__            = ['wx', 'lxml']
 
 __classifiers__ = [
             'Development Status :: 5 - Production/Stable',
