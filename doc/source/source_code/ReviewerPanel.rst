@@ -3,5 +3,5 @@ ReviewerPanel
 -------------
 
 .. automodule:: ReviewerPanel
-     :synopsis: Creates a GUI wxPanel to provide edit controls for one Reviewer instance
+     :synopsis: Creates a Qt GUI to provide edit controls for one Reviewer instance
      :members:

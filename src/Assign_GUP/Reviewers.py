@@ -74,25 +74,31 @@ class Reviewers:
         else:
             liszt = self.db.keys()
         return liszt
-   
-'''
-    Example XML data:
-    <Reviewer name="Pete">
-        <full_name>Pete Jemian</full_name>
-        <phone>630-252-3189</phone>
-        <email>jemian@anl.gov</email>
-        <notes>ANL, USAXS, ASAXS</notes>
-        <joined>2005-2</joined>
-        <topics  bio="0.1" chem="0.3" phys="0.7" mater="1.0" poly="0.9" GI="0.7" XPCS="0.8" USAXS="1.0" />
-    </Reviewer>
-'''
 
+def demo(xml_file_name = '2012-2-panel.xml'):
+    '''
+    print various items from a panel.xml file
+    
+    Example XML data::
 
-if __name__ == '__main__':
-    panel = Reviewers('2012-2-panel.xml')
+        <Reviewer name="Pete">
+            <full_name>Pete Jemian</full_name>
+            <phone>630-252-3189</phone>
+            <email>jemian@anl.gov</email>
+            <notes>ANL, USAXS, ASAXS</notes>
+            <joined>2005-2</joined>
+            <topics  bio="0.1" chem="0.3" phys="0.7" mater="1.0" poly="0.9" GI="0.7" XPCS="0.8" USAXS="1.0" />
+        </Reviewer>
+
+    '''
+    panel = Reviewers('')
     panel.readXml()
     # import pprint
     #pprint.pprint(panel.db)
     print panel.topics
     print panel.reviewers()
     print panel
+
+
+if __name__ == '__main__':
+    demo()

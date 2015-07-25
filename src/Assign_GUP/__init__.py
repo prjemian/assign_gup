@@ -2,7 +2,7 @@ __package_name__        = u'Assign_GUP'
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__
 
-__version__             = u'2015.0713.0'
+__version__             = u'2015.0725.0'
 __release__             = __version__
 __author__              = u'Pete R. Jemian'
 __email__               = u'jemian@anl.gov'
@@ -16,7 +16,7 @@ __license__             = u'UChicago Argonne, LLC OPEN SOURCE LICENSE (see LICEN
 __url__                 = u'http://Assign_GUP.readthedocs.org'
 __download_url__        = u'https://github.com/prjemian/assign_gup.git'
 __keywords__            = ['APS', 'GUP', 'PRP']
-__requires__            = ['wx', 'lxml', 'pyRestTable']
+__requires__            = ['PyQt4', 'lxml', 'pyRestTable']
 
 __classifiers__ = [
             'Development Status :: 5 - Production/Stable',
