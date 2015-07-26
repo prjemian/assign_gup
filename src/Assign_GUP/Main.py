@@ -8,6 +8,8 @@
 import os, sys
 from PyQt4 import QtCore, QtGui
 import qt_form_support
+import history
+
 
 def main():
     '''simple starter program to develop this code'''
@@ -25,10 +27,18 @@ class AGUP_MainWindow(object):
 
     def __init__(self):
         self.ui = qt_form_support.load_form('main_window.ui')
+        self.history_logger = history.Logger(log_file=None, 
+                                             level=history.NO_LOGGING, 
+                                             statusbar=self.ui.statusbar, 
+                                             history_widget=self.ui.history)
+        self.history_logger.add('loaded "main_window.ui"')
+        # write the chosen PRP folder path in self.ui.prp_path
+    
+    # need an About Box
+    # need to open a new/existing PRP folder
+    # need to clone a new PRP folder from an existing folder
 
 
-# 
-# 
 # import ListPanel
 # import ProposalPanel
 # import Proposals
