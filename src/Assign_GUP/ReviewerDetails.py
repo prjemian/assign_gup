@@ -9,7 +9,7 @@ import qt_form_support
 import topic_slider
 
 
-UI_FILE = 'reviewerDetails.ui'
+UI_FILE = 'reviewer_details.ui'
 
 
 class AGUP_ReviewerDetails(object):
@@ -19,13 +19,12 @@ class AGUP_ReviewerDetails(object):
 
     def __init__(self, parent, reviewer):
         '''
-        :param parent: owner (treebook object)
+        :param parent: owner (QtGui object)
         :param reviewer: instance of Reviewer object
         '''
-        self.treebook = parent
+        self.parent = parent
         self.reviewer = reviewer
         self.ui = qt_form_support.load_form(UI_FILE)
-        # self._init_tables_(self.ui.tables)
 
         self.ui.save_pb.clicked.connect(self.onSaveButton)
         self.ui.revert_pb.clicked.connect(self.onRevertButton)
@@ -33,7 +32,7 @@ class AGUP_ReviewerDetails(object):
     def onSaveButton(self, value):
         # TODO: handle self.ui.save_pb
         print "ui.save_pb not handled yet"
-        self.treebook(self)
+        self.parent(self)
     
     def onRevertButton(self, value):
         # TODO: handle self.ui.revert_pb
@@ -96,7 +95,7 @@ def AGUP_main():
     '''simple starter program to develop this code'''
     import sys
     app = QtGui.QApplication(sys.argv)
-    # NOTE: for development, "showIt" used here to 
+    # NOTE: for development, "report" used here to 
     # pass the print routine to the class
     # This is wired to the "Save" button for demo only.
     main_window = AGUP_ReviewerDetails(report, None)
@@ -110,12 +109,11 @@ def AGUP_main():
     main_window.setNotes('''That URL is fake.\nDo not trust it!''')
 
     # setup some examples for testing
-    topic_dict = dict(SAXS=0.5, GISAXS=0.9, XPCS=0.1)
+    topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
     topics = sorted(topic_dict.keys())
     w = {}
     for row, key in enumerate(topics):
         w[key] = topic_slider.AGUP_TopicSlider(main_window.ui.topic_layout, row, key, topic_dict[key])
-        #print row, key, w[key].getSliderValue(), w[key].getValue()
     main_window.ui.topic_layout.setColumnStretch(1,3)
 
     report(main_window)

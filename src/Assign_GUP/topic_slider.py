@@ -1,12 +1,26 @@
 
 '''
-add topic, slider, value_entry to a QGridLayout
+add label, slider, value to a QGridLayout
 
-Coordinate the action of a slider and text entry for the topic value::
+Coordinate the action of a slider with the topic value::
 
-  bio     |---|---|---|[-]|---|     0.7
+  label   slider                    value
+  bio     -|---|---|---|[-]|---|-   0.7
+  phys    -|--[|]--|---|---|---|-   0.2
 
-A *topic* is some area of interest to the PRP.
+======  =========  ====================================================
+widget  type       description
+======  =========  ====================================================
+label   QLabel     mnemonic name (no white space)
+slider  QSlider    graphical adjustment of value
+value   QLineEdit  string with floating point value: 0 <= value <= 1.0
+======  =========  ====================================================
+
+These three widgets will be added to the *parent* widget,
+assumed to be on the same row of a QGridLayout.
+
+A *topic* (known here as *label*) is some scientific area 
+of interest to the PRP.
 Such as, for the SAXS review panel, some of the proposals
 are for XPCS (X-ray Photon Correlation Spectroscopy).
 
@@ -51,7 +65,7 @@ class AGUP_TopicSlider(object):
         
         # connect slider changes with value_widget and vice versa
         self.slider.valueChanged.connect(self.onSliderChange)
-        #self.slider.sliderMoved.connect(self.onSliderChange)
+        self.slider.sliderMoved.connect(self.onSliderChange)
         self.value_widget.textEdited.connect(self.onValueChange)
     
     def onSliderChange(self, value):
