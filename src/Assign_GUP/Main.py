@@ -12,6 +12,7 @@ import history
 
 
 UI_FILE = 'main_window.ui'
+ABOUT_UI_FILE = 'about.ui'
 
 
 def main():
@@ -37,9 +38,32 @@ class AGUP_MainWindow(object):
         self.history_logger.add('loaded "' + UI_FILE + '"')
         # write the chosen PRP folder path in self.ui.prp_path
     
-    # need an About Box
-    # need to open a new/existing PRP folder
-    # need to clone a new PRP folder from an existing folder
+        self.ui.actionAbout.triggered.connect(self.doAbout)
+        # need to open a new/existing PRP folder
+        # need to clone a new PRP folder from an existing folder
+
+    def doAbout(self, *args, **kw):
+#         self.setStatus('About ... box requested')
+        about = qt_form_support.load_form(ABOUT_UI_FILE)
+        
+        self.url = 'http://Assign_GUP.readthedocs.org'
+        pb = QtGui.QPushButton(self.url, clicked=self.doUrl)
+        about.verticalLayout_main.addWidget(pb)
+        
+        # TODO: provide control to show the license
+
+        about.show()
+        about.exec_()
+    
+    def doUrl(self):
+#         self.setStatus('opening documentation URL in default browser')
+        service = QtGui.QDesktopServices()
+        url = QtCore.QUrl(self.url)
+        service.openUrl(url)
+
+    def doClose(self, *args, **kw):
+#         self.setStatus('application exit requested')
+        self.ui.close()
 
 
 # import ListPanel
