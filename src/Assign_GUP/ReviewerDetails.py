@@ -33,6 +33,7 @@ class AGUP_ReviewerDetails(object):
     def onSaveButton(self, value):
         # TODO: handle self.ui.save_pb
         print "ui.save_pb not handled yet"
+        self.treebook(self)
     
     def onRevertButton(self, value):
         # TODO: handle self.ui.revert_pb
@@ -81,11 +82,24 @@ class AGUP_ReviewerDetails(object):
         self.ui.notes.setPlainText(value)
 
 
+def report(mw):
+    print 'getFullName', mw.getFullName()
+    print 'getSortName', mw.getSortName()
+    print 'getPhone', mw.getPhone()
+    print 'getEmail', mw.getEmail()
+    print 'getJoined', mw.getJoined()
+    print 'getUrl', mw.getUrl()
+    print 'getNotes', mw.getNotes()
+
+
 def AGUP_main():
     '''simple starter program to develop this code'''
     import sys
     app = QtGui.QApplication(sys.argv)
-    main_window = AGUP_ReviewerDetails(None, None)
+    # NOTE: for development, "showIt" used here to 
+    # pass the print routine to the class
+    # This is wired to the "Save" button for demo only.
+    main_window = AGUP_ReviewerDetails(report, None)
     
     main_window.setFullName('Joe Reviewer')
     main_window.setSortName('Reviewer')
@@ -104,13 +118,7 @@ def AGUP_main():
         #print row, key, w[key].getSliderValue(), w[key].getValue()
     main_window.ui.topic_layout.setColumnStretch(1,3)
 
-    print 'getFullName', main_window.getFullName()
-    print 'getSortName', main_window.getSortName()
-    print 'getPhone', main_window.getPhone()
-    print 'getEmail', main_window.getEmail()
-    print 'getJoined', main_window.getJoined()
-    print 'getUrl', main_window.getUrl()
-    print 'getNotes', main_window.getNotes()
+    report(main_window)
 
     main_window.ui.show()
     sys.exit(app.exec_())
