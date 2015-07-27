@@ -9,10 +9,22 @@ import os, sys
 from PyQt4 import QtCore, QtGui
 import qt_form_support
 import history
+from _imaging import path
 
 
 UI_FILE = 'main_window.ui'
 ABOUT_UI_FILE = 'about.ui'
+DOCS_URL = 'http://Assign_GUP.readthedocs.org'
+LICENSE_FILE = 'LICENSE'
+addMessageToHistory = None
+
+
+def addLog(message):
+    global addMessageToHistory
+    if addMessageToHistory is not None:
+        addMessageToHistory(message)
+    else:
+        print message
 
 
 def main():
@@ -21,7 +33,8 @@ def main():
     app = QtGui.QApplication(sys.argv)
     main_window = AGUP_MainWindow()
     main_window.ui.show()
-    sys.exit(app.exec_())
+    _r = app.exec_()
+    sys.exit(_r)
 
 
 class AGUP_MainWindow(object):
@@ -30,41 +43,86 @@ class AGUP_MainWindow(object):
     '''
 
     def __init__(self):
+        global addMessageToHistory
         self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
                                              statusbar=self.ui.statusbar, 
                                              history_widget=self.ui.history)
-        self.history_logger.add('loaded "' + UI_FILE + '"')
-        # write the chosen PRP folder path in self.ui.prp_path
-    
+        addMessageToHistory = self.history_logger.add
+        addLog('loaded "' + UI_FILE + '"')
+        self.prp_path = os.path.abspath(os.getcwd())
+        self.ui.prp_path.setText(self.prp_path)
+
+        self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
+        self.ui.actionNew_PRP_Folder_from_existing.triggered.connect(self.doClonePrpFolder)
+        self.ui.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
+        self.ui.actionExit.triggered.connect(self.doClose)
         self.ui.actionAbout.triggered.connect(self.doAbout)
-        # need to open a new/existing PRP folder
+
         # need to clone a new PRP folder from an existing folder
 
     def doAbout(self, *args, **kw):
-#         self.setStatus('About ... box requested')
+        addLog('About... box requested')
         about = qt_form_support.load_form(ABOUT_UI_FILE)
         
-        self.url = 'http://Assign_GUP.readthedocs.org'
-        pb = QtGui.QPushButton(self.url, clicked=self.doUrl)
-        about.verticalLayout_main.addWidget(pb)
-        
-        # TODO: provide control to show the license
+        about.docs_pb.clicked.connect(self.doUrl)
+        about.license_pb.clicked.connect(self.doLicense)
 
         about.show()
         about.exec_()
     
     def doUrl(self):
-#         self.setStatus('opening documentation URL in default browser')
+        addLog('opening documentation URL in default browser')
+        url = QtCore.QUrl(DOCS_URL)
         service = QtGui.QDesktopServices()
-        url = QtCore.QUrl(self.url)
         service.openUrl(url)
+    
+    def doLicense(self):
+        addLog('opening License in new window')
+        license_ui = qt_form_support.load_form('plainTextEdit.ui')
+        path = os.path.abspath(os.path.join(qt_form_support.get_forms_path(), '..'))
+        license_text = open(os.path.join(path, LICENSE_FILE), 'r').read()
+        putTextInWindow('LICENSE', license_text).show()
 
     def doClose(self, *args, **kw):
-#         self.setStatus('application exit requested')
+        addLog('application exit requested')
         self.ui.close()
+    
+    def doOpenPrpFolder(self):
+        addLog('Open PRP Folder requested')
+        flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
+        title = 'Choose PRP folder'
+        path = QtGui.QFileDialog.getExistingDirectory(None, title, self.prp_path, options=flags)
+        if os.path.exists(path):
+            self.prp_path = str(path)
+            self.ui.prp_path.setText(path)
+            addLog('selected PRP Folder: ' + path)
+    
+    def doNewPrpFolder(self):
+        addLog('New PRP Folder requested')
+    
+    def doClonePrpFolder(self):
+        addLog('Clone PRP Folder requested')
 
+
+def putTextInWindow(title, text, width=300, height=300):
+    '''puts *text* in a QPlainTextEdit window and returns the object'''
+    ui = qt_form_support.load_form('plainTextEdit.ui')
+    ui.setWindowTitle(title)
+    ui.plainTextEdit.setPlainText(text)
+    # TODO: why doesn't this work?
+    # geom = ui.geometry()
+    # geom.setWidth(width)
+    # geom.setHeight(height)
+    # ui.setGeometry(geom)
+    return ui
+
+
+if __name__ == '__main__':
+    main()
+
+# legacy wx code - leave for reference during development
 
 # import ListPanel
 # import ProposalPanel
@@ -413,7 +471,3 @@ class AGUP_MainWindow(object):
 # 
 # 
 #     # ===============================================================
-
-
-if __name__ == '__main__':
-    main()
