@@ -11,6 +11,9 @@ import qt_form_support
 import history
 
 
+UI_FILE = 'main_window.ui'
+
+
 def main():
     '''simple starter program to develop this code'''
     import sys
@@ -26,12 +29,12 @@ class AGUP_MainWindow(object):
     '''
 
     def __init__(self):
-        self.ui = qt_form_support.load_form('main_window.ui')
+        self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
                                              statusbar=self.ui.statusbar, 
                                              history_widget=self.ui.history)
-        self.history_logger.add('loaded "main_window.ui"')
+        self.history_logger.add('loaded "' + UI_FILE + '"')
         # write the chosen PRP folder path in self.ui.prp_path
     
     # need an About Box
