@@ -6,5 +6,6 @@ Main
      :synopsis: Runs the GUI.
      :members:
 
-.. autoclass:: Main
-     :members:
+..
+   .. autoclass:: Main
+        :members:
