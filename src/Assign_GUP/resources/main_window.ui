@@ -21,6 +21,9 @@
        <string>settings</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="topMargin">
+        <number>20</number>
+       </property>
        <item row="0" column="0">
         <layout class="QFormLayout" name="formLayout">
          <property name="fieldGrowthPolicy">
@@ -90,6 +93,9 @@
          <string>Application History</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="topMargin">
+          <number>20</number>
+         </property>
          <item>
           <widget class="QPlainTextEdit" name="history">
            <property name="styleSheet">
@@ -113,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>969</width>
-     <height>38</height>
+     <height>45</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

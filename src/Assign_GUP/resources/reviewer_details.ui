@@ -33,6 +33,9 @@
        <string>Reviewer</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="topMargin">
+        <number>20</number>
+       </property>
        <item row="0" column="0">
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
@@ -189,6 +192,9 @@
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <property name="topMargin">
+        <number>20</number>
+       </property>
        <item row="0" column="1">
         <layout class="QGridLayout" name="topic_layout"/>
        </item>
