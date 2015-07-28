@@ -45,8 +45,16 @@ class AGUP_MainWindow(object):
     def __init__(self):
         global addMessageToHistory
 
-        self.rc = rcfile.RcFile(RC_FILE, RC_SECTION)
-        self.config = self.rc.read()
+        try:
+            self.rc = rcfile.RcFile(RC_FILE, RC_SECTION)
+            self.config = self.rc.read()
+        except rcfile.RcFileNotFound:
+            self.config = {
+                'rcfile':         self.rc.rcfile,
+                'review_cycle':   '',
+                'prp_path':       os.getcwd(),
+
+            }
 
         self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
