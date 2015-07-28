@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#Boa:Frame:Main
 
 '''
 :mod:`Main` code runs the GUI.
@@ -9,13 +8,14 @@ import os, sys
 from PyQt4 import QtCore, QtGui
 import qt_form_support
 import history
-from _imaging import path
-
+import rcfile
 
 UI_FILE = 'main_window.ui'
 ABOUT_UI_FILE = 'about.ui'
 DOCS_URL = 'http://Assign_GUP.readthedocs.org'
 LICENSE_FILE = 'LICENSE'
+RC_FILE = '.assign_gup.rc'
+RC_SECTION = 'Assign_GUP'
 addMessageToHistory = None
 
 
@@ -44,15 +44,29 @@ class AGUP_MainWindow(object):
 
     def __init__(self):
         global addMessageToHistory
+
+        self.rc = rcfile.RcFile(RC_FILE, RC_SECTION)
+        self.config = self.rc.read()
+
         self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
                                              statusbar=self.ui.statusbar, 
                                              history_widget=self.ui.history)
         addMessageToHistory = self.history_logger.add
+
+        # TODO: clean this up with respect to self.config values
+        # TODO: need handlers for widgets and config settings
+
         addLog('loaded "' + UI_FILE + '"')
-        self.prp_path = os.path.abspath(os.getcwd())
+        self.prp_path = self.config.get('prp_path', None) or os.path.abspath(os.getcwd())
+
         self.ui.prp_path.setText(self.prp_path)
+        self.ui.rcfile.setText(self.rc.rcfile)
+        self.ui.review_cycle.setText(self.config['review_cycle'])
+        addLog('Configuration file: ' + self.rc.rcfile)
+        for key in sorted(self.config.keys()):
+            addLog('Configuration option %s: %s' % (key, self.config[key]))
 
         self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.ui.actionNew_PRP_Folder_from_existing.triggered.connect(self.doClonePrpFolder)
@@ -60,17 +74,15 @@ class AGUP_MainWindow(object):
         self.ui.actionExit.triggered.connect(self.doClose)
         self.ui.actionAbout.triggered.connect(self.doAbout)
 
-        # need to clone a new PRP folder from an existing folder
-
     def doAbout(self, *args, **kw):
         addLog('About... box requested')
-        about = qt_form_support.load_form(ABOUT_UI_FILE)
+        ui = qt_form_support.load_form(ABOUT_UI_FILE)
         
-        about.docs_pb.clicked.connect(self.doUrl)
-        about.license_pb.clicked.connect(self.doLicense)
+        ui.docs_pb.clicked.connect(self.doUrl)
+        ui.license_pb.clicked.connect(self.doLicense)
 
-        about.show()
-        about.exec_()
+        ui.show()
+        ui.exec_()
     
     def doUrl(self):
         addLog('opening documentation URL in default browser')
@@ -81,9 +93,12 @@ class AGUP_MainWindow(object):
     def doLicense(self):
         addLog('opening License in new window')
         license_ui = qt_form_support.load_form('plainTextEdit.ui')
+
         path = os.path.abspath(os.path.join(qt_form_support.get_forms_path(), '..'))
         license_text = open(os.path.join(path, LICENSE_FILE), 'r').read()
-        putTextInWindow('LICENSE', license_text).show()
+
+        ui = putTextInWindow('LICENSE', license_text)
+        ui.show()
 
     def doClose(self, *args, **kw):
         addLog('application exit requested')
@@ -91,8 +106,10 @@ class AGUP_MainWindow(object):
     
     def doOpenPrpFolder(self):
         addLog('Open PRP Folder requested')
+
         flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
         title = 'Choose PRP folder'
+
         path = QtGui.QFileDialog.getExistingDirectory(None, title, self.prp_path, options=flags)
         if os.path.exists(path):
             self.prp_path = str(path)
@@ -122,7 +139,7 @@ def putTextInWindow(title, text, width=300, height=300):
 if __name__ == '__main__':
     main()
 
-# legacy wx code - leave for reference during development
+# legacy wx Boa Constructore GUI code - leave for reference during development
 
 # import ListPanel
 # import ProposalPanel
