@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1074</width>
-    <height>975</height>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -253,6 +253,9 @@
           <widget class="QLineEdit" name="subjects">
            <property name="styleSheet">
             <string notr="true">background: #F5FFFA</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

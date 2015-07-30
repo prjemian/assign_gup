@@ -77,7 +77,6 @@ class AGUP_MainWindow(object):
             addLog('Configuration option %s: %s' % (key, self.config[key]))
 
         self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
-        self.ui.actionNew_PRP_Folder_from_existing.triggered.connect(self.doClonePrpFolder)
         self.ui.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.ui.actionExit.triggered.connect(self.doClose)
         self.ui.actionAbout.triggered.connect(self.doAbout)
@@ -126,9 +125,6 @@ class AGUP_MainWindow(object):
     
     def doNewPrpFolder(self):
         addLog('New PRP Folder requested')
-    
-    def doClonePrpFolder(self):
-        addLog('Clone PRP Folder requested')
 
 
 def putTextInWindow(title, text, width=300, height=300):
