@@ -1,6 +1,6 @@
---------------------------------
-Resource configuration (RC) file
---------------------------------
+-----------------------------------------------------
+General support for Resource configuration (RC) files
+-----------------------------------------------------
 
 .. automodule:: rcfile
      :synopsis: resource configuration

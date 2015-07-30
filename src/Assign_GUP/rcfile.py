@@ -2,6 +2,11 @@
 '''
 Manage the resource configuration (RC) file
 
+This is generic support for RC files with one
+application-specific section.
+Metadata (time stamp, filename, host computer name)
+are written into a separate *metadata* section.
+
 EXAMPLE::
 
     RC_FILE = '.assign_gup.rc'
@@ -51,14 +56,24 @@ import ConfigParser
 import socket
 
 
+METADATA_SECTION = 'metadata'
+
+
 class RcFileNotFound(IOError): 
     '''RC file was not found'''
+    pass
+
+class RcSectionNameReserved(ValueError): 
+    '''Specified section name is reserved'''
     pass
 
 
 class RcFile(object):
     
     def __init__(self, rcfile, section):
+        if section == METADATA_SECTION:
+            msg = 'Specified section name is reserved: ' + METADATA_SECTION
+            raise RcSectionNameReserved(msg)
         self.rcfile = self.getRcFileName(basename=rcfile)
         self.section = section
     
@@ -88,11 +103,10 @@ class RcFile(object):
         # https://docs.python.org/2/library/configparser.html
         config = ConfigParser.SafeConfigParser()
     
-        section = 'metadata'
-        config.add_section(section)
-        config.set(section, 'timestamp', str(datetime.datetime.now()))
-        config.set(section, 'rcfile', self.rcfile)
-        config.set(section, 'host', socket.gethostname())
+        config.add_section(METADATA_SECTION)
+        config.set(METADATA_SECTION, 'timestamp', str(datetime.datetime.now()))
+        config.set(METADATA_SECTION, 'rcfile', self.rcfile)
+        config.set(METADATA_SECTION, 'host', socket.gethostname())
     
         config.add_section(self.section)
         for key, value in sorted(kw.items()):

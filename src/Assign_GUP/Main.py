@@ -8,7 +8,7 @@ import os, sys
 from PyQt4 import QtCore, QtGui
 import qt_form_support
 import history
-import rcfile
+import settings
 
 UI_FILE = 'main_window.ui'
 ABOUT_UI_FILE = 'about.ui'
@@ -45,16 +45,7 @@ class AGUP_MainWindow(object):
     def __init__(self):
         global addMessageToHistory
 
-        try:
-            self.rc = rcfile.RcFile(RC_FILE, RC_SECTION)
-            self.config = self.rc.read()
-        except rcfile.RcFileNotFound:
-            self.config = {
-                'rcfile':         self.rc.rcfile,
-                'review_cycle':   '',
-                'prp_path':       os.getcwd(),
-
-            }
+        self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
 
         self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
@@ -63,21 +54,26 @@ class AGUP_MainWindow(object):
                                              history_widget=self.ui.history)
         addMessageToHistory = self.history_logger.add
 
-        # TODO: clean this up with respect to self.config values
         # TODO: need handlers for widgets and config settings
 
         addLog('loaded "' + UI_FILE + '"')
-        self.prp_path = self.config.get('prp_path', None) or os.path.abspath(os.getcwd())
 
-        self.ui.prp_path.setText(self.prp_path)
-        self.ui.rcfile.setText(self.rc.rcfile)
-        self.ui.review_cycle.setText(self.config['review_cycle'])
-        addLog('Configuration file: ' + self.rc.rcfile)
-        for key in sorted(self.config.keys()):
-            addLog('Configuration option %s: %s' % (key, self.config[key]))
+        # assign values to each of the display widgets in the main window
+
+        self.ui.settings_box.setTitle('settings from ' + self.settings.source)
+        self.setPrpPathText(self.settings.getByKey('prp_path'))
+        self.setRcFileText(self.settings.getByKey('rcfile'))
+        self.setReviewCycleText(self.settings.getByKey('review_cycle'))
+        self.setReviewersFileText(self.settings.getByKey('reviewers_file'))
+        self.setProposalsFileText(self.settings.getByKey('proposals_file'))
+        self.setAnalysesFileText(self.settings.getByKey('analyses_file'))
+
+        for key in sorted(self.settings.getKeys()):
+            addLog('Configuration option %s: %s' % (key, self.settings.getByKey(key)))
 
         self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.ui.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
+        self.ui.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.ui.actionExit.triggered.connect(self.doClose)
         self.ui.actionAbout.triggered.connect(self.doAbout)
 
@@ -117,14 +113,38 @@ class AGUP_MainWindow(object):
         flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
         title = 'Choose PRP folder'
 
-        path = QtGui.QFileDialog.getExistingDirectory(None, title, self.prp_path, options=flags)
+        prp_path = self.settings.getByKey('prp_path')
+        path = QtGui.QFileDialog.getExistingDirectory(None, title, prp_path, options=flags)
         if os.path.exists(path):
-            self.prp_path = str(path)
-            self.ui.prp_path.setText(path)
+            self.settings.setPrpPath(path)
+            self.setPrpPathText(path)
             addLog('selected PRP Folder: ' + path)
     
+    def doSaveSettings(self):
+        addLog('Save Settings requested')
+        self.settings.write()
+        addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
+
     def doNewPrpFolder(self):
         addLog('New PRP Folder requested')
+
+    def setPrpPathText(self, text):
+        self.ui.prp_path.setText(text)
+
+    def setRcFileText(self, text):
+        self.ui.rcfile.setText(text)
+    
+    def setReviewCycleText(self, text):
+        self.ui.review_cycle.setText(text)
+
+    def setReviewersFileText(self, text):
+        self.ui.reviewers_file.setText(text)
+
+    def setProposalsFileText(self, text):
+        self.ui.proposals_file.setText(text)
+
+    def setAnalysesFileText(self, text):
+        self.ui.analyses_file.setText(text)
 
 
 def putTextInWindow(title, text, width=300, height=300):
