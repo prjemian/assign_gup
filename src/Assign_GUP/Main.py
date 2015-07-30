@@ -46,6 +46,7 @@ class AGUP_MainWindow(object):
         global addMessageToHistory
 
         self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
+        # TODO: support self.settings.modified flag
 
         self.ui = qt_form_support.load_form(UI_FILE)
         self.history_logger = history.Logger(log_file=None, 
@@ -69,11 +70,12 @@ class AGUP_MainWindow(object):
         self.setAnalysesFileText(self.settings.getByKey('analyses_file'))
 
         for key in sorted(self.settings.getKeys()):
-            addLog('Configuration option %s: %s' % (key, self.settings.getByKey(key)))
+            addLog('Configuration option: %s = %s' % (key, self.settings.getByKey(key)))
 
         self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.ui.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.ui.actionSave_settings.triggered.connect(self.doSaveSettings)
+        self.ui.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.ui.actionExit.triggered.connect(self.doClose)
         self.ui.actionAbout.triggered.connect(self.doAbout)
 
@@ -105,6 +107,13 @@ class AGUP_MainWindow(object):
 
     def doClose(self, *args, **kw):
         addLog('application exit requested')
+        # TODO: refactor this to Qt
+        #if self.settings.modified:
+        #    # confirm this step
+        #    result = self.RequestConfirmation('Exit (Quit)',
+        #          'There are unsaved changes.  Exit (Quit) anyway?')
+        #    if result != wx.ID_YES:
+        #        return
         self.ui.close()
     
     def doOpenPrpFolder(self):
@@ -124,6 +133,12 @@ class AGUP_MainWindow(object):
         addLog('Save Settings requested')
         self.settings.write()
         addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
+    
+    def doResetDefaults(self):
+        addLog('requested to reset default settings')
+        self.settings.resetDefaults()
+        addLog('default settings reset')
+        # TODO: what about Save?
 
     def doNewPrpFolder(self):
         addLog('New PRP Folder requested')
