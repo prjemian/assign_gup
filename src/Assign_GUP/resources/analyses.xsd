@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="analysis">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Proposals"/>
+      </xs:sequence>
+      <xs:attribute name="time" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Proposals">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Proposal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Proposal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Topics"/>
+        <xs:element ref="Reviewers"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Topics">
+    <!-- TODO: generalize
+      This is too complicated in XSD SChema.
+      The list of topics should be flexible, 
+      yet consistent across reviewers and analyses 
+      for each review session.
+      -->
+    <xs:complexType>
+      <xs:attribute name="GI" use="required" type="xs:decimal"/>
+      <xs:attribute name="USAXS" use="required" type="xs:decimal"/>
+      <xs:attribute name="XPCS" use="required" type="xs:decimal"/>
+      <xs:attribute name="bio" use="required" type="xs:decimal"/>
+      <xs:attribute name="chem" use="required"/>
+      <xs:attribute name="earth" type="xs:decimal"/>
+      <xs:attribute name="eng" use="required" type="xs:decimal"/>
+      <xs:attribute name="enviro" use="required" type="xs:decimal"/>
+      <xs:attribute name="geo" use="required" type="xs:decimal"/>
+      <xs:attribute name="mater" use="required"/>
+      <xs:attribute name="med" type="xs:decimal"/>
+      <xs:attribute name="phys" use="required" type="xs:decimal"/>
+      <xs:attribute name="poly" use="required" type="xs:decimal"/>
+      <xs:attribute name="proprietary" use="required" type="xs:decimal"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Reviewers">
+    <xs:complexType>
+      <xs:attribute name="reviewer1" use="required"/>
+      <xs:attribute name="reviewer2" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
