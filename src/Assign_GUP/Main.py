@@ -9,6 +9,7 @@ from PyQt4 import QtCore, QtGui
 import qt_form_support
 import history
 import settings
+import Proposals_ListView
 
 UI_FILE = 'main_window.ui'
 ABOUT_UI_FILE = 'about.ui'
@@ -74,6 +75,7 @@ class AGUP_MainWindow(object):
 
         self.ui.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.ui.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
+        self.ui.actionImport_proposals.triggered.connect(self.doImportProposals)
         self.ui.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.ui.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.ui.actionExit.triggered.connect(self.doClose)
@@ -129,6 +131,22 @@ class AGUP_MainWindow(object):
             self.setPrpPathText(path)
             addLog('selected PRP Folder: ' + path)
     
+    def doImportProposals(self):
+        addLog('Import Proposals requested')
+
+        # flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
+        title = 'Choose XML file with proposals'
+
+        prp_path = self.settings.getByKey('prp_path')
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
+        path = str(path)
+        if os.path.exists(path):
+            # TODO: where's the beef?
+            widget = Proposals_ListView.ProposalsView(path)
+            widget.show()
+            # widget.exec_()
+            addLog('imported proposals file: ' + path)
+
     def doSaveSettings(self):
         addLog('Save Settings requested')
         self.settings.write()

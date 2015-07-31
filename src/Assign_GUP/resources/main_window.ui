@@ -183,6 +183,7 @@
     <addaction name="actionNew_PRP_Folder"/>
     <addaction name="separator"/>
     <addaction name="actionOpen_Folder"/>
+    <addaction name="actionImport_proposals"/>
     <addaction name="separator"/>
     <addaction name="actionSave_settings"/>
     <addaction name="actionReset_Defaults"/>
@@ -242,6 +243,11 @@
   <action name="actionReset_Defaults">
    <property name="text">
     <string>Reset Defaults</string>
+   </property>
+  </action>
+  <action name="actionImport_proposals">
+   <property name="text">
+    <string>Import proposals ...</string>
    </property>
   </action>
  </widget>

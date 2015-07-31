@@ -18,12 +18,12 @@ class AGUP_ProposalDetails(object):
     QtGui widget to edit one Proposal instance
     '''
 
-    def __init__(self, parent, proposal):
+    def __init__(self, owner, proposal):
         '''
-        :param parent: owner (QtGui object)
+        :param owner: main window (QtGui object)
         :param proposal: instance of Proposal object
         '''
-        self.parent = parent
+        self.owner = owner
         self.proposal = proposal
         self.ui = qt_form_support.load_form(UI_FILE)
 
