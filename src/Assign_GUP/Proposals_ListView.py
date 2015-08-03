@@ -3,15 +3,13 @@
 MVC for proposals - test version
 '''
 
+from lxml import etree
 import os, sys
 from PyQt4 import QtGui, QtCore
 import qt_form_support
-from lxml import etree
 import ProposalDetails
 
-PROPOSALS_UI_FILE = 'proposals_listview.ui'
-PROPOSAL_DETAILS_UI_FILE = 'proposal_details.ui'
-PROPOSALS_TEST_FILE = 'project/2015-2/proposals.xml'
+UI_FILE = 'proposals_listview.ui'
 
 def xmlToString(obj):
     s = etree.tostring(obj, 
@@ -21,26 +19,29 @@ def xmlToString(obj):
     return s
 
 
-class ProposalsView(object):
+class ProposalsView(QtGui.QWidget):
     '''
     QtGui widget to view and assign all proposals
     '''
 
-    def __init__(self, xml_proposal_file):
+    def __init__(self, xml_proposal_file, parent=None):
         '''
         '''
-        self.ui = qt_form_support.load_form(PROPOSALS_UI_FILE)
-        self.details_panel = qt_form_support.load_form(PROPOSAL_DETAILS_UI_FILE)
-        layout = self.ui.details_gb.layout()
+        QtGui.QWidget.__init__(self, parent=None)
+
+        qt_form_support.loadUi(UI_FILE, self)
+
+        self.details_panel = ProposalDetails.AGUP_ProposalDetails()
+        layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
         self.model = None   # TODO: not used yet
-
+  
         self.proposals = Proposals__Container(xml_proposal_file)
         self.proposals.load()
         self.populateList()
-        
-        self.ui.listWidget.itemChanged.connect(self.listItemChanged)
-        self.ui.listWidget.currentItemChanged.connect(self.on_item_changed)
+          
+        self.listWidget.itemChanged.connect(self.listItemChanged)
+        self.listWidget.currentItemChanged.connect(self.on_item_changed)
             
     def listItemChanged(self, *args, **kws):
         print args, kws
@@ -60,19 +61,16 @@ class ProposalsView(object):
     
     def populateList(self, selectedProposal=None):
         selected = None
-        self.ui.listWidget.clear()
+        self.listWidget.clear()
         for proposal in self.proposals.inOrder():
             key = getXmlText(proposal, 'proposal_id')
             item = QtGui.QListWidgetItem(key)
-            self.ui.listWidget.addItem(item)
+            self.listWidget.addItem(item)
             if selectedProposal is not None and selectedProposal == id(proposal):
                 selected = item
         if selected is not None:
             selected.setSelected(True)
-            self.ui.listWidget.setCurrentItem(selected)
-    
-    def show(self):
-        self.ui.show()
+            self.listWidget.setCurrentItem(selected)
 
 
 class Proposals__Container(object):
@@ -152,9 +150,10 @@ def getXmlText(parent, tag):
 
 def main():
     '''simple starter program to develop this code'''
+    PROPOSALS_TEST_FILE = 'project/2015-2/proposals.xml'
     app = QtGui.QApplication(sys.argv)
     main_window = ProposalsView(PROPOSALS_TEST_FILE)
-    main_window.ui.show()
+    main_window.show()
     sys.exit(app.exec_())
 
 

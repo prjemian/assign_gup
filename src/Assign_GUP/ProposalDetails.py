@@ -7,54 +7,55 @@ QtGui widget to edit one Proposal instance
 from PyQt4 import QtGui, QtCore
 import qt_form_support
 import topic_slider
-import Main
+import main_window
 
 
 UI_FILE = 'proposal_details.ui'
 
 
-class AGUP_ProposalDetails(object):
+class AGUP_ProposalDetails(QtGui.QWidget):
     '''
     QtGui widget to edit one Proposal instance
     '''
 
-    def __init__(self, owner, proposal):
+    def __init__(self, owner=None, proposal=None, parent=None):
         '''
         :param owner: main window (QtGui object)
         :param proposal: instance of Proposal object
         '''
         self.owner = owner
         self.proposal = proposal
-        self.ui = qt_form_support.load_form(UI_FILE)
+        QtGui.QWidget.__init__(self, parent)
+        qt_form_support.loadUi(UI_FILE, self)
 
-        self.ui.save_pb.clicked.connect(self.onSaveButton)
-        self.ui.revert_pb.clicked.connect(self.onRevertButton)
+        self.save_pb.clicked.connect(self.onSaveButton)
+        self.revert_pb.clicked.connect(self.onRevertButton)
     
     def onSaveButton(self, value):
-        # TODO: handle self.ui.save_pb
-        Main.addLog("ui.save_pb not handled yet")
+        # TODO: handle self.save_pb
+        main_window.addLog("save_pb not handled yet")
     
     def onRevertButton(self, value):
-        # TODO: handle self.ui.revert_pb
-        Main.addLog("ui.revert_pb not handled yet")
+        # TODO: handle self.revert_pb
+        main_window.addLog("revert_pb not handled yet")
 
     def setProposalId(self, value):
-        self.ui.proposal_id.setText(value)
+        self.proposal_id.setText(value)
     
     def setProposalTitle(self, value):
-        self.ui.proposal_title.setPlainText(value)
+        self.proposal_title.setPlainText(value)
 
     def setReviewPeriod(self, value):
-        self.ui.review_period.setText(value)
+        self.review_period.setText(value)
 
     def setSpkName(self, value):
-        self.ui.spk_name.setText(value)
+        self.spk_name.setText(value)
 
     def setFirstChoiceBl(self, value):
-        self.ui.first_choice_bl.setText(value)
+        self.first_choice_bl.setText(value)
 
     def setSubjects(self, value):
-        self.ui.subjects.setPlainText(value)
+        self.subjects.setPlainText(value)
     
 
 # def report(mw):
@@ -71,26 +72,26 @@ def AGUP_main():
     '''simple starter program to develop this code'''
     import sys
     app = QtGui.QApplication(sys.argv)
-    main_window = AGUP_ProposalDetails(None, None)
-    Main.addLog("created main window")
+    mw = AGUP_ProposalDetails(None, None)
+    main_window.addLog("created main window")
     
-    main_window.setProposalId('GUP-421654')
-    main_window.setProposalTitle('USAXS study of nothing in something')
-    main_window.setReviewPeriod('2025-5')
-    main_window.setSpkName('Joe User')
-    main_window.setFirstChoiceBl('45-ID-K')
-    main_window.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
+    mw.setProposalId('GUP-421654')
+    mw.setProposalTitle('USAXS study of nothing in something')
+    mw.setReviewPeriod('2025-5')
+    mw.setSpkName('Joe User')
+    mw.setFirstChoiceBl('45-ID-K')
+    mw.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
 # 
     # setup some examples for testing
     topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
     topics = sorted(topic_dict.keys())
     w = {}
     for row, key in enumerate(topics):
-        w[key] = topic_slider.AGUP_TopicSlider(main_window.ui.topic_layout, row, key, topic_dict[key])
-    main_window.ui.topic_layout.setColumnStretch(1,3)
-    Main.addLog("defined some default data")
+        w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, topic_dict[key])
+    mw.topic_layout.setColumnStretch(1,3)
+    main_window.addLog("defined some default data")
 
-    main_window.ui.show()
+    mw.show()
     sys.exit(app.exec_())
 
 
