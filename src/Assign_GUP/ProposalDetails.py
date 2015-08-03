@@ -7,7 +7,7 @@ QtGui widget to edit one Proposal instance
 from PyQt4 import QtGui, QtCore
 import qt_form_support
 import topic_slider
-from Main import addLog
+import Main
 
 
 UI_FILE = 'proposal_details.ui'
@@ -32,11 +32,11 @@ class AGUP_ProposalDetails(object):
     
     def onSaveButton(self, value):
         # TODO: handle self.ui.save_pb
-        addLog("ui.save_pb not handled yet")
+        Main.addLog("ui.save_pb not handled yet")
     
     def onRevertButton(self, value):
         # TODO: handle self.ui.revert_pb
-        addLog("ui.revert_pb not handled yet")
+        Main.addLog("ui.revert_pb not handled yet")
 
     def setProposalId(self, value):
         self.ui.proposal_id.setText(value)
@@ -54,7 +54,7 @@ class AGUP_ProposalDetails(object):
         self.ui.first_choice_bl.setText(value)
 
     def setSubjects(self, value):
-        self.ui.subjects.setText(value)
+        self.ui.subjects.setPlainText(value)
     
 
 # def report(mw):
@@ -72,14 +72,14 @@ def AGUP_main():
     import sys
     app = QtGui.QApplication(sys.argv)
     main_window = AGUP_ProposalDetails(None, None)
-    addLog("created main window")
+    Main.addLog("created main window")
     
     main_window.setProposalId('GUP-421654')
     main_window.setProposalTitle('USAXS study of nothing in something')
     main_window.setReviewPeriod('2025-5')
     main_window.setSpkName('Joe User')
     main_window.setFirstChoiceBl('45-ID-K')
-    main_window.setSubjects('medical,environmental,earth,solar,electrical,long-winded')
+    main_window.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
 # 
     # setup some examples for testing
     topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
@@ -88,7 +88,7 @@ def AGUP_main():
     for row, key in enumerate(topics):
         w[key] = topic_slider.AGUP_TopicSlider(main_window.ui.topic_layout, row, key, topic_dict[key])
     main_window.ui.topic_layout.setColumnStretch(1,3)
-    addLog("defined some default data")
+    Main.addLog("defined some default data")
 
     main_window.ui.show()
     sys.exit(app.exec_())
