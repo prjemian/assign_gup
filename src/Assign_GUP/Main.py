@@ -134,9 +134,7 @@ class AGUP_MainWindow(object):
     def doImportProposals(self):
         addLog('Import Proposals requested')
 
-        # flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
         title = 'Choose XML file with proposals'
-
         prp_path = self.settings.getByKey('prp_path')
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)

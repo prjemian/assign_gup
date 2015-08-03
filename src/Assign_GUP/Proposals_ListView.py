@@ -33,12 +33,13 @@ class ProposalsView(object):
         self.details_panel = qt_form_support.load_form(PROPOSAL_DETAILS_UI_FILE)
         layout = self.ui.details_gb.layout()
         layout.addWidget(self.details_panel)
-        self.model = None
+        self.model = None   # TODO: not used yet
 
         self.proposals = Proposals__Container(xml_proposal_file)
         self.proposals.load()
         self.populateList()
         
+        self.ui.listWidget.itemChanged.connect(self.listItemChanged)
         self.ui.listWidget.currentItemChanged.connect(self.on_item_changed)
             
     def listItemChanged(self, *args, **kws):
@@ -152,7 +153,7 @@ def getXmlText(parent, tag):
 def main():
     '''simple starter program to develop this code'''
     app = QtGui.QApplication(sys.argv)
-    main_window = ProposalsView()
+    main_window = ProposalsView(PROPOSALS_TEST_FILE)
     main_window.ui.show()
     sys.exit(app.exec_())
 

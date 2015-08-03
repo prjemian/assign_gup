@@ -1,7 +1,7 @@
----------------
-ProposalDetails
----------------
+------------------
+Proposals_ListView
+------------------
 
-.. automodule:: ProposalDetails
-     :synopsis: Creates a Qt GUI to provide edit controls for one Proposal instance
+.. automodule:: Proposals_ListView
+     :synopsis: Creates a Qt editor GUI for one Proposal instance
      :members:
