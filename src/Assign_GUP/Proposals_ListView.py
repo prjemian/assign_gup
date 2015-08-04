@@ -1,6 +1,6 @@
 
 '''
-MVC for proposals - test version
+MVC for proposals - test version using QListWidget
 '''
 
 from lxml import etree
