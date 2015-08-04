@@ -6,7 +6,7 @@ MVC for proposals - test version
 from lxml import etree
 import os, sys
 from PyQt4 import QtGui, QtCore
-import qt_form_support
+import resources
 import ProposalDetails
 
 UI_FILE = 'proposals_listview.ui'
@@ -29,7 +29,7 @@ class ProposalsView(QtGui.QWidget):
         '''
         QtGui.QWidget.__init__(self, parent=None)
 
-        qt_form_support.loadUi(UI_FILE, self)
+        resources.loadUi(UI_FILE, self)
 
         self.details_panel = ProposalDetails.AGUP_ProposalDetails()
         layout = self.details_gb.layout()

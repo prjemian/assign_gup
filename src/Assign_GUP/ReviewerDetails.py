@@ -5,7 +5,7 @@ QtGui widget to edit one Reviewer instance
 
 
 from PyQt4 import QtGui, QtCore
-import qt_form_support
+import resources
 import topic_slider
 
 
@@ -25,7 +25,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.parent = parent
         self.reviewer = reviewer
         QtGui.QWidget.__init__(self, parent)
-        qt_form_support.loadUi(UI_FILE, self)
+        resources.loadUi(UI_FILE, self)
 
         self.save_pb.clicked.connect(self.onSaveButton)
         self.revert_pb.clicked.connect(self.onRevertButton)

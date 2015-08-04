@@ -9,7 +9,7 @@ from PyQt4 import QtCore, QtGui, uic
 import about
 import history
 import Proposals_ListView
-import qt_form_support
+import resources
 import settings
 
 UI_FILE = 'main_window.ui'
@@ -32,7 +32,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         # TODO: support self.settings.modified flag
 
         QtGui.QMainWindow.__init__(self)
-        qt_form_support.loadUi(UI_FILE, baseinstance=self)
+        resources.loadUi(UI_FILE, baseinstance=self)
 
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 

@@ -5,7 +5,7 @@ QtGui widget to edit one Proposal instance
 
 
 from PyQt4 import QtGui, QtCore
-import qt_form_support
+import resources
 import topic_slider
 import main_window
 
@@ -26,7 +26,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.owner = owner
         self.proposal = proposal
         QtGui.QWidget.__init__(self, parent)
-        qt_form_support.loadUi(UI_FILE, self)
+        resources.loadUi(UI_FILE, self)
 
         self.save_pb.clicked.connect(self.onSaveButton)
         self.revert_pb.clicked.connect(self.onRevertButton)

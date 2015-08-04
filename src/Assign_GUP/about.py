@@ -8,7 +8,7 @@ import os, sys
 from PyQt4 import QtCore, QtGui
 import main_window
 import plainTextEdit
-import qt_form_support
+import resources
 
 UI_FILE = 'about.ui'
 DOCS_URL = 'http://Assign_GUP.readthedocs.org'
@@ -22,7 +22,7 @@ class AboutBox(QtGui.QDialog):
 
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
-        qt_form_support.loadUi(UI_FILE, baseinstance=self)
+        resources.loadUi(UI_FILE, baseinstance=self)
 
         self.docs_pb.clicked.connect(self.doUrl)
         self.license_pb.clicked.connect(self.doLicense)
@@ -38,7 +38,7 @@ class AboutBox(QtGui.QDialog):
         '''show the license'''
         main_window.addLog('opening License in new window')
 
-        path = qt_form_support.get_forms_path()
+        path = resources.get_forms_path()
         path = os.path.abspath(os.path.join(path, '..'))
         license_text = open(os.path.join(path, LICENSE_FILE), 'r').read()
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-(internal) support for forms defined in .ui files
+(internal) support for items in resources folder, such as forms defined in .ui files
 '''
 
 # Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
@@ -37,7 +37,7 @@ def loadUi(ui_file, baseinstance=None, **kw):
     Here is an example from this code::
 
         from PyQt4 import QtGui
-        import qt_form_support
+        import resources
         
         UI_FILE = 'plainTextEdit.ui'
         
