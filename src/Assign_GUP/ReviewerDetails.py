@@ -12,115 +12,107 @@ import topic_slider
 UI_FILE = 'reviewer_details.ui'
 
 
-class AGUP_ReviewerDetails(object):
+class AGUP_ReviewerDetails(QtGui.QWidget):
     '''
     QtGui widget to edit one Reviewer instance
     '''
 
-    def __init__(self, parent, reviewer):
+    def __init__(self, parent=None, reviewer=None):
         '''
         :param parent: owner (QtGui object)
         :param reviewer: instance of Reviewer object
         '''
         self.parent = parent
         self.reviewer = reviewer
-        self.ui = qt_form_support.load_form(UI_FILE)
+        QtGui.QWidget.__init__(self, parent)
+        qt_form_support.loadUi(UI_FILE, self)
 
-        self.ui.save_pb.clicked.connect(self.onSaveButton)
-        self.ui.revert_pb.clicked.connect(self.onRevertButton)
+        self.save_pb.clicked.connect(self.onSaveButton)
+        self.revert_pb.clicked.connect(self.onRevertButton)
     
     def onSaveButton(self, value):
-        # TODO: handle self.ui.save_pb
-        print "ui.save_pb not handled yet"
-        self.parent(self)
+        # TODO: handle self.save_pb
+        print "save_pb not handled yet"
     
     def onRevertButton(self, value):
-        # TODO: handle self.ui.revert_pb
-        print "ui.revert_pb not handled yet"
+        # TODO: handle self.revert_pb
+        print "revert_pb not handled yet"
     
     def getFullName(self):
-        return str(self.ui.full_name.text())
+        return str(self.full_name.text())
     
     def getSortName(self):
-        return str(self.ui.sort_name.text())
+        return str(self.sort_name.text())
     
     def getPhone(self):
-        return str(self.ui.phone.text())
+        return str(self.phone.text())
     
     def getEmail(self):
-        return str(self.ui.email.text())
+        return str(self.email.text())
     
     def getJoined(self):
-        return str(self.ui.joined.text())
+        return str(self.joined.text())
     
     def getUrl(self):
-        return str(self.ui.url.text())
+        return str(self.url.text())
     
     def getNotes(self):
-        return str(self.ui.notes.toPlainText())
+        return str(self.notes.toPlainText())
     
     def setFullName(self, value):
-        self.ui.full_name.setText(value)
+        self.full_name.setText(value)
     
     def setSortName(self, value):
-        self.ui.sort_name.setText(value)
+        self.sort_name.setText(value)
     
     def setPhone(self, value):
-        self.ui.phone.setText(value)
+        self.phone.setText(value)
     
     def setEmail(self, value):
-        self.ui.email.setText(value)
+        self.email.setText(value)
     
     def setJoined(self, value):
-        self.ui.joined.setText(value)
+        self.joined.setText(value)
     
     def setUrl(self, value):
-        self.ui.url.setText(value)
+        self.url.setText(value)
     
     def setNotes(self, value):
-        self.ui.notes.setPlainText(value)
+        self.notes.setPlainText(value)
 
 
-def report(mw):
-    print 'getFullName', mw.getFullName()
-    print 'getSortName', mw.getSortName()
-    print 'getPhone', mw.getPhone()
-    print 'getEmail', mw.getEmail()
-    print 'getJoined', mw.getJoined()
-    print 'getUrl', mw.getUrl()
-    print 'getNotes', mw.getNotes()
-
-
-def AGUP_main():
-    '''simple starter program to develop this code'''
+def main():
     import sys
     app = QtGui.QApplication(sys.argv)
-    # NOTE: for development, "report" used here to 
-    # pass the print routine to the class
-    # This is wired to the "Save" button for demo only.
-    main_window = AGUP_ReviewerDetails(report, None)
+    mw = AGUP_ReviewerDetails()
     
-    main_window.setFullName('Joe Reviewer')
-    main_window.setSortName('Reviewer')
-    main_window.setPhone('555-555-5555')
-    main_window.setEmail('joe@user.com')
-    main_window.setJoined('2010-2')
-    main_window.setUrl('http://user.com')
-    main_window.setNotes('''That URL is fake.\nDo not trust it!''')
+    mw.setFullName('Joe Reviewer')
+    mw.setSortName('Reviewer')
+    mw.setPhone('555-555-5555')
+    mw.setEmail('joe@user.com')
+    mw.setJoined('2010-2')
+    mw.setUrl('http://user.com')
+    mw.setNotes('''That URL is fake.\nDo not trust it!''')
 
     # setup some examples for testing
     topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
     topics = sorted(topic_dict.keys())
     w = {}
     for row, key in enumerate(topics):
-        w[key] = topic_slider.AGUP_TopicSlider(main_window.ui.topic_layout, row, key, topic_dict[key])
-    main_window.ui.topic_layout.setColumnStretch(1,3)
+        w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, topic_dict[key])
+    mw.topic_layout.setColumnStretch(1,3)
 
-    report(main_window)
+    print mw.getFullName()
+    print mw.getSortName()
+    print mw.getPhone()
+    print mw.getEmail()
+    print mw.getJoined()
+    print mw.getUrl()
+    print mw.getNotes()
 
-    main_window.ui.show()
+    mw.show()
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-    AGUP_main()
+    main()
