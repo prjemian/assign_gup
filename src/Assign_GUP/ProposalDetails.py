@@ -56,16 +56,6 @@ class AGUP_ProposalDetails(QtGui.QWidget):
 
     def setSubjects(self, value):
         self.subjects.setPlainText(value)
-    
-
-# def report(mw):
-#     print 'getFullName', mw.getFullName()
-#     print 'getSortName', mw.getSortName()
-#     print 'getPhone', mw.getPhone()
-#     print 'getEmail', mw.getEmail()
-#     print 'getJoined', mw.getJoined()
-#     print 'getUrl', mw.getUrl()
-#     print 'getNotes', mw.getNotes()
 
 
 def AGUP_main():
