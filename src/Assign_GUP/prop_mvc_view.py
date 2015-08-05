@@ -34,7 +34,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
 
         if proposals is None:       # developer use
             if not os.path.exists(PROPOSALS_TEST_FILE):
-                raise 'File not found: ' + PROPOSALS_TEST_FILE
+                raise IOError, 'File not found: ' + PROPOSALS_TEST_FILE
             proposals = prop_mvc_data.AGUP_Proposals_List()
             proposals.importXml(PROPOSALS_TEST_FILE)
         self.proposals = proposals
