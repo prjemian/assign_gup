@@ -153,8 +153,8 @@ def main():
     '''simple starter program to develop this code'''
     PROPOSALS_TEST_FILE = 'project/2015-2/proposals.xml'
     app = QtGui.QApplication(sys.argv)
-    main_window = ProposalsView(PROPOSALS_TEST_FILE)
-    main_window.show()
+    mw = ProposalsView(PROPOSALS_TEST_FILE)
+    mw.show()
     sys.exit(app.exec_())
 
 

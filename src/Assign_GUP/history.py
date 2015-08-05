@@ -22,6 +22,8 @@ NOTSET = 0
 # unique to this code
 NO_LOGGING = -1
 
+addMessageToHistory = None
+
 
 def _now():
     return datetime.datetime.now()
@@ -92,3 +94,11 @@ class Logger(object):
         self.add("host             = " + socket.gethostname() )
         self.add("program          = " + sys.argv[0] )
         self.add("PID              = " + str(os.getpid()) )
+
+
+def addLog(message):
+    global addMessageToHistory
+    if addMessageToHistory is not None:
+        addMessageToHistory(message)
+    else:
+        print message

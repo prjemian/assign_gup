@@ -6,7 +6,7 @@ show the About box
 
 import os, sys
 from PyQt4 import QtCore, QtGui
-import main_window
+import history
 import plainTextEdit
 import resources
 
@@ -29,14 +29,14 @@ class AboutBox(QtGui.QDialog):
 
     def doUrl(self):
         '''opening documentation URL in default browser'''
-        main_window.addLog(self.__doc__)
+        history.addLog(self.__doc__)
         url = QtCore.QUrl(DOCS_URL)
         service = QtGui.QDesktopServices()
         service.openUrl(url)
 
     def doLicense(self):
         '''show the license'''
-        main_window.addLog('opening License in new window')
+        history.addLog('opening License in new window')
 
         path = resources.get_forms_path()
         path = os.path.abspath(os.path.join(path, '..'))

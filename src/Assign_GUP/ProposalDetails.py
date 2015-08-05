@@ -7,7 +7,7 @@ QtGui widget to edit one Proposal instance
 from PyQt4 import QtGui, QtCore
 import resources
 import topic_slider
-import main_window
+import history
 
 
 UI_FILE = 'proposal_details.ui'
@@ -34,11 +34,11 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     
     def onSaveButton(self, value):
         # TODO: handle self.save_pb in the caller
-        main_window.addLog("save_pb pressed")
+        history.addLog("save_pb pressed")
     
     def onRevertButton(self, value):
         # TODO: handle self.revert_pb in the caller
-        main_window.addLog("revert_pb pressed")
+        history.addLog("revert_pb pressed")
     
     def clear(self):
         self.setProposalId('')
@@ -86,7 +86,7 @@ def AGUP_main():
     import sys
     app = QtGui.QApplication(sys.argv)
     mw = AGUP_ProposalDetails(None, None)
-    main_window.addLog("created main window")
+    history.addLog("created main window")
     
     mw.setProposalId('GUP-421654')
     mw.setProposalTitle('USAXS study of nothing in something')
@@ -102,7 +102,7 @@ def AGUP_main():
     for row, key in enumerate(topics):
         w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, topic_dict[key])
     mw.topic_layout.setColumnStretch(1,3)
-    main_window.addLog("defined some default data")
+    history.addLog("defined some default data")
 
     mw.show()
     sys.exit(app.exec_())

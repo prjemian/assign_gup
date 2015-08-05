@@ -17,9 +17,6 @@ RC_FILE = '.assign_gup.rc'
 RC_SECTION = 'Assign_GUP'
 
 
-addMessageToHistory = None
-
-
 class AGUP_MainWindow(QtGui.QMainWindow):
     '''
     Creates a Qt GUI for the main window
@@ -38,11 +35,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                                              level=history.NO_LOGGING, 
                                              statusbar=self.statusbar, 
                                              history_widget=self.history)
-        addMessageToHistory = self.history_logger.add
+        history.addMessageToHistory = self.history_logger.add
 
         # TODO: need handlers for widgets and config settings
 
-        addLog('loaded "' + UI_FILE + '"')
+        history.addLog('loaded "' + UI_FILE + '"')
 
         # assign values to each of the display widgets in the main window
 
@@ -55,7 +52,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.setAnalysesFileText(self.settings.getByKey('analyses_file'))
  
         for key in sorted(self.settings.getKeys()):
-            addLog('Configuration option: %s = %s' % (key, self.settings.getByKey(key)))
+            history.addLog('Configuration option: %s = %s' % (key, self.settings.getByKey(key)))
  
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
@@ -66,12 +63,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionAbout.triggered.connect(self.doAbout)
 
     def doAbout(self, *args, **kw):
-        addLog('About... box requested')
+        history.addLog('About... box requested')
         ui = about.AboutBox(self)
         ui.show()
 
     def doClose(self, *args, **kw):
-        addLog('application exit requested')
+        history.addLog('application exit requested')
         # TODO: refactor this to Qt
         #if self.settings.modified:
         #    # confirm this step
@@ -82,7 +79,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.close()
     
     def doOpenPrpFolder(self):
-        addLog('Open PRP Folder requested')
+        history.addLog('Open PRP Folder requested')
 
         flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
         title = 'Choose PRP folder'
@@ -92,10 +89,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if os.path.exists(path):
             self.settings.setPrpPath(path)
             self.setPrpPathText(path)
-            addLog('selected PRP Folder: ' + path)
+            history.addLog('selected PRP Folder: ' + path)
     
     def doImportProposals(self):
-        addLog('Import Proposals requested')
+        history.addLog('Import Proposals requested')
 
         title = 'Choose XML file with proposals'
         prp_path = self.settings.getByKey('prp_path')
@@ -106,22 +103,22 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             widget = Proposals_ListView.ProposalsView(path, self)
             widget.show()
             # FIXME: form does not stay up or get filled with information
-            addLog('imported proposals file: ' + path)
+            history.addLog('imported proposals file: ' + path)
 
     def doSaveSettings(self):
-        addLog('Save Settings requested')
+        history.addLog('Save Settings requested')
         self.settings.write()
-        addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
+        history.addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
     
     def doResetDefaults(self):
-        addLog('requested to reset default settings')
+        history.addLog('requested to reset default settings')
         self.settings.resetDefaults()
-        addLog('default settings reset')
-        addLog('NOTE: default settings reset NOT IMPLEMENTED YET')
+        history.addLog('default settings reset')
+        history.addLog('NOTE: default settings reset NOT IMPLEMENTED YET')
         # TODO: what about Save?
 
     def doNewPrpFolder(self):
-        addLog('New PRP Folder requested')
+        history.addLog('New PRP Folder requested')
 
     def setPrpPathText(self, text):
         self.prp_path.setText(text)
@@ -140,14 +137,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def setAnalysesFileText(self, text):
         self.analyses_file.setText(text)
-
-
-def addLog(message):
-    global addMessageToHistory
-    if addMessageToHistory is not None:
-        addMessageToHistory(message)
-    else:
-        print message
 
 
 def main():
