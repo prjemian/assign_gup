@@ -191,6 +191,8 @@
     <addaction name="actionOpen_Folder"/>
     <addaction name="actionImport_proposals"/>
     <addaction name="separator"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
     <addaction name="actionSave_settings"/>
     <addaction name="actionReset_Defaults"/>
     <addaction name="separator"/>
@@ -206,34 +208,25 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionHelp">
-   <property name="text">
-    <string>Help</string>
-   </property>
-  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About ...</string>
-   </property>
-  </action>
-  <action name="actionOpen_Reviewers">
-   <property name="text">
-    <string>Open Panel ...</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>E&amp;xit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionOpen_Folder">
    <property name="text">
-    <string>Open Folder ...</string>
+    <string>&amp;Open Folder ...</string>
    </property>
-  </action>
-  <action name="actionNew_PRP_Folder_from_existing">
-   <property name="text">
-    <string>New PRP Folder from existing ...</string>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionNew_PRP_Folder">
@@ -245,15 +238,34 @@
    <property name="text">
     <string>Save settings</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="actionImport_proposals">
+   <property name="text">
+    <string>&amp;Import proposals ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionReset_Defaults">
    <property name="text">
     <string>Reset Defaults</string>
    </property>
   </action>
-  <action name="actionImport_proposals">
+  <action name="actionSave">
    <property name="text">
-    <string>Import proposals ...</string>
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>Save &amp;As ...</string>
    </property>
   </action>
  </widget>

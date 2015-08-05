@@ -2,7 +2,7 @@ __package_name__        = u'Assign_GUP'
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__
 
-__version__             = u'2015.0725.0'
+__version__             = u'2015.08.dev'
 __release__             = __version__
 __author__              = u'Pete R. Jemian'
 __email__               = u'jemian@anl.gov'

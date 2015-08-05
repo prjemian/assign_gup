@@ -8,7 +8,7 @@ import os, sys
 from PyQt4 import QtCore, QtGui, uic
 import about
 import history
-import Proposals_ListView
+import prop_mvc
 import resources
 import settings
 
@@ -23,13 +23,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     '''
 
     def __init__(self):
-        global addMessageToHistory
-
         self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
         # TODO: support self.settings.modified flag
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
+        self.proposal_view = None
+        self.reviewer_view = None
+        self.modified = False
 
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
@@ -57,6 +58,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.actionImport_proposals.triggered.connect(self.doImportProposals)
+        self.actionSave.triggered.connect(self.doSave)
+        self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.actionExit.triggered.connect(self.doClose)
@@ -70,7 +73,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doClose(self, *args, **kw):
         history.addLog('application exit requested')
         # TODO: refactor this to Qt
-        #if self.settings.modified:
+        #if self.modified or self.settings.modified:
         #    # confirm this step
         #    result = self.RequestConfirmation('Exit (Quit)',
         #          'There are unsaved changes.  Exit (Quit) anyway?')
@@ -99,11 +102,18 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)
         if os.path.exists(path):
-            # TODO: where's the beef?
-            widget = Proposals_ListView.ProposalsView(path, self)
-            widget.show()
-            # FIXME: form does not stay up or get filled with information
+            # TODO: import the data, then give it to the View
+            self.proposal_view = prop_mvc.AGUP_Proposals_View(self)
+            self.proposal_view.show()
             history.addLog('imported proposals file: ' + path)
+
+    def doSave(self):
+        history.addLog('Save requested')
+        history.addLog('NOTE: Save NOT IMPLEMENTED YET')
+
+    def doSaveAs(self):
+        history.addLog('Save As requested')
+        history.addLog('NOTE: Save As NOT IMPLEMENTED YET')
 
     def doSaveSettings(self):
         history.addLog('Save Settings requested')
