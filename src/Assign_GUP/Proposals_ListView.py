@@ -47,6 +47,7 @@ class ProposalsView(QtGui.QWidget):
         print args, kws
 
     def on_item_changed(self, curr, prev):
+        # TODO: first check if current details are modified and don't allow the change if not handled properly
         text = curr.text()
         proposal = self.proposals.proposal(str(text))
         # TODO: let AGUP_ProposalDetails do this work

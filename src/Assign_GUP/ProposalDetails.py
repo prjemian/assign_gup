@@ -18,7 +18,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     QtGui widget to edit one Proposal instance
     '''
 
-    def __init__(self, owner=None, proposal=None, parent=None):
+    def __init__(self, parent=None, owner=None, proposal=None):
         '''
         :param owner: main window (QtGui object)
         :param proposal: instance of Proposal object
@@ -28,34 +28,57 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
 
-        self.save_pb.clicked.connect(self.onSaveButton)
-        self.revert_pb.clicked.connect(self.onRevertButton)
+        self.save_pb.clicked.connect(self.onSaveButton)         # TODO: do this in the caller
+        self.revert_pb.clicked.connect(self.onRevertButton)     # TODO: do this in the caller
+        self.modified = False
     
     def onSaveButton(self, value):
-        # TODO: handle self.save_pb
-        main_window.addLog("save_pb not handled yet")
+        # TODO: handle self.save_pb in the caller
+        main_window.addLog("save_pb pressed")
     
     def onRevertButton(self, value):
-        # TODO: handle self.revert_pb
-        main_window.addLog("revert_pb not handled yet")
+        # TODO: handle self.revert_pb in the caller
+        main_window.addLog("revert_pb pressed")
+    
+    def clear(self):
+        self.setProposalId('')
+        self.setProposalTitle('')
+        self.setReviewPeriod('')
+        self.setSpkName('')
+        self.setFirstChoiceBl('')
+        self.setSubjects('')
+    
+    def setAll(self, prop_id, title, period, speaker, choice, subjects):
+        self.setProposalId(prop_id)
+        self.setProposalTitle(title)
+        self.setReviewPeriod(period)
+        self.setSpkName(speaker)
+        self.setFirstChoiceBl(choice)
+        self.setSubjects(subjects)
 
     def setProposalId(self, value):
         self.proposal_id.setText(value)
+        self.modified = True
     
     def setProposalTitle(self, value):
         self.proposal_title.setPlainText(value)
+        self.modified = True
 
     def setReviewPeriod(self, value):
         self.review_period.setText(value)
+        self.modified = True
 
     def setSpkName(self, value):
         self.spk_name.setText(value)
+        self.modified = True
 
     def setFirstChoiceBl(self, value):
         self.first_choice_bl.setText(value)
+        self.modified = True
 
     def setSubjects(self, value):
         self.subjects.setPlainText(value)
+        self.modified = True
 
 
 def AGUP_main():

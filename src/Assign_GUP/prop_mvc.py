@@ -1,6 +1,8 @@
 
 '''
 MVC for proposals - test version
+
+:see: http://www.saltycrane.com/blog/2008/01/pyqt-43-simple-qabstractlistmodel/
 '''
 
 import os, sys
@@ -22,34 +24,35 @@ class AGUP_Proposals_View(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
 
+        self.details = ProposalDetails.AGUP_ProposalDetails()
+        layout = self.details_gb.layout()
+        layout.addWidget(self.details)
+    
+        self.mylist = ["test1", "test2", "test3", "test4"]
+        self.proposals_model = AGUP_Proposals_Model(self.mylist)
+        self.listView.setModel(self.proposals_model)
+
 
 class AGUP_Proposals_Model(QtCore.QAbstractListModel):
     '''
     MVC model for Proposals
+    
+    This is an adapter for the actual proposals data
     '''
     
-    def __init__(self, symbList=[[]], headerdata=[], parent=None):
+    def __init__(self, data_in=[], parent=None):
         QtCore.QAbstractListModel.__init__(self, parent)
-        self.header = headerdata
-        self.symbList = symbList
+        self.data_in = data_in
 
-    # TODO: refactor from table to list
     def rowCount(self, parent):
-        return len(self.symbList)
+        return len(self.data_in)
 
-    # TODO: refactor from table to list
-    def columnCount(self, parent):
-        if len(self.symbList) > 0:
-            return len(self.symbList[0])
-        return 0
-
-    # TODO: refactor from table to list
     def data(self, index, role):
         if not index.isValid():
             return None
             # For the foreground role you will need to edit this to suit your data
         elif role == QtCore.Qt.ForegroundRole:
-            item = self.symbList[index.row()][index.column()]
+            item = self.data_in[index.row()]
             if str(item) == "OFF":
                 return QtGui.QBrush(QtCore.Qt.red)
             elif str(item) == "ON":
@@ -58,18 +61,12 @@ class AGUP_Proposals_Model(QtCore.QAbstractListModel):
                 return QtGui.QBrush(QtCore.Qt.black)
 
         elif role != QtCore.Qt.DisplayRole:
-            return None
-        return self.symbList[index.row()][index.column()]
-
-    # TODO: refactor from table to list
-    def headerData(self, col, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return self.header[col]
-        return None
+            return QtCore.QVariant()
+        return QtCore.QVariant(self.data_in[index.row()])
 
     # Use this only if you want the items in the table to be editable
     #   def setData(self, index, value, color):
-    #       self.symbList[index.row()][index.column()] = value
+    #       self.data_in[index.row()] = value
     #       self.emit(QtCore.SIGNAL('dataChanged(const QModelIndex &, ''const QModelIndex &)'), index, index)
     #       return True
 
@@ -77,15 +74,27 @@ class AGUP_Proposals_Model(QtCore.QAbstractListModel):
     #       return QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
 
+class AGUP_Proposals_list(object):
+    '''
+    the list of all proposals (is this needed?)
+    '''
+    
+    def __init__(self):
+        pass
+
+
+class AGUP_Proposal_data(object):
+    '''
+    data of a single proposal
+    '''
+    
+    def __init__(self):
+        pass
+
 def main():
     import sys
     app = QtGui.QApplication(sys.argv)
     ui = AGUP_Proposals_View()
-    
-    mylist = [["test1", "test2"], ["test3","test4"]]
-    proposals_model = AGUP_Proposals_Model(mylist)
-    ui.listView.setModel(proposals_model)
-
     ui.show()
     sys.exit(app.exec_())
 
