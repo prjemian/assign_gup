@@ -8,7 +8,7 @@ import os, sys
 from PyQt4 import QtCore, QtGui, uic
 import about
 import history
-import prop_mvc
+import prop_mvc_view
 import resources
 import settings
 
@@ -103,7 +103,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = str(path)
         if os.path.exists(path):
             # TODO: import the data, then give it to the View
-            self.proposal_view = prop_mvc.AGUP_Proposals_View(self)
+            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self)
             self.proposal_view.show()
             history.addLog('imported proposals file: ' + path)
 
