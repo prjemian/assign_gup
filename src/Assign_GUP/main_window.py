@@ -105,10 +105,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if self.proposal_view is not None:  # TODO: why is this needed?
                 self.proposal_view.close()
             self.close()
-        # FIXME: How to stop this error?
-        # QObject::startTimer: QTimer can only be used with threads started with QThread
-        #same issue here. I've fixed it by setting the QtCore.Qt.WA_DeleteOnClose 
-        #attribute on the main window of my program.
     
     def doOpenPrpFolder(self):
         history.addLog('Open PRP Folder requested')
@@ -157,8 +153,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         except exception_list, exc:
             history.addLog(str(exc))
             return
-        self.proposal_view 
-        ui = prop_mvc_view.AGUP_Proposals_View(self, 
+        self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
                                                                proposals, 
                                                                self.topics)
 

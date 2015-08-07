@@ -26,7 +26,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
     
     def __init__(self, parent=None, proposals=None, topics=None):
         self.parent = parent
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
 
         self.details_panel = proposal_details.AGUP_ProposalDetails(self)
@@ -101,7 +101,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         
     def setModel(self, model):
         self.proposals = model
-        self.proposals_model = prop_mvc_model.AGUP_Proposals_Model(self.proposals)
+        self.proposals_model = prop_mvc_model.AGUP_Proposals_Model(self.proposals, parent=self)
         self.listView.setModel(self.proposals_model)
 
         # select the first item in the list

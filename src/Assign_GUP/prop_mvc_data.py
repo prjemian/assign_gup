@@ -3,6 +3,7 @@
 Proposals: underlying data class for the MVC model 
 '''
 
+from PyQt4 import QtCore
 from lxml import etree
 import os
 import proposal
@@ -27,7 +28,7 @@ class XmlSyntaxError(etree.XMLSyntaxError):
     '''Xml Syntax error'''
     pass
 
-class AGUP_Proposals_List(object):
+class AGUP_Proposals_List(QtCore.QObject):
     '''
     the list of all proposals (is this needed?)
     '''
