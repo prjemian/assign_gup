@@ -6,7 +6,22 @@ Proposals: underlying data class for the MVC model
 from lxml import etree
 import os
 import proposal
+import resources
 import xml_utility
+
+
+XML_SCHEMA_FILE = resources.resource_file('proposals.xsd')
+ROOT_TAG = 'Review_list'
+
+
+class IncorrectXmlRootTag(etree.DocumentInvalid):
+    '''the root tag of the XML file is incorrect'''
+    pass
+
+
+class InvalidWithXmlSchema(etree.DocumentInvalid):
+    '''error while validating against the XML Schema'''
+    pass
 
 
 class AGUP_Proposals_List(object):
@@ -37,6 +52,7 @@ class AGUP_Proposals_List(object):
         if not os.path.exists(filename):
             raise IOError, 'file not found: ' + filename
         doc = etree.parse(filename)
+        self.validate(doc)
         root = doc.getroot()
         self.cycle = root.attrib['period']
         db = {}
@@ -52,3 +68,16 @@ class AGUP_Proposals_List(object):
 
     def inOrder(self):
         return sorted(self.proposals.values())
+    
+    def validate(self, xmlDoc):
+        '''validate XML document for correct root tag & XML Schema'''
+        root = xmlDoc.getroot()
+        if root.tag != ROOT_TAG:
+            msg = 'expected=' + ROOT_TAG
+            msg += ', received=' + root.tag
+            raise IncorrectXmlRootTag, msg
+        try:
+            xml_utility.validate(xmlDoc, XML_SCHEMA_FILE)
+        except etree.DocumentInvalid, exc:
+            raise InvalidWithXmlSchema, str(exc)
+        return True

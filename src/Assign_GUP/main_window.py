@@ -8,9 +8,11 @@ import os, sys
 from PyQt4 import QtCore, QtGui, uic
 import about
 import history
+import prop_mvc_data
 import prop_mvc_view
 import resources
 import settings
+import topics
 
 UI_FILE = 'main_window.ui'
 RC_FILE = '.assign_gup.rc'
@@ -31,6 +33,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.proposal_view = None
         self.reviewer_view = None
         self.modified = False
+        self.topics = topics.Topics()
 
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
@@ -102,10 +105,22 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)
         if os.path.exists(path):
-            # TODO: import the data, then give it to the View
-            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self)
-            self.proposal_view.show()
+            history.addLog('selected file: ' + path)
+            self.importProposals(path)
             history.addLog('imported proposals file: ' + path)
+    
+    def importProposals(self, filename):
+        '''read a proposals XML file and set the model accordingly'''
+        exception_list = (prop_mvc_data.IncorrectXmlRootTag, prop_mvc_data.InvalidWithXmlSchema)
+        proposals = prop_mvc_data.AGUP_Proposals_List()
+        try:
+            proposals.importXml(filename)
+        except exception_list, exc:
+            history.addLog(str(exc))
+            return
+        # TODO: revise self.topics based on proposal list
+        self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, proposals)
+        self.proposal_view.show()
 
     def doSave(self):
         history.addLog('Save requested')

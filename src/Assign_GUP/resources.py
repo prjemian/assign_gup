@@ -56,7 +56,7 @@ def loadUi(ui_file, baseinstance=None, **kw):
         sys.exit(app.exec_())
 
     '''
-    return uic.loadUi(os.path.join(get_forms_path(), ui_file), baseinstance=baseinstance, **kw)
+    return uic.loadUi(resource_file(ui_file), baseinstance=baseinstance, **kw)
 
 
 def get_forms_path():
@@ -65,3 +65,10 @@ def get_forms_path():
     ref = inspect.getsourcefile(get_forms_path)
     path = os.path.abspath(os.path.dirname(ref))
     return os.path.join(path, FORMS_SUBDIRECTORY)
+
+
+def resource_file(filename):
+    '''absolute path to file in resources directory'''
+    # assume this is less risky than __file__
+    path = get_forms_path()
+    return os.path.abspath(os.path.join(path, filename))

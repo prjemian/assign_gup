@@ -13,6 +13,7 @@ import prop_mvc_data
 import prop_mvc_model
 import ProposalDetails
 import resources
+from topics import Topics
 
 UI_FILE = 'proposals_listview.ui'
 PROPOSALS_TEST_FILE = os.path.join('project', '2015-2', 'proposals.xml')
@@ -23,7 +24,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
     Manage the list of proposals, including assignments of topic weights and reviewers
     '''
     
-    def __init__(self, parent=None, proposals=None):
+    def __init__(self, parent=None, proposals=None, topics=None):
         self.parent = parent
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
@@ -31,23 +32,17 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.details_panel = ProposalDetails.AGUP_ProposalDetails(self)
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
+        
+        self.topics = topics or Topics()
 
         if proposals is None:       # developer use
             if not os.path.exists(PROPOSALS_TEST_FILE):
                 raise IOError, 'File not found: ' + PROPOSALS_TEST_FILE
             proposals = prop_mvc_data.AGUP_Proposals_List()
             proposals.importXml(PROPOSALS_TEST_FILE)
-        self.proposals = proposals
 
-        self.proposals_model = prop_mvc_model.AGUP_Proposals_Model(self.proposals)
-        self.listView.setModel(self.proposals_model)
+        self.setModel(proposals)
 
-        # select the first item in the list
-        pt = QtCore.QPoint(0,0)
-        idx = self.listView.indexAt(pt)
-        self.listView.setCurrentIndex(idx)
-        self.prior_selection = idx
-        self.selectProposalByIndex(idx)
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
         self.listView.installEventFilter(self)      # for keyboard events
@@ -93,6 +88,18 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''
         prop_id = str(index.data().toPyObject())
         self.selectProposal(prop_id)
+        
+    def setModel(self, model):
+        self.proposals = model
+        self.proposals_model = prop_mvc_model.AGUP_Proposals_Model(self.proposals)
+        self.listView.setModel(self.proposals_model)
+
+        # select the first item in the list
+        pt = QtCore.QPoint(0,0)
+        idx = self.listView.indexAt(pt)
+        self.listView.setCurrentIndex(idx)
+        self.prior_selection = idx
+        self.selectProposalByIndex(idx)
 
 
 def main():     # development only

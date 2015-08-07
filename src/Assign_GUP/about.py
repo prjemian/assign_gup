@@ -37,11 +37,7 @@ class AboutBox(QtGui.QDialog):
     def doLicense(self):
         '''show the license'''
         history.addLog('opening License in new window')
-
-        path = resources.get_forms_path()
-        path = os.path.abspath(os.path.join(path, '..'))
-        license_text = open(os.path.join(path, LICENSE_FILE), 'r').read()
-
+        license_text = open(resources.resource_file('../' + LICENSE_FILE), 'r').read()
         ui = plainTextEdit.TextWindow('LICENSE', license_text, self)
         ui.setMinimumSize(1100, 500)
         ui.show()
