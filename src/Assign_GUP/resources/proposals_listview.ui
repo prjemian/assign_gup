@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>245</height>
+    <width>1000</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,21 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,5">
      <item>
       <widget class="QGroupBox" name="proposals_gb">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="title">
         <string>Proposals</string>
        </property>

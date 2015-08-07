@@ -27,6 +27,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def __init__(self):
         self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
         # TODO: support self.settings.modified flag
+        # TODO: support self.settings when things change
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
@@ -36,6 +37,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.reviewer_view = None
         self.modified = False
         self.topics = topics.Topics()
+        
+        # dummy topics for now
+        # TODO: need a topic editor, perhaps QListWidget?
+        topics_list = '''bio phys eng poly mater  USAXS XPCS
+                        enviro proprietary chem geo GI med earth'''.split()
+        for key in topics_list:
+            self.topics.add(key)
+
 
         self.history_logger = history.Logger(log_file=None, 
                                              level=history.NO_LOGGING, 
@@ -58,7 +67,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.setAnalysesFileText(self.settings.getByKey('analyses_file'))
  
         for key in sorted(self.settings.getKeys()):
-            history.addLog('Configuration option: %s = %s' % (key, self.settings.getByKey(key)))
+            value = self.settings.getByKey(key)
+            history.addLog('Configuration option: %s = %s' % (key, value))
  
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
@@ -69,7 +79,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAbout.triggered.connect(self.doAbout)
-        
+
         self.openPrpFolder(self.settings.getByKey('prp_path'))
 
     def doAbout(self, *args, **kw):
@@ -78,14 +88,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         ui.show()
 
     def canExit(self):
-        # TODO: refactor this to Qt
-        #if self.modified or self.settings.modified:
-        #    # confirm this step
-        #    result = self.RequestConfirmation('Exit (Quit)',
-        #          'There are unsaved changes.  Exit (Quit) anyway?')
-        #    if result != wx.ID_YES:
-        #        return
-        return True
+        decision = self.settings.modified
+        if self.proposal_view is not None:
+            decision |= self.proposal_view.isProposalListModified()
+        return decision
 
     def closeEvent(self, event):
         #  called when user clicks the big [X] to quit
@@ -94,13 +100,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.doClose()
             event.accept() # let the window close
         else:
+            # confirm exit while dirty with a Dialog: "Exit" or "do not Exit"
             event.ignore()
 
     def doClose(self, *args, **kw):
         history.addLog('application exit requested')
-        #--
-        # QtCore.QCoreApplication.instance().quit()
-        #--
         if self.canExit():
             if self.proposal_view is not None:  # TODO: why is this needed?
                 self.proposal_view.close()
@@ -120,16 +124,27 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog('selected PRP Folder: ' + path)
     
     def openPrpFolder(self, path):
+        history.addLog('Opening PRP folder: ' + path)
         self.setPrpPathText(path)
+
         prop_filename = os.path.join(path, 'proposals.xml')
         panel_filename = os.path.join(path, 'panel.xml')
         analysis_filename = os.path.join(path, 'analysis.xml')
+
         if not os.path.exists(prop_filename):
             return
+        history.addLog('Importing Proposals file: ' + prop_filename)
         self.importProposals(prop_filename)
-        # TODO: import proposals.xml
-        # TODO: import panel.xml
-        # TODO: import analysis.xml
+
+        if not os.path.exists(panel_filename):
+            return
+        history.addLog('Importing Reviewers file: ' + panel_filename)
+        self.importReviewers(panel_filename)
+
+        if not os.path.exists(analysis_filename):
+            return
+        history.addLog('Importing Analyses file: ' + analysis_filename)
+        self.importAnalyses(analysis_filename)
 
     def doImportProposals(self):
         history.addLog('Import Proposals requested')
@@ -163,6 +178,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.setReviewCycleText(proposals.cycle)
 
         self.proposal_view.show()
+    
+    def importReviewers(self, filename):
+        history.addLog('Importing Reviewers file: NOT IMPLEMENTED NOW')
+        self.setReviewersFileText(filename)
+    
+    def importAnalyses(self, filename):
+        history.addLog('Importing Analyses file: NOT IMPLEMENTED NOW')
+        self.setAnalysesFileText(filename)
 
     def doSave(self):
         history.addLog('Save requested')

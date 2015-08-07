@@ -40,6 +40,7 @@ class AGUP_TopicSlider(QtCore.QObject):
     '''add topic, slider, value_entry to a QGridLayout'''
     
     def __init__(self, parent, row, label, value):
+        QtCore.QObject.__init__(self)
         self.slider_factor = 100    # slider = slider_factor * value_widget
 
         self.slider = QtGui.QSlider(

@@ -5,9 +5,10 @@ QtGui widget to edit one Proposal instance
 
 
 from PyQt4 import QtGui, QtCore
+import history
+import qt_utils
 import resources
 import topic_slider
-import history
 
 
 UI_FILE = 'proposal_details.ui'
@@ -25,19 +26,18 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
 
-        self.save_pb.clicked.connect(self.onSaveButton)         # TODO: do this in the caller
-        self.revert_pb.clicked.connect(self.onRevertButton)     # TODO: do this in the caller
         self.modified = False
         self.topic_list = []
         self.topic_widgets = {}
     
-    def onSaveButton(self, value):
-        # TODO: handle self.save_pb in the caller
-        history.addLog("save_pb pressed")
-    
-    def onRevertButton(self, value):
-        # TODO: handle self.revert_pb in the caller
-        history.addLog("revert_pb pressed")
+    def onTopicValueChanged(self, value):
+        history.addLog("topic value changed: " + str(value))
+        if not self.modified:
+            self.modified = True
+        if self.modified and not self.save_pb.isEnabled():
+            self.save_pb.setEnabled(True)
+            self.revert_pb.setEnabled(True)
+            qt_utils.setButtonBackground(self.save_pb, '#F99')
     
     def clear(self):
         self.setProposalId('')
@@ -83,7 +83,9 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         if topic not in self.topic_list:
             self.topic_list.append(topic)
         row = self.topic_list.index(topic)
-        self.topic_widgets[topic] = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
+        topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
+        self.topic_widgets[topic] = topicslider
+        topicslider.slider.valueChanged.connect(self.onTopicValueChanged)
 
     def setTopic(self, key, value):
         if key not in self.topic_list:
@@ -95,33 +97,33 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.modified = True
 
 
-def AGUP_main():
-    '''simple starter program to develop this code'''
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    mw = AGUP_ProposalDetails()
-    history.addLog("created main window")
-    
-    mw.setProposalId('GUP-421654')
-    mw.setProposalTitle('USAXS study of nothing in something')
-    mw.setReviewPeriod('2025-5')
-    mw.setSpkName('Joe User')
-    mw.setFirstChoiceBl('45-ID-K')
-    mw.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
-
-    # setup some examples for testing
-    topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
-    for key in sorted(topic_dict.keys()):
-        mw.addTopic(key, topic_dict[key])
-    mw.topic_layout.setColumnStretch(1,3)
-    history.addLog("defined some default data")
-    
-    mw.setTopic('SAXS', 0.05)
-    #mw.setTopic('gonzo', 0.05)
-
-    mw.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    AGUP_main()
+# def AGUP_main():
+#     '''simple starter program to develop this code'''
+#     import sys
+#     app = QtGui.QApplication(sys.argv)
+#     mw = AGUP_ProposalDetails()
+#     history.addLog("created main window")
+#      
+#     mw.setProposalId('GUP-421654')
+#     mw.setProposalTitle('USAXS study of nothing in something')
+#     mw.setReviewPeriod('2025-5')
+#     mw.setSpkName('Joe User')
+#     mw.setFirstChoiceBl('45-ID-K')
+#     mw.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
+#  
+#     # setup some examples for testing
+#     topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
+#     for key in sorted(topic_dict.keys()):
+#         mw.addTopic(key, topic_dict[key])
+#     mw.topic_layout.setColumnStretch(1,3)
+#     history.addLog("defined some default data")
+#      
+#     mw.setTopic('SAXS', 0.05)
+#     #mw.setTopic('gonzo', 0.05)
+#  
+#     mw.show()
+#     sys.exit(app.exec_())
+#  
+#  
+# if __name__ == '__main__':
+#     AGUP_main()
