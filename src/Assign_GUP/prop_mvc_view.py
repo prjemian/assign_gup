@@ -11,7 +11,7 @@ from PyQt4 import QtGui, QtCore
 import history
 import prop_mvc_data
 import prop_mvc_model
-import ProposalDetails
+import proposal_details
 import resources
 from topics import Topics
 
@@ -26,20 +26,28 @@ class AGUP_Proposals_View(QtGui.QWidget):
     
     def __init__(self, parent=None, proposals=None, topics=None):
         self.parent = parent
-        QtGui.QWidget.__init__(self)
+        QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
 
-        self.details_panel = ProposalDetails.AGUP_ProposalDetails(self)
+        self.details_panel = proposal_details.AGUP_ProposalDetails(self)
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
-        
-        self.topics = topics or Topics()
+
+        if topics is None:       # developer use
+            topics = Topics()
+            for key in 'bio chem phys'.split():
+                topics.add(key)
+        self.topics = topics
 
         if proposals is None:       # developer use
             if not os.path.exists(PROPOSALS_TEST_FILE):
                 raise IOError, 'File not found: ' + PROPOSALS_TEST_FILE
             proposals = prop_mvc_data.AGUP_Proposals_List()
             proposals.importXml(PROPOSALS_TEST_FILE)
+
+        for topic in topics:
+            proposals.addTopic(topic)
+            self.details_panel.addTopic(topic, 0.0)
 
         self.setModel(proposals)
 
@@ -80,6 +88,8 @@ class AGUP_Proposals_View(QtGui.QWidget):
                                   proposal.db['first_choice_bl'], 
                                   proposal.db['subjects'],
                                   )
+        # TODO: proposal.setTopic(topic, assigned_value)
+        # set reviewers
         history.addLog('selected proposal: ' + str(prop_id))
 
     def selectProposalByIndex(self, index):

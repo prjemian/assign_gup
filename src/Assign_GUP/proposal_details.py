@@ -28,6 +28,8 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.save_pb.clicked.connect(self.onSaveButton)         # TODO: do this in the caller
         self.revert_pb.clicked.connect(self.onRevertButton)     # TODO: do this in the caller
         self.modified = False
+        self.topic_list = []
+        self.topic_widgets = {}
     
     def onSaveButton(self, value):
         # TODO: handle self.save_pb in the caller
@@ -76,13 +78,28 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     def setSubjects(self, value):
         self.subjects.setPlainText(value)
         self.modified = True
+    
+    def addTopic(self, topic, value):
+        if topic not in self.topic_list:
+            self.topic_list.append(topic)
+        row = self.topic_list.index(topic)
+        self.topic_widgets[topic] = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
+
+    def setTopic(self, key, value):
+        if key not in self.topic_list:
+            raise KeyError, 'unknown Topic: ' + key
+        if value < 0 or value > 1:
+            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
+        self.topic_widgets[key].setValue(value)
+        self.topic_widgets[key].onValueChange(value)    # sets the slider
+        self.modified = True
 
 
 def AGUP_main():
     '''simple starter program to develop this code'''
     import sys
     app = QtGui.QApplication(sys.argv)
-    mw = AGUP_ProposalDetails(None, None)
+    mw = AGUP_ProposalDetails()
     history.addLog("created main window")
     
     mw.setProposalId('GUP-421654')
@@ -91,15 +108,16 @@ def AGUP_main():
     mw.setSpkName('Joe User')
     mw.setFirstChoiceBl('45-ID-K')
     mw.setSubjects('medical, environmental, earth, solar, electrical, long-winded')
-# 
+
     # setup some examples for testing
     topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
-    topics = sorted(topic_dict.keys())
-    w = {}
-    for row, key in enumerate(topics):
-        w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, topic_dict[key])
+    for key in sorted(topic_dict.keys()):
+        mw.addTopic(key, topic_dict[key])
     mw.topic_layout.setColumnStretch(1,3)
     history.addLog("defined some default data")
+    
+    mw.setTopic('SAXS', 0.05)
+    #mw.setTopic('gonzo', 0.05)
 
     mw.show()
     sys.exit(app.exec_())

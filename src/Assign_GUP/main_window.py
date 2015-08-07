@@ -30,6 +30,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
         self.proposal_view = None
         self.reviewer_view = None
         self.modified = False
@@ -67,14 +69,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAbout.triggered.connect(self.doAbout)
+        
+        self.openPrpFolder(self.settings.getByKey('prp_path'))
 
     def doAbout(self, *args, **kw):
         history.addLog('About... box requested')
         ui = about.AboutBox(self)
         ui.show()
 
-    def doClose(self, *args, **kw):
-        history.addLog('application exit requested')
+    def canExit(self):
         # TODO: refactor this to Qt
         #if self.modified or self.settings.modified:
         #    # confirm this step
@@ -82,7 +85,30 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         #          'There are unsaved changes.  Exit (Quit) anyway?')
         #    if result != wx.ID_YES:
         #        return
-        self.close()
+        return True
+
+    def closeEvent(self, event):
+        #  called when user clicks the big [X] to quit
+        history.addLog('application forced quit requested')
+        if self.canExit():
+            self.doClose()
+            event.accept() # let the window close
+        else:
+            event.ignore()
+
+    def doClose(self, *args, **kw):
+        history.addLog('application exit requested')
+        #--
+        # QtCore.QCoreApplication.instance().quit()
+        #--
+        if self.canExit():
+            if self.proposal_view is not None:  # TODO: why is this needed?
+                self.proposal_view.close()
+            self.close()
+        # FIXME: How to stop this error?
+        # QObject::startTimer: QTimer can only be used with threads started with QThread
+        #same issue here. I've fixed it by setting the QtCore.Qt.WA_DeleteOnClose 
+        #attribute on the main window of my program.
     
     def doOpenPrpFolder(self):
         history.addLog('Open PRP Folder requested')
@@ -94,12 +120,23 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = QtGui.QFileDialog.getExistingDirectory(None, title, prp_path, options=flags)
         if os.path.exists(path):
             self.settings.setPrpPath(path)
-            self.setPrpPathText(path)
+            self.openPrpFolder(path)
             history.addLog('selected PRP Folder: ' + path)
     
+    def openPrpFolder(self, path):
+        self.setPrpPathText(path)
+        prop_filename = os.path.join(path, 'proposals.xml')
+        panel_filename = os.path.join(path, 'panel.xml')
+        analysis_filename = os.path.join(path, 'analysis.xml')
+        if not os.path.exists(prop_filename):
+            return
+        self.importProposals(prop_filename)
+        # TODO: import proposals.xml
+        # TODO: import panel.xml
+        # TODO: import analysis.xml
+
     def doImportProposals(self):
         history.addLog('Import Proposals requested')
-
         title = 'Choose XML file with proposals'
         prp_path = self.settings.getByKey('prp_path')
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
@@ -111,15 +148,25 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     
     def importProposals(self, filename):
         '''read a proposals XML file and set the model accordingly'''
-        exception_list = (prop_mvc_data.IncorrectXmlRootTag, prop_mvc_data.InvalidWithXmlSchema)
         proposals = prop_mvc_data.AGUP_Proposals_List()
+
+        exception_list = (prop_mvc_data.IncorrectXmlRootTag, 
+                          prop_mvc_data.InvalidWithXmlSchema)
         try:
             proposals.importXml(filename)
         except exception_list, exc:
             history.addLog(str(exc))
             return
-        # TODO: revise self.topics based on proposal list
-        self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, proposals)
+        self.proposal_view 
+        ui = prop_mvc_view.AGUP_Proposals_View(self, 
+                                                               proposals, 
+                                                               self.topics)
+
+        self.setProposalsFileText(filename)
+        txt = self.getReviewCycleText()
+        if self.getReviewCycleText() == '':
+            self.setReviewCycleText(proposals.cycle)
+
         self.proposal_view.show()
 
     def doSave(self):
@@ -150,6 +197,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def setRcFileText(self, text):
         self.rcfile.setText(text)
+
+    def getReviewCycleText(self):
+        return str(self.review_cycle.text())
     
     def setReviewCycleText(self, text):
         self.review_cycle.setText(text)

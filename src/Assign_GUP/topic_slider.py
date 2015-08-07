@@ -36,7 +36,7 @@ in the particular topic.
 
 from PyQt4 import QtGui, QtCore
 
-class AGUP_TopicSlider(object):
+class AGUP_TopicSlider(QtCore.QObject):
     '''add topic, slider, value_entry to a QGridLayout'''
     
     def __init__(self, parent, row, label, value):
@@ -96,7 +96,7 @@ class AGUP_TopicSlider(object):
         
         This routine sets the slider value.
         '''
-        self.value_widget.setText(value)
+        self.value_widget.setText(str(value))
     
     def getSliderValue(self):
         value = self.slider.value()

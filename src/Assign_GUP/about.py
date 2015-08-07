@@ -40,4 +40,5 @@ class AboutBox(QtGui.QDialog):
         license_text = open(resources.resource_file('../' + LICENSE_FILE), 'r').read()
         ui = plainTextEdit.TextWindow('LICENSE', license_text, self)
         ui.setMinimumSize(1100, 500)
+        ui.setWindowModality(QtCore.Qt.ApplicationModal)
         ui.show()

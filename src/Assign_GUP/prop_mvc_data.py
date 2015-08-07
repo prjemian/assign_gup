@@ -23,6 +23,9 @@ class InvalidWithXmlSchema(etree.DocumentInvalid):
     '''error while validating against the XML Schema'''
     pass
 
+class XmlSyntaxError(etree.XMLSyntaxError):
+    '''Xml Syntax error'''
+    pass
 
 class AGUP_Proposals_List(object):
     '''
@@ -51,8 +54,11 @@ class AGUP_Proposals_List(object):
         '''
         if not os.path.exists(filename):
             raise IOError, 'file not found: ' + filename
-        doc = etree.parse(filename)
-        self.validate(doc)
+        try:
+            doc = etree.parse(filename)
+        except etree.XMLSyntaxError, exc:
+            raise XmlSyntaxError, str(exc)
+        self.validateXml(doc)
         root = doc.getroot()
         self.cycle = root.attrib['period']
         db = {}
@@ -69,8 +75,8 @@ class AGUP_Proposals_List(object):
     def inOrder(self):
         return sorted(self.proposals.values())
     
-    def validate(self, xmlDoc):
-        '''validate XML document for correct root tag & XML Schema'''
+    def validateXml(self, xmlDoc):
+        '''validateXml XML document for correct root tag & XML Schema'''
         root = xmlDoc.getroot()
         if root.tag != ROOT_TAG:
             msg = 'expected=' + ROOT_TAG
@@ -81,3 +87,28 @@ class AGUP_Proposals_List(object):
         except etree.DocumentInvalid, exc:
             raise InvalidWithXmlSchema, str(exc)
         return True
+
+    def addTopic(self, key, initial_value=0.0):
+        '''
+        add a new topic key and initial value to all proposals
+        '''
+        if initial_value < 0 or initial_value >= 1.0:
+            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
+        for prop in self.inOrder():
+            if key not in prop.db['topics']:
+                prop.db['topics'][key] = initial_value
+
+    def setTopicValue(self, prop_id, topic, value):
+        '''
+        set the topic value on a proposal identified by GUP ID
+        '''
+        if value < 0 or value >= 1.0:
+            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
+        if prop_id not in self.proposals:
+            raise KeyError, 'Proposal ID not found: ' + str(prop_id)
+        self.proposals[prop_id].setTopic(topic, value)
+
+
+if __name__ == '__main__':
+    import prop_mvc_view
+    prop_mvc_view.main()

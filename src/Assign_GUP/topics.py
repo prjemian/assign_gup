@@ -19,7 +19,7 @@ class Topics(object):
     def exists(self, key):
         return key in self.topics
     
-    def add(self, value):
+    def add(self, key):
         if not self.exists(key):
             self.topics.append(key)
     

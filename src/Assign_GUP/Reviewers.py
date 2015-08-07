@@ -9,7 +9,7 @@ import os
 import Reviewer
 
 
-class Reviewers:
+class Reviewers(object):
     '''
     The set of review panel members
     '''

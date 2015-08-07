@@ -60,3 +60,10 @@ class AGUP_Proposal_Data(object):
                         if who not in self.db['eligible_reviewers']:
                             # add to list of reviewers eligible for this proposal
                             self.db['eligible_reviewers'][who] = None
+
+    def setTopic(self, topic, value):
+        if value < 0 or value >= 1.0:
+            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
+        if topic not in self.db['topics']:
+            raise KeyError, 'Topic not found: ' + str(topic)
+        self.db['topics'][topic] = value
