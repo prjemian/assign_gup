@@ -87,25 +87,35 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         ui = about.AboutBox(self)
         ui.show()
 
-    def canExit(self):
-        decision = not self.settings.modified
+    def cannotExit(self):
+        '''
+        advise if the application has unsaved changes
+        '''
+        decision = self.settings.modified
         if self.proposal_view is not None:
-            decision |= not self.proposal_view.isProposalListModified()
+            decision |= self.proposal_view.isProposalListModified()
         return decision
 
     def closeEvent(self, event):
-        #  called when user clicks the big [X] to quit
+        '''
+        'called when user clicks the big [X] to quit
+        '''
         history.addLog('application forced quit requested')
-        if self.canExit():
-            self.doClose()
-            event.accept() # let the window close
-        else:
+        if self.cannotExit():
             # confirm exit while dirty with a Dialog: "Exit" or "do not Exit"
             event.ignore()
+        else:
+            self.doClose()
+            event.accept() # let the window close
 
     def doClose(self, *args, **kw):
+        '''
+        'called when user chooses exit (or quit), or from closeEvent()
+        '''
         history.addLog('application exit requested')
-        if self.canExit():
+        if self.cannotExit():
+            pass
+        else:
             if self.proposal_view is not None:  # TODO: why is this needed?
                 self.proposal_view.close()
             self.close()
