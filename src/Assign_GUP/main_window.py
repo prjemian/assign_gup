@@ -88,9 +88,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         ui.show()
 
     def canExit(self):
-        decision = self.settings.modified
+        decision = not self.settings.modified
         if self.proposal_view is not None:
-            decision |= self.proposal_view.isProposalListModified()
+            decision |= not self.proposal_view.isProposalListModified()
         return decision
 
     def closeEvent(self, event):
