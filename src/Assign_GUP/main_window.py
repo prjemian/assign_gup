@@ -34,6 +34,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.main_window_title = self.windowTitle()
 
         self.modified = False
+        self.forced_exit = False
 
         self.proposal_view = None
         self.reviewer_view = None
@@ -115,6 +116,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         advise if the application has unsaved changes
         '''
+        if self.forced_exit:
+            return False
         decision = self.modified
         decision |= self.settings.modified
         if self.proposal_view is not None:
@@ -129,8 +132,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('application forced quit requested')
         if self.cannotExit():
-            # confirm exit while dirty with a Dialog: "Exit" or "do not Exit"
-            event.ignore()
+            if self.doNotQuitNow():
+                event.ignore()
+            else:
+                event.accept()
         else:
             self.doClose()
             event.accept() # let the window close
@@ -141,12 +146,43 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('application exit requested')
         if self.cannotExit():
-            pass
-        else:
-            if self.proposal_view is not None:  # TODO: why is this needed?
-                self.proposal_view.close()
-            self.close()
+            if self.doNotQuitNow():
+                return
+
+        if self.proposal_view is not None:  # TODO: why is this needed?
+            self.proposal_view.close()
+        self.close()
     
+    def doNotQuitNow(self):
+        '''
+        Ask user to save changes before exit.
+        
+        Return True if application should *NOT* exit.
+        '''
+        box = QtGui.QMessageBox()
+        box.setText('The session data has changed.')
+        box.setInformativeText('Save the changes?')
+        box.setStandardButtons(QtGui.QMessageBox.Save 
+                               | QtGui.QMessageBox.Discard
+                               | QtGui.QMessageBox.Cancel)
+        box.setDefaultButton(QtGui.QMessageBox.Save)
+        ret = box.exec_()
+
+        if ret == QtGui.QMessageBox.Save:
+            history.addLog('Save before Exit was selected')
+            self.doSave()       # TODO: or doSaveAs() ?
+            self.doSaveSettings()
+        elif ret == QtGui.QMessageBox.Cancel:
+            history.addLog('Application Exit was canceled')
+            return True     # application should NOT exit
+        elif ret == QtGui.QMessageBox.Discard:
+            self.forced_exit = True
+            history.addLog('Discard Changes was chosen')
+        else:
+            msg = 'wrong button value from confirm close dialog: ' + str(ret)
+            raise ValueError, msg
+        return False    # application should exit
+
     def doOpenPrpFolder(self):
         '''
         '''
@@ -261,11 +297,23 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog('list of topics unchanged')
             self.adjustMainWindowTitle()
             return
-        # TODO: confirm before proceeding
+        
+        # confirm before proceeding
+        box = QtGui.QMessageBox()
+        box.setText('The list of topics has changed.')
+        box.setInformativeText('Save the changes?')
+        box.setStandardButtons(QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard)
+        box.setDefaultButton(QtGui.QMessageBox.Save)
+        ret = box.exec_()
+        if ret == QtGui.QMessageBox.Discard:
+            history.addLog('revised list of topics not accepted')
+            self.adjustMainWindowTitle()
+            return
+        
         #---
         # TODO: merge final list form editor with
         # x self.topics
-        # x proposals
+        # x proposals    TODO: need to re-check this one
         # - reviewers
         for key in added:
             self.topics.add(key)
