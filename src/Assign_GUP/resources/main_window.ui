@@ -190,6 +190,7 @@
     <addaction name="separator"/>
     <addaction name="actionOpen_Folder"/>
     <addaction name="actionImport_proposals"/>
+    <addaction name="actionEdit_proposals"/>
     <addaction name="actionEdit_Topics"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
@@ -275,6 +276,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionEdit_proposals">
+   <property name="text">
+    <string>Edit Proposals ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>

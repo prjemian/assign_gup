@@ -35,17 +35,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        if topics is None:       # developer use
-            topics = Topics()
-            for key in 'bio chem phys'.split():
-                topics.add(key)
         self.topics = topics
-
-        if proposals is None:       # developer use
-            if not os.path.exists(PROPOSALS_TEST_FILE):
-                raise IOError, 'File not found: ' + PROPOSALS_TEST_FILE
-            proposals = prop_mvc_data.AGUP_Proposals_List()
-            proposals.importXml(PROPOSALS_TEST_FILE)
 
         for topic in topics:
             proposals.addTopic(topic)
@@ -55,17 +45,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
 
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
-        self.listView.installEventFilter(self)      # for keyboard events
 
-    def eventFilter(self, listView, event):
-        if event.type() == QtCore.QEvent.KeyPress:
-            if event.key() in NAVIGATOR_KEYS:
-                prev = listView.currentIndex()
-                listView.keyPressEvent(event)
-                curr = listView.currentIndex()
-                self.selectProposalByIndex(curr, prev)
-                return True
-        return False
+        self.arrowKeysEventFilter = ArrowKeysEventFilter()
+        self.listView.installEventFilter(self.arrowKeysEventFilter)
 
     def on_item_clicked(self, index):
         '''
@@ -123,8 +105,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.listView.setModel(self.proposals_model)
 
         # select the first item in the list
-        pt = QtCore.QPoint(0,0)
-        idx = self.listView.indexAt(pt)
+        idx = self.listView.indexAt(QtCore.QPoint(0,0))
         self.listView.setCurrentIndex(idx)
         self.prior_selection_index = idx
         self.selectProposalByIndex(idx, None)
@@ -134,13 +115,21 @@ class AGUP_Proposals_View(QtGui.QWidget):
         return self.details_panel.modified
 
 
-def main():     # development only
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    ui = AGUP_Proposals_View()
-    ui.show()
-    sys.exit(app.exec_())
+class ArrowKeysEventFilter(QtCore.QObject):
+    '''
+    custom event filter
+    '''
 
-
-if __name__ == '__main__':
-    main()
+    def eventFilter(self, listView, event):
+        '''
+        watches for ArrowUp and ArrowDown (navigator keys) to change selection
+        '''
+        if event.type() == QtCore.QEvent.KeyPress:
+            if event.key() in NAVIGATOR_KEYS:
+                prev = listView.currentIndex()
+                listView.keyPressEvent(event)
+                curr = listView.currentIndex()
+                parent = listView.parent().parent()     # FIXME: fragile!
+                parent.selectProposalByIndex(curr, prev)
+                return True
+        return False
