@@ -27,20 +27,20 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
-        # TODO: support self.settings.modified flag
-        # TODO: support self.settings when things change
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.main_window_title = self.windowTitle()
+
+        self.modified = False
 
         self.proposal_view = None
         self.reviewer_view = None
-        self.modified = False
+        self.edit_topics_ui = None
         self.topics = topics.Topics()
         
         # dummy topics for now
-        # TODO: need a topic editor, perhaps QListWidget?
         topics_list = '''bio chem geo eng mater med phys poly'''.split()
         for key in topics_list:
             self.topics.add(key)
@@ -57,6 +57,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self._init_connections_()
 
         self.openPrpFolder(self.settings.getByKey('prp_path'))
+        self.settings.modified = False
+        self.modified = False
+        self.adjustMainWindowTitle()
 
     def _init_history_(self):
         self.history_logger = history.Logger(log_file=None, 
@@ -93,18 +96,31 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doAbout(self, *args, **kw):
         '''
+        describe this application and where to get more info
         '''
         history.addLog('About... box requested')
         ui = about.AboutBox(self)
         ui.show()
+    
+    def adjustMainWindowTitle(self):
+        '''
+        indicate in main window title when there are unsaved modifications (when self.cannotExit() is True)
+        '''
+        title = self.main_window_title
+        if self.cannotExit():
+            title += ' (*)'
+        self.setWindowTitle(title)
 
     def cannotExit(self):
         '''
         advise if the application has unsaved changes
         '''
-        decision = self.settings.modified
+        decision = self.modified
+        decision |= self.settings.modified
         if self.proposal_view is not None:
             decision |= self.proposal_view.isProposalListModified()
+        # if self.reviewer_view is not None:
+        #     decision |= self.reviewer_view.isReviewerListModified()
         return decision
 
     def closeEvent(self, event):
@@ -243,6 +259,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         removed = [_ for _ in known_topics if _ not in tl]
         if len(added) + len(removed) == 0:
             history.addLog('list of topics unchanged')
+            self.adjustMainWindowTitle()
             return
         # TODO: confirm before proceeding
         #---
@@ -258,17 +275,24 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.proposals.removeTopic(key)
         history.addLog('added topics: ' + ' '.join(added))
         history.addLog('deleted topics: ' + ' '.join(removed))
+        self.modified = True
+        self.edit_topics_ui = None
+        self.adjustMainWindowTitle()
 
     def doSave(self):
         '''
         '''
         history.addLog('Save requested')
+        self.modified = False
+        self.adjustMainWindowTitle()
         history.addLog('NOTE: Save NOT IMPLEMENTED YET')
 
     def doSaveAs(self):
         '''
         '''
         history.addLog('Save As requested')
+        self.modified = False
+        self.adjustMainWindowTitle()
         history.addLog('NOTE: Save As NOT IMPLEMENTED YET')
 
     def doSaveSettings(self):
@@ -277,6 +301,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('Save Settings requested')
         self.settings.write()
         history.addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
+        self.adjustMainWindowTitle()
     
     def doResetDefaults(self):
         '''
@@ -286,34 +311,45 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('default settings reset')
         history.addLog('NOTE: default settings reset NOT IMPLEMENTED YET')
         # TODO: what about Save?
+        self.adjustMainWindowTitle()
 
     def doNewPrpFolder(self):
         '''
         '''
         history.addLog('New PRP Folder requested')
+        self.adjustMainWindowTitle()
 
     # widget getters and setters
 
     def setPrpPathText(self, text):
         self.prp_path.setText(text)
+        self.settings.setPrpPath(text)
+        self.adjustMainWindowTitle()
 
     def setRcFileText(self, text):
         self.rcfile.setText(text)
+        self.settings.setRcFile(text)
+        self.adjustMainWindowTitle()
 
     def getReviewCycleText(self):
         return str(self.review_cycle.text())
     
     def setReviewCycleText(self, text):
         self.review_cycle.setText(text)
+        self.settings.setReviewCycle(text)
+        self.adjustMainWindowTitle()
 
     def setReviewersFileText(self, text):
         self.reviewers_file.setText(text)
+        self.adjustMainWindowTitle()
 
     def setProposalsFileText(self, text):
         self.proposals_file.setText(text)
+        self.adjustMainWindowTitle()
 
     def setAnalysesFileText(self, text):
         self.analyses_file.setText(text)
+        self.adjustMainWindowTitle()
 
 
 def main():
