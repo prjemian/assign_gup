@@ -32,12 +32,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     
     def onTopicValueChanged(self, value):
         history.addLog("topic value changed: " + str(value))
-        if not self.modified:
-            self.modified = True
-        if self.modified and not self.save_pb.isEnabled():
-            self.save_pb.setEnabled(True)
-            self.revert_pb.setEnabled(True)
-            qt_utils.setButtonBackground(self.save_pb, '#F99')
+        self.modified = True
     
     def clear(self):
         self.setProposalId('')

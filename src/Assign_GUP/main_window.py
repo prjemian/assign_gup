@@ -40,24 +40,31 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         # dummy topics for now
         # TODO: need a topic editor, perhaps QListWidget?
-        topics_list = '''bio phys eng poly mater  USAXS XPCS
-                        enviro proprietary chem geo GI med earth'''.split()
+        topics_list = '''bio chem geo eng mater med phys poly'''.split()
         for key in topics_list:
             self.topics.add(key)
 
-
-        self.history_logger = history.Logger(log_file=None, 
-                                             level=history.NO_LOGGING, 
-                                             statusbar=self.statusbar, 
-                                             history_widget=self.history)
-        history.addMessageToHistory = self.history_logger.add
+        self._init_history_()
 
         # TODO: need handlers for widgets and config settings
 
         history.addLog('loaded "' + UI_FILE + '"')
 
         # assign values to each of the display widgets in the main window
+        self._init_mainwindow_widget_values_()
 
+        self._init_connections_()
+
+        self.openPrpFolder(self.settings.getByKey('prp_path'))
+
+    def _init_history_(self):
+        self.history_logger = history.Logger(log_file=None, 
+                                             level=history.NO_LOGGING, 
+                                             statusbar=self.statusbar, 
+                                             history_widget=self.history)
+        history.addMessageToHistory = self.history_logger.add
+
+    def _init_mainwindow_widget_values_(self):
         self.settings_box.setTitle('settings from ' + self.settings.source)
         self.setPrpPathText(self.settings.getByKey('prp_path'))
         self.setRcFileText(self.settings.getByKey('rcfile'))
@@ -69,7 +76,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         for key in sorted(self.settings.getKeys()):
             value = self.settings.getByKey(key)
             history.addLog('Configuration option: %s = %s' % (key, value))
- 
+
+    def _init_connections_(self):
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.actionImport_proposals.triggered.connect(self.doImportProposals)
@@ -79,8 +87,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAbout.triggered.connect(self.doAbout)
-
-        self.openPrpFolder(self.settings.getByKey('prp_path'))
 
     def doAbout(self, *args, **kw):
         history.addLog('About... box requested')

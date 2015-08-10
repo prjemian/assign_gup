@@ -17,6 +17,7 @@ import resources
 from topics import Topics
 
 UI_FILE = 'proposals_listview.ui'
+NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
 PROPOSALS_TEST_FILE = os.path.join('project', '2015-2', 'proposals.xml')
 
 
@@ -56,11 +57,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.listView.entered.connect(self.on_item_clicked)
         self.listView.installEventFilter(self)      # for keyboard events
 
-        self.details_panel.save_pb.clicked.connect(self.onSaveButton)
-        self.details_panel.revert_pb.clicked.connect(self.onRevertButton)
-
     def eventFilter(self, listView, event):
-        NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
         if event.type() == QtCore.QEvent.KeyPress:
             if event.key() in NAVIGATOR_KEYS:
                 prev = listView.currentIndex()
@@ -69,22 +66,6 @@ class AGUP_Proposals_View(QtGui.QWidget):
                 self.selectProposalByIndex(curr, prev)
                 return True
         return False
-    
-    def onSaveButton(self, value):
-        # TODO: handle self.save_pb here
-        history.addLog("save_pb pressed")
-        self.details_panel.modified = False
-        self.details_panel.save_pb.setEnabled(False)
-        self.details_panel.revert_pb.setEnabled(False)
-        qt_utils.setButtonBackground(self.details_panel.save_pb)
-
-    def onRevertButton(self, value):
-        # TODO: handle self.revert_pb here
-        history.addLog("revert_pb pressed")
-        self.details_panel.modified = False
-        self.details_panel.save_pb.setEnabled(False)
-        self.details_panel.revert_pb.setEnabled(False)
-        qt_utils.setButtonBackground(self.details_panel.save_pb)
 
     def on_item_clicked(self, index):
         '''
@@ -94,18 +75,18 @@ class AGUP_Proposals_View(QtGui.QWidget):
             return False
         self.selectProposalByIndex(index, self.prior_selection_index)
     
-    def canChangeProposal(self):
+    def details_modified(self):
         '''OK to select a different proposal now?'''
-        return not self.details_panel.modified
+        return self.details_panel.modified
 
     def selectProposal(self, prop_id, prev_prop_index):
         '''
         select Proposal for editing as referenced by ID number
         '''
-        if not self.canChangeProposal():
-            # must save or revert before changing proposals
-            self.listView.setCurrentIndex(prev_prop_index)
-            return
+        if self.details_modified():
+            # TODO: get values from details panel and store in main
+            history.addLog('need to save modified proposal details')
+            pass
             
         proposal = self.proposals.proposals[str(prop_id)]
         self.details_panel.setAll(
