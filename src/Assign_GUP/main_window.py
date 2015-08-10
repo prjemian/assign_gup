@@ -13,6 +13,7 @@ import prop_mvc_view
 import resources
 import settings
 import topics
+import topics_editor
 
 UI_FILE = 'main_window.ui'
 RC_FILE = '.assign_gup.rc'
@@ -79,6 +80,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def _init_connections_(self):
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
+        self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.actionImport_proposals.triggered.connect(self.doImportProposals)
         self.actionSave.triggered.connect(self.doSave)
@@ -144,7 +146,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.setPrpPathText(path)
 
         prop_filename = os.path.join(path, 'proposals.xml')
-        panel_filename = os.path.join(path, 'panel.xml')
+        reviewers_filename = os.path.join(path, 'panel.xml')
         analysis_filename = os.path.join(path, 'analysis.xml')
 
         if not os.path.exists(prop_filename):
@@ -152,10 +154,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('Importing Proposals file: ' + prop_filename)
         self.importProposals(prop_filename)
 
-        if not os.path.exists(panel_filename):
+        if not os.path.exists(reviewers_filename):
             return
-        history.addLog('Importing Reviewers file: ' + panel_filename)
-        self.importReviewers(panel_filename)
+        history.addLog('Importing Reviewers file: ' + reviewers_filename)
+        self.importReviewers(reviewers_filename)
 
         if not os.path.exists(analysis_filename):
             return
@@ -175,23 +177,22 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     
     def importProposals(self, filename):
         '''read a proposals XML file and set the model accordingly'''
-        proposals = prop_mvc_data.AGUP_Proposals_List()
+        self.proposals = prop_mvc_data.AGUP_Proposals_List()
 
         exception_list = (prop_mvc_data.IncorrectXmlRootTag, 
                           prop_mvc_data.InvalidWithXmlSchema)
         try:
-            proposals.importXml(filename)
+           self.proposals.importXml(filename)
         except exception_list, exc:
             history.addLog(str(exc))
             return
-        self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
-                                                               proposals, 
-                                                               self.topics)
+        p_v = prop_mvc_view.AGUP_Proposals_View(self, self.proposals, self.topics)
+        self.proposal_view = p_v
 
         self.setProposalsFileText(filename)
         txt = self.getReviewCycleText()
         if self.getReviewCycleText() == '':
-            self.setReviewCycleText(proposals.cycle)
+            self.setReviewCycleText(self.proposals.cycle)
 
         self.proposal_view.show()
     
@@ -202,6 +203,40 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def importAnalyses(self, filename):
         history.addLog('Importing Analyses file: NOT IMPLEMENTED NOW')
         self.setAnalysesFileText(filename)
+
+    def doEditTopics(self):
+        '''
+        Create Window to edit list of Topics
+        '''
+        history.addLog('Edit Topics ... requested')
+        self.edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, self.topics.getList())
+        self.edit_topics_ui.show()
+        
+        # react to Topics Editor window closing
+        self.edit_topics_ui.custom_signals.closed.connect(self.doEditTopicsCloseWindow)
+
+    def doEditTopicsCloseWindow(self, *argv, **kw):
+        known_topics = self.topics.getList()
+        tl = self.edit_topics_ui.getList()
+        added = [_ for _ in tl if _ not in known_topics]
+        removed = [_ for _ in known_topics if _ not in tl]
+        if len(added) + len(removed) == 0:
+            history.addLog('list of topics unchanged')
+            return
+        # TODO: confirm before proceeding
+        #---
+        # TODO: merge final list form editor with
+        # x self.topics
+        # x proposals
+        # - reviewers
+        for key in added:
+            self.topics.add(key)
+            self.proposals.addTopic(key)
+        for key in removed:
+            self.topics.remove(key)
+            self.proposals.removeTopic(key)
+        history.addLog('added topics: ' + ' '.join(added))
+        history.addLog('deleted topics: ' + ' '.join(removed))
 
     def doSave(self):
         history.addLog('Save requested')

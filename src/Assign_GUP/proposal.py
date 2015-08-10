@@ -20,6 +20,22 @@ class AGUP_Proposal_Data(object):
     def __init__(self):
         self.db = dict(topics={}, eligible_reviewers={})
 
+    def addTopic(self, key, initial_value=0.0):
+        '''
+        add a new topic key and initial value to this proposal
+        '''
+        if initial_value < 0 or initial_value >= 1.0:
+            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
+        if key not in self.db['topics']:
+            self.db['topics'][key] = initial_value
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key from this proposal
+        '''
+        if key in self.db['topics']:
+            del self.db['topics'][key]
+
     def importXml(self, proposal):
         '''
         Fill the class variables with values from the XML node

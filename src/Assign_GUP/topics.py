@@ -10,7 +10,7 @@ class Topics(object):
     '''
     
     def __init__(self):
-        self.clear()
+        self.clearAll()
 
     def __iter__(self):
         for key in sorted(self.topics):
@@ -41,7 +41,7 @@ class Topics(object):
         for key in key_list:
             self.add(key)
     
-    def clear(self):
+    def clearAll(self):
         '''
         remove all keys from the list of topics
         '''

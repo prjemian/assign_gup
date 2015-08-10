@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>Form</class>
  <widget class="QWidget" name="Form">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -134,6 +137,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="close_pb">
+         <property name="text">
+          <string>Close Window</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

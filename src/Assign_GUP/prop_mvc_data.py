@@ -96,8 +96,14 @@ class AGUP_Proposals_List(QtCore.QObject):
         if initial_value < 0 or initial_value >= 1.0:
             raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
         for prop in self.inOrder():
-            if key not in prop.db['topics']:
-                prop.db['topics'][key] = initial_value
+            prop.addTopic(key, initial_value)
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key from all proposals
+        '''
+        for prop in self.inOrder():
+            prop.removeTopic(key)
 
     def setTopicValue(self, prop_id, topic, value):
         '''
@@ -108,8 +114,3 @@ class AGUP_Proposals_List(QtCore.QObject):
         if prop_id not in self.proposals:
             raise KeyError, 'Proposal ID not found: ' + str(prop_id)
         self.proposals[prop_id].setTopic(topic, value)
-
-
-if __name__ == '__main__':
-    import prop_mvc_view
-    prop_mvc_view.main()
