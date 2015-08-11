@@ -18,6 +18,7 @@ import topics_editor
 UI_FILE = 'main_window.ui'
 RC_FILE = '.assign_gup.rc'
 RC_SECTION = 'Assign_GUP'
+DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
 
 
 class AGUP_MainWindow(QtGui.QMainWindow):
@@ -41,7 +42,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.topics = topics.Topics()
         
         # dummy topics for now
-        topics_list = '''bio chem geo eng mater med phys poly'''.split()
+        topics_list = DUMMY_TOPICS_LIST
         for key in topics_list:
             self.topics.add(key)
 

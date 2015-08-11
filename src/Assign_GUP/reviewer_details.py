@@ -26,17 +26,6 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.reviewer = reviewer
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
-
-        self.save_pb.clicked.connect(self.onSaveButton)
-        self.revert_pb.clicked.connect(self.onRevertButton)
-    
-    def onSaveButton(self, value):
-        # TODO: handle self.save_pb
-        print "save_pb not handled yet"
-    
-    def onRevertButton(self, value):
-        # TODO: handle self.revert_pb
-        print "revert_pb not handled yet"
     
     def getFullName(self):
         return str(self.full_name.text())

@@ -20,22 +20,6 @@ class AGUP_Proposal_Data(object):
     def __init__(self):
         self.db = dict(topics={}, eligible_reviewers={})
 
-    def addTopic(self, key, initial_value=0.0):
-        '''
-        add a new topic key and initial value to this proposal
-        '''
-        if initial_value < 0 or initial_value >= 1.0:
-            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
-        if key not in self.db['topics']:
-            self.db['topics'][key] = initial_value
-
-    def removeTopic(self, key):
-        '''
-        remove an existing topic key from this proposal
-        '''
-        if key in self.db['topics']:
-            del self.db['topics'][key]
-
     def importXml(self, proposal):
         '''
         Fill the class variables with values from the XML node
@@ -77,6 +61,22 @@ class AGUP_Proposal_Data(object):
                             # add to list of reviewers eligible for this proposal
                             self.db['eligible_reviewers'][who] = None
 
+    def addTopic(self, key, initial_value=0.0):
+        '''
+        add a new topic key and initial value to this proposal
+        '''
+        if initial_value < 0 or initial_value > 1.0:
+            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
+        if key not in self.db['topics']:
+            self.db['topics'][key] = initial_value
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key from this proposal
+        '''
+        if key in self.db['topics']:
+            del self.db['topics'][key]
+
     def getTopics(self):
         '''
         return a dictionary of topics: values
@@ -85,13 +85,16 @@ class AGUP_Proposal_Data(object):
 
     def setTopics(self, topic_dict):
         '''
+        set topic values from a dictionary, each topic name must already exist
         '''
         for topic, value in topic_dict.items():
             self.setTopic(topic, value)
 
     def setTopic(self, topic, value):
         '''
+        set the value of an existing topic
         '''
+        initial_value = float(initial_value)
         if value < 0 or value > 1.0:
             raise ValueError, 'value must be between 0 and 1: given=' + str(value)
         if topic not in self.db['topics']:
