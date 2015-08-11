@@ -326,6 +326,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doSave(self):
         '''
         '''
+        # TODO: consider saving window geometries
         history.addLog('Save requested')
         self.modified = False
         self.adjustMainWindowTitle()

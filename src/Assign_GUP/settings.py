@@ -10,6 +10,7 @@ import rcfile
 
 class ApplicationSettings(object):
     '''
+    manage and preserve default settings for this application
     '''
     
     def __init__(self, rc_file, rc_section):
@@ -26,7 +27,7 @@ class ApplicationSettings(object):
         Reset all application settings to default values.
         '''
         self.config = {
-           # these are the supported keys
+            # these are the supported keys
             'rcfile':         self.rc.rcfile,
             'review_cycle':   '',
             'prp_path':       os.path.abspath(os.getcwd()),
@@ -34,7 +35,6 @@ class ApplicationSettings(object):
             'proposals_file': '',
             'analyses_file':  '',
             'version':        '1.0',
-            # TODO: consider saving window geometries
         }
         self.source = 'defaults'
         self.modified = True
