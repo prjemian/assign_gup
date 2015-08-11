@@ -6,7 +6,6 @@ QtGui widget to edit one Proposal instance
 
 from PyQt4 import QtGui, QtCore
 import history
-import qt_utils
 import resources
 import topic_slider
 
@@ -23,6 +22,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         '''
         '''
         self.parent = parent
+
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
 
@@ -37,8 +37,24 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         history.addLog("topic (" + topic + ") value changed: " + str(value))
         self.modified = True
         prop_id = str(self.getProposalId())
-        # must emit both topic & value
         self.custom_signals.topicValueChanged.emit(prop_id, str(topic), value)
+    
+    def addTopic(self, topic, value):
+        if topic not in self.topic_list:
+            self.topic_list.append(topic)
+        row = self.topic_list.index(topic)
+        topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
+        self.topic_widgets[topic] = topicslider
+        topicslider.slider.valueChanged.connect(lambda: self.onTopicValueChanged(topic))
+
+    def setTopic(self, key, value):
+        if key not in self.topic_list:
+            raise KeyError, 'unknown Topic: ' + key
+        if value < 0 or value > 1:
+            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
+        self.topic_widgets[key].setValue(value)
+        self.topic_widgets[key].onValueChange(value)    # sets the slider
+        self.modified = True
     
     def clear(self):
         self.setProposalId('')
@@ -81,23 +97,6 @@ class AGUP_ProposalDetails(QtGui.QWidget):
 
     def setSubjects(self, value):
         self.subjects.setPlainText(value)
-        self.modified = True
-    
-    def addTopic(self, topic, value):
-        if topic not in self.topic_list:
-            self.topic_list.append(topic)
-        row = self.topic_list.index(topic)
-        topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
-        self.topic_widgets[topic] = topicslider
-        topicslider.slider.valueChanged.connect(lambda: self.onTopicValueChanged(topic))
-
-    def setTopic(self, key, value):
-        if key not in self.topic_list:
-            raise KeyError, 'unknown Topic: ' + key
-        if value < 0 or value > 1:
-            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
-        self.topic_widgets[key].setValue(value)
-        self.topic_widgets[key].onValueChange(value)    # sets the slider
         self.modified = True
 
 

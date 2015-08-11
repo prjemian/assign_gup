@@ -5,6 +5,7 @@ QtGui widget to edit one Reviewer instance
 
 
 from PyQt4 import QtGui, QtCore
+import history
 import resources
 import topic_slider
 
@@ -17,15 +18,44 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
     QtGui widget to edit one Reviewer instance
     '''
 
-    def __init__(self, parent=None, reviewer=None):
+    def __init__(self, parent=None):
         '''
         :param parent: owner (QtGui object)
-        :param reviewer: instance of Reviewer object
         '''
         self.parent = parent
-        self.reviewer = reviewer
+
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
+
+        self.modified = False
+        self.topic_list = []
+        self.topic_widgets = {}
+
+        self.custom_signals = CustomSignals()
+    
+    def onTopicValueChanged(self, topic):
+        value = self.topic_widgets[topic].getValue()
+        history.addLog("topic (" + topic + ") value changed: " + str(value))
+        self.modified = True
+        sort_name = str(self.getSortName())
+        self.custom_signals.topicValueChanged.emit(sort_name, str(topic), value)
+    
+    def addTopic(self, topic, value):
+        if topic not in self.topic_list:
+            self.topic_list.append(topic)
+        row = self.topic_list.index(topic)
+        topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
+        self.topic_widgets[topic] = topicslider
+        topicslider.slider.valueChanged.connect(lambda: self.onTopicValueChanged(topic))
+
+    def setTopic(self, key, value):
+        if key not in self.topic_list:
+            raise KeyError, 'unknown Topic: ' + key
+        if value < 0 or value > 1:
+            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
+        self.topic_widgets[key].setValue(value)
+        self.topic_widgets[key].onValueChange(value)    # sets the slider
+        self.modified = True
     
     def getFullName(self):
         return str(self.full_name.text())
@@ -50,24 +80,37 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
     
     def setFullName(self, value):
         self.full_name.setText(value)
+        self.modified = True
     
     def setSortName(self, value):
         self.sort_name.setText(value)
+        self.modified = True
     
     def setPhone(self, value):
         self.phone.setText(value)
+        self.modified = True
     
     def setEmail(self, value):
         self.email.setText(value)
+        self.modified = True
     
     def setJoined(self, value):
         self.joined.setText(value)
+        self.modified = True
     
     def setUrl(self, value):
-        self.url.setText(value)
+        self.url.setText(value or '')
+        self.modified = True
     
     def setNotes(self, value):
         self.notes.setPlainText(value)
+        self.modified = True
+
+
+class CustomSignals(QtCore.QObject):
+    '''custom signals'''
+    
+    topicValueChanged = QtCore.pyqtSignal(str, str, float)
 
 
 def main():

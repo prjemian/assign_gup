@@ -7,6 +7,20 @@ from lxml import etree
 import os
 
 
+class IncorrectXmlRootTag(etree.DocumentInvalid):
+    '''the root tag of the XML file is incorrect'''
+    pass
+
+
+class InvalidWithXmlSchema(etree.DocumentInvalid):
+    '''error while validating against the XML Schema'''
+    pass
+
+class XmlSyntaxError(etree.XMLSyntaxError):
+    '''Xml Syntax error'''
+    pass
+
+
 def getXmlText(parent, tag):
     '''
     Read the text content of an XML node

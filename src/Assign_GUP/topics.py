@@ -56,3 +56,58 @@ class Topics(object):
             self.topics.remove(key)
         else:
             raise KeyError, 'Cannot remove (does not exist): ' + key
+
+
+class Topic_MixinClass(object):
+    '''
+    provides common methods for topic handling in data classes: proposals & reviewers
+    '''
+
+    def importXml(self, reviewer):
+        '''
+        Fill the class variables with values from the XML node
+        
+        :param proposal: lxml node of the Reviewer
+        '''
+        msg = 'each subclass of Topic_MixinClass() must implement importXml() method'
+        raise NotImplementedError, msg
+
+    def addTopic(self, key, initial_value=0.0):
+        '''
+        add a new topic key and initial value
+        '''
+        initial_value = float(initial_value)
+        if initial_value < 0 or initial_value > 1.0:
+            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
+        if key not in self.db['topics']:
+            self.db['topics'][key] = initial_value
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key
+        '''
+        if key in self.db['topics']:
+            del self.db['topics'][key]
+
+    def getTopics(self):
+        '''
+        return a dictionary of topics: values
+        '''
+        return self.db['topics']
+
+    def setTopics(self, topic_dict):
+        '''
+        set topic values from a dictionary, each topic name must already exist
+        '''
+        for topic, value in topic_dict.items():
+            self.setTopic(topic, value)
+
+    def setTopic(self, topic, value):
+        '''
+        set the value of an existing topic
+        '''
+        if value < 0 or value > 1.0:
+            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
+        if topic not in self.db['topics']:
+            raise KeyError, 'Topic not found: ' + str(topic)
+        self.db['topics'][topic] = value

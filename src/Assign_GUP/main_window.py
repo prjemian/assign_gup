@@ -14,6 +14,7 @@ import resources
 import settings
 import topics
 import topics_editor
+import xml_utility
 
 UI_FILE = 'main_window.ui'
 RC_FILE = '.assign_gup.rc'
@@ -241,8 +242,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''read a proposals XML file and set the model accordingly'''
         self.proposals = prop_mvc_data.AGUP_Proposals_List()
 
-        exception_list = (prop_mvc_data.IncorrectXmlRootTag, 
-                          prop_mvc_data.InvalidWithXmlSchema)
+        exception_list = (xml_utility.IncorrectXmlRootTag, 
+                          xml_utility.InvalidWithXmlSchema)
         try:
            self.proposals.importXml(filename)
         except exception_list, exc:

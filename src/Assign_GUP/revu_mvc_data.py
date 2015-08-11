@@ -1,43 +1,45 @@
 
 '''
-Proposals: underlying data class for the MVC model 
+Reviewers: underlying data class for the MVC model 
 '''
 
 from PyQt4 import QtCore
 from lxml import etree
 import os
-import proposal
+import reviewer
 import resources
 import xml_utility
 
 
-XML_SCHEMA_FILE = resources.resource_file('proposals.xsd')
-ROOT_TAG = 'Review_list'
+XML_SCHEMA_FILE = resources.resource_file('reviewers.xsd')
+ROOT_TAG = 'Review_panel'
 
-class AGUP_Proposals_List(QtCore.QObject):
+class AGUP_Reviewers_List(QtCore.QObject):
     '''
-    the list of all proposals
+    the list of all reviewers
     '''
     
     def __init__(self):
-        self.proposals = {}
-        self.prop_id_list = []
+        QtCore.QObject.__init__(self)
+
+        self.reviewers = {}.clear()
+        self.reviewer_sort_list = []
     
     def __len__(self):
-        return len(self.proposals)
+        return len(self.reviewers)
 
     def __iter__(self):
-        for prop in self.proposals.values():
-            yield prop
+        for item in self.reviewers.values():
+            yield item
 
     def getByIndex(self, index):
-        if index < 0 or index >= len(self.prop_id_list):
+        if index < 0 or index >= len(self.reviewer_sort_list):
             raise IndexError, 'Index not found: ' + str(index)
-        return self.prop_id_list[index]
+        return self.reviewer_sort_list[index]
 
     def importXml(self, filename):
         '''
-        :param str filename: name of XML file with proposals
+        :param str filename: name of XML file with reviewers
         '''
         if not os.path.exists(filename):
             raise IOError, 'file not found: ' + filename
@@ -45,20 +47,22 @@ class AGUP_Proposals_List(QtCore.QObject):
             doc = etree.parse(filename)
         except etree.XMLSyntaxError, exc:
             raise xml_utility.XmlSyntaxError, str(exc)
+
         self.validateXml(doc)
+
+        db = {}
+        self.reviewer_sort_list = []
         root = doc.getroot()
         self.cycle = root.attrib['period']
-        db = {}
-        self.prop_id_list = []
-        for node in doc.findall('Proposal'):
-            prop_id = xml_utility.getXmlText(node, 'proposal_id')
-            prop = proposal.AGUP_Proposal_Data(node, filename)
-            db[prop_id] = prop
-            self.prop_id_list.append(prop_id)
-        self.proposals = db
+        for node in doc.findall('Reviewer'):
+            sort_name = node.attrib['name'].strip()
+            panelist = reviewer.AGUP_Reviewer_Data(node, filename)
+            db[sort_name] = panelist
+            self.reviewer_sort_list.append(sort_name)
+        self.reviewers = db
 
     def inOrder(self):
-        return sorted(self.proposals.values())
+        return sorted(self.reviewers.values())
     
     def validateXml(self, xmlDoc):
         '''validateXml XML document for correct root tag & XML Schema'''
@@ -75,26 +79,26 @@ class AGUP_Proposals_List(QtCore.QObject):
 
     def addTopic(self, key, initial_value=0.0):
         '''
-        add a new topic key and initial value to all proposals
+        add a new topic key and initial value to all reviewers
         '''
         if initial_value < 0 or initial_value >= 1.0:
             raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
-        for prop in self.inOrder():
-            prop.addTopic(key, initial_value)
+        for item in self.inOrder():
+            item.addTopic(key, initial_value)
 
     def removeTopic(self, key):
         '''
-        remove an existing topic key from all proposals
+        remove an existing topic key from all reviewers
         '''
-        for prop in self.inOrder():
-            prop.removeTopic(key)
+        for item in self.inOrder():
+            item.removeTopic(key)
 
-    def setTopicValue(self, prop_id, topic, value):
+    def setTopicValue(self, sort_name, topic, value):
         '''
-        set the topic value on a proposal identified by GUP ID
+        set the topic value on a reviewer identified by sort_name
         '''
         if value < 0 or value > 1.0:
             raise ValueError, 'value must be between 0 and 1: given=' + str(value)
-        if prop_id not in self.proposals:
-            raise KeyError, 'Proposal ID not found: ' + str(prop_id)
-        self.proposals[prop_id].setTopic(topic, value)
+        if sort_name not in self.reviewers:
+            raise KeyError, 'Reviewer name not found: ' + str(sort_name)
+        self.reviewers[sort_name].setTopic(topic, value)

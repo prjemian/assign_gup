@@ -1,32 +1,32 @@
 
 '''
-MVC Model for proposals - test version
-
-:see: http://www.saltycrane.com/blog/2008/01/pyqt-43-simple-qabstractlistmodel/
-:see: http://www.saltycrane.com/blog/2007/12/pyqt-43-qtableview-qabstracttablemodel/
+Generic MVC Model for AGUP
 '''
+
+# :see: http://www.saltycrane.com/blog/2008/01/pyqt-43-simple-qabstractlistmodel/
+# :see: http://www.saltycrane.com/blog/2007/12/pyqt-43-qtableview-qabstracttablemodel/
 
 import os, sys
 from PyQt4 import QtGui, QtCore
 
 
-class AGUP_Proposals_Model(QtCore.QAbstractListModel):
+class AGUP_MVC_Model(QtCore.QAbstractListModel):
     '''
-    MVC model for Proposals
+    Generic MVC model for AGUP
     
-    This is an adapter for the actual proposals data object: proposal_dict
+    This is an adapter for the actual data object
     '''
     
-    def __init__(self, proposals=[], headerdata=None, parent=None):
+    def __init__(self, data_object=[], headerdata=None, parent=None):
         QtCore.QAbstractListModel.__init__(self, parent)
-        self.proposals = proposals
+        self.data_object = data_object
 
     def columnCount(self, parent):
         #return len(self.headerdata)     # table
         return 1        # list
 
     def rowCount(self, parent):
-        return len(self.proposals)
+        return len(self.data_object)
 
     def data(self, index, role):
         if not index.isValid():
@@ -34,14 +34,14 @@ class AGUP_Proposals_Model(QtCore.QAbstractListModel):
             # For the foreground role you will need to edit this to suit your data
         row = index.row()
         if role == QtCore.Qt.ForegroundRole:
-            item = self.proposals.getByIndex(row)
+            item = self.data_object.getByIndex(row)
         elif role != QtCore.Qt.DisplayRole:
             return QtCore.QVariant()
-        return self.proposals.getByIndex(row)
+        return self.data_object.getByIndex(row)
 
     # Use this only if you want the items in the table to be editable
     #   def setData(self, index, value, color):
-    #       self.proposals.getByIndex(row) = value
+    #       self.data_object.getByIndex(row) = value
     #       self.emit(QtCore.SIGNAL('dataChanged(const QModelIndex &, ''const QModelIndex &)'), index, index)
     #       return True
 

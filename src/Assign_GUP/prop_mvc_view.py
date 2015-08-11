@@ -9,8 +9,7 @@ MVC View for proposals - test version
 import os, sys
 from PyQt4 import QtGui, QtCore
 import history
-import prop_mvc_data
-import prop_mvc_model
+import general_mvc_model
 import proposal_details
 import qt_utils
 import resources
@@ -69,31 +68,24 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''OK to select a different proposal now?'''
         return self.details_panel.modified
 
-#     def getEditableData(self):
-#         '''
-#         '''
-#         ed = self.proposals.getEditableData()
-#         return ed    # TODO: what to do with it?
-
     def selectProposal(self, prop_id, prev_prop_index):
         '''
         select Proposal for editing as referenced by ID number
         '''
-        if self.details_modified():
+#         if self.details_modified():
 #             # TODO: get values from details panel and store in main
-#             d = self.getEditableData()    # TODO: what to do with it?
-            history.addLog('need to save modified proposal details')
-            pass
+#             history.addLog('need to save modified proposal details')
+#             pass
             
         proposal = self.proposals.proposals[str(prop_id)]
         self.details_panel.setAll(
-                                  proposal.db['proposal_id'], 
-                                  proposal.db['proposal_title'], 
-                                  proposal.db['review_period'], 
-                                  proposal.db['spk_name'], 
-                                  proposal.db['first_choice_bl'], 
-                                  proposal.db['subjects'],
-                                  )
+                                proposal.db['proposal_id'], 
+                                proposal.db['proposal_title'], 
+                                proposal.db['review_period'], 
+                                proposal.db['spk_name'], 
+                                proposal.db['first_choice_bl'], 
+                                proposal.db['subjects'],
+                                )
         topics_dict = proposal.getTopics()
         for topic, value in topics_dict.items():
             self.details_panel.setTopic(topic, value)
@@ -118,7 +110,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         
     def setModel(self, model):
         self.proposals = model
-        self.proposals_model = prop_mvc_model.AGUP_Proposals_Model(self.proposals, parent=self)
+        self.proposals_model = general_mvc_model.AGUP_MVC_Model(self.proposals, parent=self)
         self.listView.setModel(self.proposals_model)
 
         # select the first item in the list
