@@ -19,7 +19,7 @@ class CustomSignals(QtCore.QObject):
     
     closed = QtCore.pyqtSignal()
 
-class AGUP_TopicsEditor(QtGui.QWidget):
+class AGUP_TopicsEditor(QtGui.QDialog):
     '''add topic, slider, value_entry to a QGridLayout'''
     
     def __init__(self, parent=None, topics_list=None):
@@ -27,7 +27,7 @@ class AGUP_TopicsEditor(QtGui.QWidget):
         self.topics_list = topics.Topics()
         self.topics_list.addItems(topics_list or 'one two three'.split())
 
-        QtGui.QWidget.__init__(self)
+        QtGui.QDialog.__init__(self)
         resources.loadUi(UI_FILE, self)
         self.setWindowTitle('AGUP List of Topics')
         self.listWidget.addItems(self.topics_list.getList())
@@ -91,5 +91,5 @@ class AGUP_TopicsEditor(QtGui.QWidget):
         self.close()
     
     def closeEvent(self, event):
-        self.custom_signals.closed.emit()   # this window is closing
+        self.custom_signals.closed.emit()   # this window is closing - needed?
         event.accept()

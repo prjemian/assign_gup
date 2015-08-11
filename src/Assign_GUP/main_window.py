@@ -38,7 +38,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.proposal_view = None
         self.reviewer_view = None
-        self.edit_topics_ui = None
         self.topics = topics.Topics()
         
         # dummy topics for now
@@ -277,22 +276,20 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         Create Window to edit list of Topics
         '''
+        # post the editor GUI
         history.addLog('Edit Topics ... requested')
         if self.proposal_view is not None:
             self.proposal_view.close()
-        self.edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, self.topics.getList())
-        self.edit_topics_ui.show()
+            self.proposal_view = None
         
-        # react to Topics Editor window closing
-        self.edit_topics_ui.custom_signals.closed.connect(self.doEditTopicsCloseWindow)
-
-    def doEditTopicsCloseWindow(self, *argv, **kw):
-        '''
-        '''
         known_topics = self.topics.getList()
-        tl = self.edit_topics_ui.getList()
-        added = [_ for _ in tl if _ not in known_topics]
-        removed = [_ for _ in known_topics if _ not in tl]
+        edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics)
+        edit_topics_ui.exec_()   # Modal Dialog
+        
+        # learn what changed
+        topics_list = edit_topics_ui.getList()
+        added = [_ for _ in topics_list if _ not in known_topics]
+        removed = [_ for _ in known_topics if _ not in topics_list]
         if len(added) + len(removed) == 0:
             history.addLog('list of topics unchanged')
             self.adjustMainWindowTitle()
@@ -324,7 +321,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('added topics: ' + ' '.join(added))
         history.addLog('deleted topics: ' + ' '.join(removed))
         self.modified = True
-        self.edit_topics_ui = None
         self.adjustMainWindowTitle()
 
     def doSave(self):
