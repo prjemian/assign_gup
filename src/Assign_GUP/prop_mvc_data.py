@@ -89,6 +89,17 @@ class AGUP_Proposals_List(QtCore.QObject):
             raise InvalidWithXmlSchema, str(exc)
         return True
 
+#     def getEditableData(self):
+#         '''
+#         get the editable data of all proposals
+#         '''
+#         topics_db = {}
+#         for prop in self.inOrder():
+#             d = prop.getTopics()
+#             key = prop.db['proposal_id']
+#             topics_db[key] = d
+#         return dict(reviewers=[], topics=topics_db)
+
     def addTopic(self, key, initial_value=0.0):
         '''
         add a new topic key and initial value to all proposals
@@ -109,7 +120,7 @@ class AGUP_Proposals_List(QtCore.QObject):
         '''
         set the topic value on a proposal identified by GUP ID
         '''
-        if value < 0 or value >= 1.0:
+        if value < 0 or value > 1.0:
             raise ValueError, 'value must be between 0 and 1: given=' + str(value)
         if prop_id not in self.proposals:
             raise KeyError, 'Proposal ID not found: ' + str(prop_id)

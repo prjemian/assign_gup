@@ -29,10 +29,16 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.modified = False
         self.topic_list = []
         self.topic_widgets = {}
+
+        self.custom_signals = CustomSignals()
     
-    def onTopicValueChanged(self, value):
-        history.addLog("topic value changed: " + str(value))
+    def onTopicValueChanged(self, topic):
+        value = self.topic_widgets[topic].getValue()
+        history.addLog("topic (" + topic + ") value changed: " + str(value))
         self.modified = True
+        prop_id = str(self.getProposalId())
+        # must emit both topic & value
+        self.custom_signals.topicValueChanged.emit(prop_id, str(topic), value)
     
     def clear(self):
         self.setProposalId('')
@@ -49,6 +55,9 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.setSpkName(speaker)
         self.setFirstChoiceBl(choice)
         self.setSubjects(subjects)
+
+    def getProposalId(self):
+        return self.proposal_id.text()
 
     def setProposalId(self, value):
         self.proposal_id.setText(value)
@@ -80,7 +89,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         row = self.topic_list.index(topic)
         topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
         self.topic_widgets[topic] = topicslider
-        topicslider.slider.valueChanged.connect(self.onTopicValueChanged)
+        topicslider.slider.valueChanged.connect(lambda: self.onTopicValueChanged(topic))
 
     def setTopic(self, key, value):
         if key not in self.topic_list:
@@ -90,6 +99,12 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.topic_widgets[key].setValue(value)
         self.topic_widgets[key].onValueChange(value)    # sets the slider
         self.modified = True
+
+
+class CustomSignals(QtCore.QObject):
+    '''custom signals'''
+    
+    topicValueChanged = QtCore.pyqtSignal(str, str, float)
 
 
 # def AGUP_main():

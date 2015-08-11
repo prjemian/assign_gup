@@ -45,6 +45,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
 
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
+        self.details_panel.custom_signals.topicValueChanged.connect(self.onTopicValueChanged)
 
         self.arrowKeysEventFilter = ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
@@ -56,17 +57,31 @@ class AGUP_Proposals_View(QtGui.QWidget):
         if index == self.prior_selection_index:   # clicked on the current item
             return False
         self.selectProposalByIndex(index, self.prior_selection_index)
+
+    def onTopicValueChanged(self, prop_id, topic, value):
+        '''
+        called when user changed a topic value in the details panel
+        '''
+        self.proposals.setTopicValue(str(prop_id), str(topic), value)
+        self.details_panel.modified = True
     
     def details_modified(self):
         '''OK to select a different proposal now?'''
         return self.details_panel.modified
+
+#     def getEditableData(self):
+#         '''
+#         '''
+#         ed = self.proposals.getEditableData()
+#         return ed    # TODO: what to do with it?
 
     def selectProposal(self, prop_id, prev_prop_index):
         '''
         select Proposal for editing as referenced by ID number
         '''
         if self.details_modified():
-            # TODO: get values from details panel and store in main
+#             # TODO: get values from details panel and store in main
+#             d = self.getEditableData()    # TODO: what to do with it?
             history.addLog('need to save modified proposal details')
             pass
             
@@ -79,7 +94,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
                                   proposal.db['first_choice_bl'], 
                                   proposal.db['subjects'],
                                   )
-        # TODO: proposal.setTopic(topic, assigned_value)
+        topics_dict = proposal.getTopics()
+        for topic, value in topics_dict.items():
+            self.details_panel.setTopic(topic, value)
         # set reviewers
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
