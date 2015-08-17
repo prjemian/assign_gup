@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="AGUP_Review_Session">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Topics"/>
+        <xs:element ref="Review_panel"/>
+        <xs:element ref="Review_list"/>
+        <xs:element ref="Assignments"/>
+      </xs:sequence>
+      <xs:attribute name="cycle" use="required" type="xs:NMTOKEN"/>
+      <xs:attribute name="time" use="required"/>
+      <xs:attribute name="version" use="required" type="xs:decimal"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Review_panel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Reviewer"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Review_list">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Proposal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Assignments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Proposal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Topics">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Topic"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Topic">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" type="xs:decimal"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Reviewer">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="full_name"/>
+        <xs:element ref="phone"/>
+        <xs:element ref="email"/>
+        <xs:element ref="notes"/>
+        <xs:element ref="joined"/>
+        <xs:element ref="URL"/>
+        <xs:element ref="Topics"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:NMTOKEN"/>
+      <xs:attribute name="reviewer1"/>
+      <xs:attribute name="reviewer2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="full_name" type="xs:string"/>
+  <xs:element name="phone" type="xs:NMTOKEN"/>
+  <xs:element name="email" type="xs:string"/>
+  <xs:element name="notes" type="xs:string"/>
+  <xs:element name="joined" type="xs:NMTOKEN"/>
+  <xs:element name="URL" type="xs:anyURI"/>
+  <xs:element name="Proposal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:sequence minOccurs="0">
+          <xs:element ref="proposal_id"/>
+          <xs:element ref="proposal_type"/>
+          <xs:element ref="proposal_title"/>
+          <xs:element ref="review_period"/>
+          <xs:element ref="spk_name"/>
+          <xs:element ref="recent_req_period"/>
+          <xs:element ref="first_choice_bl"/>
+          <xs:element ref="subject"/>
+          <xs:element ref="reviewer"/>
+        </xs:sequence>
+        <xs:element ref="Topics"/>
+        <xs:element minOccurs="0" ref="Reviewers"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="proposal_id" type="xs:integer"/>
+  <xs:element name="proposal_type" type="xs:NCName"/>
+  <xs:element name="proposal_title" type="xs:string"/>
+  <xs:element name="review_period" type="xs:NMTOKEN"/>
+  <xs:element name="spk_name" type="xs:string"/>
+  <xs:element name="recent_req_period" type="xs:NMTOKEN"/>
+  <xs:element name="first_choice_bl" type="xs:string"/>
+  <xs:element name="subject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="name"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="reviewer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="name"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Reviewers">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Reviewer"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="name">
+    <xs:complexType mixed="true">
+      <xs:attribute name="assigned" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

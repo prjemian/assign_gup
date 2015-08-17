@@ -5,6 +5,7 @@ XML utility methods
 
 from lxml import etree
 import os
+import traceback
 
 
 class IncorrectXmlRootTag(etree.DocumentInvalid):
@@ -37,19 +38,50 @@ def getXmlText(parent, tag):
     return text
 
 
-def validate(xml_tree, xml_schema_file):
+def readValidXmlDoc(filename, expected_root_tag, XSD_Schema_file):
+    '''
+    Common code to read an XML file, validate it with an XSD Schema, and return the XML doc object
+
+    :param str XSD_Schema_file: name of XSD Schema file (local to package directory)
+    '''
+    if not os.path.exists(filename):
+        raise IOError, 'file not found: ' + filename
+
+    try:
+        doc = etree.parse(filename)
+    except etree.XMLSyntaxError, exc:
+        raise xml_utility.XmlSyntaxError, str(exc)
+
+    try:
+        root = doc.getroot()
+        if root.tag != expected_root_tag:
+            msg = 'expected=' + expected_root_tag
+            msg += ', received=' + root.tag
+            raise IncorrectXmlRootTag, msg
+        try:
+            validate(doc, XSD_Schema_file)
+        except etree.DocumentInvalid, exc:
+            raise InvalidWithXmlSchema, str(exc)
+    except Exception, exc:
+        msg = 'In ' + filename + ': ' + traceback.format_exc()
+        raise Exception, msg
+    
+    return doc
+
+
+def validate(xml_tree, XSD_Schema_file):
     '''
     validate an XML document tree against an XML Schema file
 
     :param obj xml_tree: instance of etree._ElementTree
-    :param str xml_schema_file: name of XML Schema file (local to package directory)
+    :param str XSD_Schema_file: name of XSD Schema file (local to package directory)
     '''
     path = os.path.abspath(os.path.dirname(__file__))
-    xsd_file_name = os.path.join(path, xml_schema_file)
-    if not os.path.exists(xsd_file_name):
-        raise IOError('Could not find XML Schema file: ' + xml_schema_file)
+    xsd_full_file_name = os.path.join(path, XSD_Schema_file)
+    if not os.path.exists(xsd_full_file_name):
+        raise IOError('Could not find XML Schema file: ' + XSD_Schema_file)
     
-    xsd_doc = etree.parse(xsd_file_name)
+    xsd_doc = etree.parse(xsd_full_file_name)
     xsd = etree.XMLSchema(xsd_doc)
 
     return xsd.assertValid(xml_tree)

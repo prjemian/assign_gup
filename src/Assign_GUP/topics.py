@@ -3,6 +3,8 @@
 Support AGUP topics
 '''
 
+DEFAULT_TOPIC_VALUE = 0.0
+
 
 class Topics(object):
     '''
@@ -38,6 +40,7 @@ class Topics(object):
         if len(key.strip().split()) != 1:
             raise KeyError, 'topic cannot have embedded white space: ' + key
         self.topics.append(key.strip())
+        self.topics_string = ' '.join(self.getList())
     
     def addItems(self, key_list):
         '''add several topics at once'''
@@ -49,16 +52,27 @@ class Topics(object):
         remove all keys from the list of topics
         '''
         self.topics = []
+        self.topics_string = ''
     
     def getList(self):
         return sorted(self.topics)
 
     def remove(self, key):
-        '''remove the named topic'''
+        '''
+        remove the named topic
+        '''
         if self.exists(key):
             self.topics.remove(key)
         else:
             raise KeyError, 'Cannot remove (does not exist): ' + key
+
+    def compareLists(self, other_topics_list):
+        '''
+        compare topics in self.topics with the other_topics_list, return True if identical
+        
+        convert each list to a sorted string and compare them
+        '''
+        return ' '.join(sorted(other_topics_list)) == self.topics_string
 
 
 class Topic_MixinClass(object):
@@ -71,26 +85,34 @@ class Topic_MixinClass(object):
         Fill the class variables with values from the XML node
         
         :param proposal: lxml node of the Reviewer
+        
+        The first step usually is to call::
+        
+          self.readValidXmlDoc(filename, expected_root_tag, XSD_Schema_file)
+        
         '''
         msg = 'each subclass of Topic_MixinClass() must implement importXml() method'
         raise NotImplementedError, msg
-
-    def addTopic(self, key, initial_value=0.0):
+    
+    def addTopic(self, key, initial_value=DEFAULT_TOPIC_VALUE):
         '''
         add a new topic key and initial value
         '''
-        initial_value = float(initial_value)
-        if initial_value < 0 or initial_value > 1.0:
-            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
-        if key not in self.db['topics']:
-            self.db['topics'][key] = initial_value
+        if not 0 <= float(initial_value) <= 1.0:
+            msg = 'initial value must be between 0 and 1: given=' + str(initial_value)
+            raise ValueError, msg
+        if not self.topicExists(key):
+            self.db['topics'][key] = float(initial_value)
 
     def removeTopic(self, key):
         '''
         remove an existing topic key
         '''
-        if key in self.db['topics']:
+        if self.topicExists(key):
             del self.db['topics'][key]
+
+    def topicExists(self, key):
+        return key in self.db['topics']
 
     def getTopics(self):
         '''
@@ -111,6 +133,6 @@ class Topic_MixinClass(object):
         '''
         if value < 0 or value > 1.0:
             raise ValueError, 'value must be between 0 and 1: given=' + str(value)
-        if topic not in self.db['topics']:
+        if not self.topicExists(topic):
             raise KeyError, 'Topic not found: ' + str(topic)
         self.db['topics'][topic] = value

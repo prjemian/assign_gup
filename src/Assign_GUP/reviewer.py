@@ -8,8 +8,6 @@ import topics
 import xml_utility
 
 
-
-
 class AGUP_Reviewer_Data(topics.Topic_MixinClass):
     '''
     A Reviewer of General User Proposals
@@ -37,7 +35,7 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
         '''
         Canonical string representation
         '''
-        if self.db['full_name'] == None or self.db['email'] == None:
+        if self.getFullName() == None or self.db['email'] == None:
             return str(None)
         return "%s <%s>" % (self.db['full_name'], self.db['email'])
 
@@ -54,3 +52,25 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
         node = reviewer.find('topics')
         for k, v in node.attrib.items():
             self.addTopic(k, v)
+    
+    def writeXmlNode(self, specified_node):
+        '''
+        write this Reviewer's data to a specified node in the XML document
+
+        :param obj specified_node: XML node to contain this data
+        '''
+        specified_node.attrib['name'] = self.getKey('name')
+        for tag in self.tagList:
+            etree.SubElement(specified_node, tag).text = self.getKey(tag)
+
+        node = etree.SubElement(specified_node, 'Topics')
+        for k, v in sorted(self.getTopics().items()):
+            subnode = etree.SubElement(node, 'Topic')
+            subnode.attrib['name'] = k
+            subnode.attrib['value'] = str(v)
+    
+    def getFullName(self):
+        return self.getKey('full_name')
+    
+    def getKey(self, key):
+        return self.db[key]

@@ -187,6 +187,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog('Discard Changes was chosen')
         else:
             msg = 'wrong button value from confirm close dialog: ' + str(ret)
+            history.addLog('ValueError: ' + msg)
             raise ValueError, msg
         return False    # application should exit
 

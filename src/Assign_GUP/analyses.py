@@ -1,14 +1,15 @@
 
 '''
-List of analyses and assessments 
+Data for all analyses, assignments, & assessments 
 '''
 
-from PyQt4 import QtCore
+
 from lxml import etree
 import os
 import traceback
 import reviewer
 import resources
+import topics
 import xml_utility
 
 
@@ -17,14 +18,12 @@ ROOT_TAG = 'analysis'
 DEFAULT_TOPIC_VALUE = 0.0
 
 
-class AGUP_Analyses(QtCore.QObject):
+class AGUP_Analyses(topics.Topic_MixinClass):
     '''
-    the list of all reviewers
+    Data for all analyses, assignments, & assessments
     '''
     
     def __init__(self):
-        QtCore.QObject.__init__(self)
-
         self.analyses = {} 
     
     def __len__(self):
@@ -38,24 +37,16 @@ class AGUP_Analyses(QtCore.QObject):
         '''
         :param str filename: name of XML file with analyses
         '''
-        def keySort(the_dict):
-            return ' '.join(sorted(the_dict.keys()))
+        def sortListUnique(the_list):
+            # make a dictionary with each list item
+            # redundancies will be overwritten
+            the_dict = {_:None for _ in the_list}
+            return sorted( the_dict.keys() )
 
-        if not os.path.exists(filename):
-            raise IOError, 'file not found: ' + filename
+        # TODO: plan to import from master XML file (different schema)
+        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
 
-        try:
-            doc = etree.parse(filename)
-        except etree.XMLSyntaxError, exc:
-            raise xml_utility.XmlSyntaxError, str(exc)
-
-        try:
-            self.validateXml(doc)
-        except Exception, exc:
-            msg = 'In ' + filename + ': ' + traceback.format_exc()
-            raise Exception, msg
-
-        topics_keys = None
+        ref_topics = None
         db = {}
         root = doc.getroot()
         proposals_node = root.find('Proposals')
@@ -76,21 +67,20 @@ class AGUP_Analyses(QtCore.QObject):
                         topics_dict[topic] = value
 
                 # check that all proposals have the exact same list of topics
-                # TODO: could be a separate function
-                if topics_keys is None:
-                    # first proposal defines the list of topics
-                    topics_keys = keySort(topics_dict)
-#                     topics_keys = topics_keys))
+                if ref_topics is None:             # first proposal defines the list of topics
+                    ref_topics = topics.Topics()
+                    ref_topics.addItems(topics_dict.keys())
                     first_prop_id = prop_id
                 else:
-                    these_keys = keySort(topics_dict)
-                    if these_keys != topics_keys:
+                    if not ref_topics.compareLists(topics_dict.keys()):
                         # look at all the keys for any missing
-                        for key in sorted({_:_ for _ in these_keys.split() + topics_keys.split()}.keys()):
+                        all_topics = topics_dict.keys() + ref_topics.getList()
+                        for key in sortListUnique(all_topics):
                             if key not in topics_dict:
+                                # define new keys as needed
                                 topics_dict[key] = DEFAULT_TOPIC_VALUE
                     # still a mismatch?
-                    if keySort(topics_dict) != topics_keys:
+                    if not ref_topics.compareLists(topics_dict.keys()):
                         msg = 'In ' + filename
                         msg += ', list topics do not match'
                         msg += ' between proposal ' + first_prop_id
@@ -105,24 +95,31 @@ class AGUP_Analyses(QtCore.QObject):
                         reviewers_dict[key] = r_node.get(key, '')
 
                 db[prop_id] = dict(Topics = topics_dict, Reviewers = reviewers_dict)
+
         self.analyses = db
+    
+    def writeXmlNode(self, specified_node):
+        '''
+        write Analyses data to a specified node in the XML document
+
+        :param obj specified_node: XML node to contain this data
+        '''
+        for prop_id, finding in sorted(self.analyses.items()):
+            prop_node = etree.SubElement(specified_node, 'Proposal')
+            prop_node.attrib['id'] = str(prop_id)
+            node = etree.SubElement(prop_node, 'Topics')
+            for k, v in sorted(finding['Topics'].items()):
+                subnode = etree.SubElement(node, 'Topic')
+                subnode.attrib['name'] = k
+                subnode.attrib['value'] = str(v)
+
+            node = etree.SubElement(prop_node, 'Reviewers')
+            for k, v in sorted(finding['Reviewers'].items()):
+                subnode = etree.SubElement(node, 'Reviewer')
+                subnode.attrib[k] = str(v)
 
     def inOrder(self):
         return sorted(self.analyses.values())
-    
-    def validateXml(self, xmlDoc):
-        '''validate XML document for correct root tag & XML Schema'''
-        # TODO: plan to import from master XML file (different schema)
-        root = xmlDoc.getroot()
-        if root.tag != ROOT_TAG:
-            msg = 'expected=' + ROOT_TAG
-            msg += ', received=' + root.tag
-            raise xml_utility.IncorrectXmlRootTag, msg
-        try:
-            xml_utility.validate(xmlDoc, XML_SCHEMA_FILE)
-        except etree.DocumentInvalid, exc:
-            raise xml_utility.InvalidWithXmlSchema, str(exc)
-        return True
 
 
 def main():

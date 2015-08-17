@@ -33,6 +33,27 @@ class AGUP_Reviewers_List(QtCore.QObject):
         for item in self.reviewers.values():
             yield item
 
+    def exists(self, sort_name):
+        '''given sort_name string, does reviewer exist?'''
+        return sort_name in self.reviewer_sort_list
+    
+    def getProposal(self, sort_name):
+        '''return reviewer selected by sort_name string'''
+        if not self.exists(sort_name):
+            raise IndexError, 'Reviewer not found: ' + sort_name
+        return self.reviewers[sort_name]
+    
+    def getByFullName(self, full_name):
+        '''return reviewer selected by full_name string'''
+        sort_name = None
+        for rvwr in self.inOrder():
+            if rvwr.getFullName() == full_name:
+                sort_name = rvwr.getKey('name')
+                break
+        if sort_name is None:
+            raise IndexError, 'Reviewer not found: ' + full_name
+        return self.reviewers[sort_name]
+
     def getByIndex(self, index):
         if index < 0 or index >= len(self.reviewer_sort_list):
             raise IndexError, 'Index not found: ' + str(index)
@@ -42,19 +63,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
         '''
         :param str filename: name of XML file with reviewers
         '''
-        if not os.path.exists(filename):
-            raise IOError, 'file not found: ' + filename
-
-        try:
-            doc = etree.parse(filename)
-        except etree.XMLSyntaxError, exc:
-            raise xml_utility.XmlSyntaxError, str(exc)
-
-        try:
-            self.validateXml(doc)
-        except Exception, exc:
-            msg = 'In ' + filename + ': ' + traceback.format_exc()
-            raise Exception, msg
+        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
 
         db = {}
         self.reviewer_sort_list = []
@@ -66,23 +75,18 @@ class AGUP_Reviewers_List(QtCore.QObject):
             db[sort_name] = panelist
             self.reviewer_sort_list.append(sort_name)
         self.reviewers = db
+    
+    def writeXmlNode(self, specified_node):
+        '''
+        write Reviewers' data to a specified node in the XML document
+
+        :param obj specified_node: XML node to contain this data
+        '''
+        for rvwr in self.inOrder():
+            rvwr.writeXmlNode(etree.SubElement(specified_node, 'Reviewer'))
 
     def inOrder(self):
         return sorted(self.reviewers.values())
-    
-    def validateXml(self, xmlDoc):
-        '''validateXml XML document for correct root tag & XML Schema'''
-        # TODO: plan to import from master XML file (different schema)
-        root = xmlDoc.getroot()
-        if root.tag != ROOT_TAG:
-            msg = 'expected=' + ROOT_TAG
-            msg += ', received=' + root.tag
-            raise xml_utility.IncorrectXmlRootTag, msg
-        try:
-            xml_utility.validate(xmlDoc, XML_SCHEMA_FILE)
-        except etree.DocumentInvalid, exc:
-            raise xml_utility.InvalidWithXmlSchema, str(exc)
-        return True
 
     def addTopic(self, key, initial_value=0.0):
         '''

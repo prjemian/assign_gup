@@ -20,6 +20,7 @@ class AGUP_Proposals_List(QtCore.QObject):
     '''
     
     def __init__(self):
+        QtCore.QObject.__init__(self)
         self.proposals = {}
         self.prop_id_list = []
     
@@ -30,7 +31,22 @@ class AGUP_Proposals_List(QtCore.QObject):
         for prop in self.proposals.values():
             yield prop
 
+    def exists(self, prop_id):
+        '''given ID string, does proposal exist?'''
+        return prop_id in self.prop_id_list
+    
+    def getProposal(self, prop_id):
+        '''return proposal selected by ID string'''
+        if not self.exists(prop_id):
+            raise IndexError, 'Proposal not found: ' + prop_id
+        return self.proposals[prop_id]
+
     def getByIndex(self, index):
+        '''
+        given index in sorted list of proposals, return indexed proposal
+        
+        note:  index is *not* the proposal ID number
+        '''
         if index < 0 or index >= len(self.prop_id_list):
             raise IndexError, 'Index not found: ' + str(index)
         return self.prop_id_list[index]
@@ -39,15 +55,7 @@ class AGUP_Proposals_List(QtCore.QObject):
         '''
         :param str filename: name of XML file with proposals
         '''
-        if not os.path.exists(filename):
-            raise IOError, 'file not found: ' + filename
-
-        try:
-            doc = etree.parse(filename)
-        except etree.XMLSyntaxError, exc:
-            raise xml_utility.XmlSyntaxError, str(exc)
-
-        self.validateXml(doc)
+        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
 
         db = {}
         self.prop_id_list = []
@@ -59,22 +67,18 @@ class AGUP_Proposals_List(QtCore.QObject):
             db[prop_id] = prop
             self.prop_id_list.append(prop_id)
         self.proposals = db
+    
+    def writeXmlNode(self, specified_node):
+        '''
+        write Proposals' data to a specified node in the XML document
+
+        :param obj specified_node: XML node to contain this data
+        '''
+        for prop in self.inOrder():
+            prop.writeXmlNode(etree.SubElement(specified_node, 'Proposal'))
 
     def inOrder(self):
         return sorted(self.proposals.values())
-    
-    def validateXml(self, xmlDoc):
-        '''validateXml XML document for correct root tag & XML Schema'''
-        root = xmlDoc.getroot()
-        if root.tag != ROOT_TAG:
-            msg = 'expected=' + ROOT_TAG
-            msg += ', received=' + root.tag
-            raise xml_utility.IncorrectXmlRootTag, msg
-        try:
-            xml_utility.validate(xmlDoc, XML_SCHEMA_FILE)
-        except etree.DocumentInvalid, exc:
-            raise xml_utility.InvalidWithXmlSchema, str(exc)
-        return True
 
     def addTopic(self, key, initial_value=0.0):
         '''
