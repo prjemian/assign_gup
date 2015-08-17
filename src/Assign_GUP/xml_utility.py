@@ -38,11 +38,11 @@ def getXmlText(parent, tag):
     return text
 
 
-def readValidXmlDoc(filename, expected_root_tag, XSD_Schema_file):
+def readValidXmlDoc(filename, expected_root_tag, XML_Schema_file, alt_root_tag='', alt_schema=None):
     '''
-    Common code to read an XML file, validate it with an XSD Schema, and return the XML doc object
+    Common code to read an XML file, validate it with an XML Schema, and return the XML doc object
 
-    :param str XSD_Schema_file: name of XSD Schema file (local to package directory)
+    :param str XML_Schema_file: name of XML Schema file (local to package directory)
     '''
     if not os.path.exists(filename):
         raise IOError, 'file not found: ' + filename
@@ -54,12 +54,16 @@ def readValidXmlDoc(filename, expected_root_tag, XSD_Schema_file):
 
     try:
         root = doc.getroot()
-        if root.tag != expected_root_tag:
+        if root.tag not in (expected_root_tag, alt_root_tag):
             msg = 'expected=' + expected_root_tag
+            msg += ' (or=' + alt_root_tag + ')'
             msg += ', received=' + root.tag
-            raise IncorrectXmlRootTag, msg
+            raise IncorrectXmlRootTag(msg)
         try:
-            validate(doc, XSD_Schema_file)
+            if root.tag == expected_root_tag or alt_schema is None:
+                validate(doc, XML_Schema_file)
+            else:
+                validate(doc, alt_schema)
         except etree.DocumentInvalid, exc:
             raise InvalidWithXmlSchema, str(exc)
     except Exception, exc:

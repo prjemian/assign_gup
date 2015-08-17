@@ -7,6 +7,7 @@ from PyQt4 import QtCore
 from lxml import etree
 import os
 import traceback
+import history
 import reviewer
 import resources
 import xml_utility
@@ -14,6 +15,8 @@ import xml_utility
 
 XML_SCHEMA_FILE = resources.resource_file('reviewers.xsd')
 ROOT_TAG = 'Review_panel'
+AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
+AGUP_ROOT_TAG = 'AGUP_Review_Session'
 
 class AGUP_Reviewers_List(QtCore.QObject):
     '''
@@ -63,13 +66,21 @@ class AGUP_Reviewers_List(QtCore.QObject):
         '''
         :param str filename: name of XML file with reviewers
         '''
-        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
+        doc = xml_utility.readValidXmlDoc(filename, 
+                                          AGUP_ROOT_TAG, AGUP_XML_SCHEMA_FILE,
+                                          alt_root_tag=ROOT_TAG, 
+                                          alt_schema=XML_SCHEMA_FILE,
+                                          )
+        root = doc.getroot()
+        if root.tag == AGUP_ROOT_TAG:
+            reviewers_node = root.find(ROOT_TAG)    # pre-agup reviewers file
+        else:
+            reviewers_node = root
 
         db = {}
         self.reviewer_sort_list = []
-        root = doc.getroot()
-        self.cycle = root.attrib['period']
-        for node in doc.findall('Reviewer'):
+        self.cycle = reviewers_node.get('period', None)
+        for node in reviewers_node.findall('Reviewer'):
             sort_name = node.attrib['name'].strip()
             panelist = reviewer.AGUP_Reviewer_Data(node, filename)
             db[sort_name] = panelist

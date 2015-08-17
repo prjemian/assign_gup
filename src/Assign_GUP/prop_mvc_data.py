@@ -13,6 +13,8 @@ import xml_utility
 
 XML_SCHEMA_FILE = resources.resource_file('proposals.xsd')
 ROOT_TAG = 'Review_list'
+AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
+AGUP_ROOT_TAG = 'AGUP_Review_Session'
 
 class AGUP_Proposals_List(QtCore.QObject):
     '''
@@ -55,13 +57,21 @@ class AGUP_Proposals_List(QtCore.QObject):
         '''
         :param str filename: name of XML file with proposals
         '''
-        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
+        doc = xml_utility.readValidXmlDoc(filename, 
+                                          AGUP_ROOT_TAG, AGUP_XML_SCHEMA_FILE,
+                                          alt_root_tag=ROOT_TAG, 
+                                          alt_schema=XML_SCHEMA_FILE,
+                                          )
+        root = doc.getroot()
+        if root.tag == AGUP_ROOT_TAG:
+            proposals_node = root.find(ROOT_TAG)    # pre-agup reviewers file
+        else:
+            proposals_node = root
 
         db = {}
         self.prop_id_list = []
-        root = doc.getroot()
-        self.cycle = root.attrib['period']
-        for node in doc.findall('Proposal'):
+        self.cycle = root.get('cycle', None) or root.get('period', None)
+        for node in proposals_node.findall('Proposal'):
             prop_id = xml_utility.getXmlText(node, 'proposal_id')
             prop = proposal.AGUP_Proposal_Data(node, filename)
             db[prop_id] = prop
