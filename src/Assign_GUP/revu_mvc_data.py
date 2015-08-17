@@ -7,6 +7,7 @@ from PyQt4 import QtCore
 from lxml import etree
 import os
 import traceback
+import agup_data
 import history
 import reviewer
 import resources
@@ -67,15 +68,16 @@ class AGUP_Reviewers_List(QtCore.QObject):
         :param str filename: name of XML file with reviewers
         '''
         doc = xml_utility.readValidXmlDoc(filename, 
-                                          AGUP_ROOT_TAG, AGUP_XML_SCHEMA_FILE,
+                                          agup_data.AGUP_MASTER_ROOT_TAG, 
+                                          agup_data.AGUP_XML_SCHEMA_FILE,
                                           alt_root_tag=ROOT_TAG, 
                                           alt_schema=XML_SCHEMA_FILE,
                                           )
         root = doc.getroot()
-        if root.tag == AGUP_ROOT_TAG:
-            reviewers_node = root.find(ROOT_TAG)    # pre-agup reviewers file
+        if root.tag == agup_data.AGUP_MASTER_ROOT_TAG:
+            reviewers_node = root.find(ROOT_TAG)
         else:
-            reviewers_node = root
+            reviewers_node = root    # pre-agup reviewers file
 
         db = {}
         self.reviewer_sort_list = []

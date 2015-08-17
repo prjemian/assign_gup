@@ -9,6 +9,7 @@ from PyQt4 import QtCore, QtGui, uic
 import traceback
 
 import about
+import agup_data
 import history
 import prop_mvc_data
 import prop_mvc_view
@@ -20,8 +21,6 @@ import topics_editor
 import xml_utility
 
 UI_FILE = 'main_window.ui'
-RC_FILE = '.assign_gup.rc'
-RC_SECTION = 'Assign_GUP'
 DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
 
 
@@ -31,7 +30,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     '''
 
     def __init__(self):
-        self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
+        self.settings = settings.ApplicationSettings(agup_data.RC_FILE, agup_data.RC_SECTION)
+        self.agup = agup_data.AGUP_Data(self.settings)
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
@@ -41,16 +41,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.modified = False
         self.forced_exit = False
 
-        self.proposals = None
         self.proposal_view = None
-        self.reviewers = None
         self.reviewer_view = None
-        self.topics = topics.Topics()
-        
-        # dummy topics for now
-        topics_list = DUMMY_TOPICS_LIST
-        for key in topics_list:
-            self.topics.add(key)
 
         self._init_history_()
 
@@ -63,7 +55,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self._init_connections_()
 
-        self.openPrpFolder(self.settings.getByKey('prp_path'))
         self.settings.modified = False
         self.modified = False
         self.adjustMainWindowTitle()
@@ -77,28 +68,25 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def _init_mainwindow_widget_values_(self):
         self.settings_box.setTitle('settings from ' + self.settings.source)
-        self.setPrpPathText(self.settings.getByKey('prp_path'))
+        self.setPrpFileText(self.settings.getByKey('prp_file'))
         self.setRcFileText(self.settings.getByKey('rcfile'))
         self.setReviewCycleText(self.settings.getByKey('review_cycle'))
-        self.setReviewersFileText(self.settings.getByKey('reviewers_file'))
-        self.setProposalsFileText(self.settings.getByKey('proposals_file'))
-        self.setAnalysesFileText(self.settings.getByKey('analyses_file'))
  
         for key in sorted(self.settings.getKeys()):
             value = self.settings.getByKey(key)
             history.addLog('Configuration option: %s = %s' % (key, value))
 
     def _init_connections_(self):
-        self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
-        self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
-        self.actionImport_proposals.triggered.connect(self.doImportProposals)
+        self.actionNew_PRP_Project.triggered.connect(self.doNewPrpFile)
+        self.actionOpen.triggered.connect(self.doOpenPrpFile)
+        self.actionImport_Proposals.triggered.connect(self.doImportProposals)
+        self.actionImport_Reviewers.triggered.connect(self.doImportReviewers)
         self.actionEdit_proposals.triggered.connect(self.doEditProposals)
         self.actionEdit_Reviewers.triggered.connect(self.doEditReviewers)
         self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionSave.triggered.connect(self.doSave)
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
-        self.actionReset_Defaults.triggered.connect(self.doResetDefaults)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAbout.triggered.connect(self.doAbout)
 
@@ -191,53 +179,44 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             raise ValueError, msg
         return False    # application should exit
 
-    def doOpenPrpFolder(self):
+    def doOpenPrpFile(self):
         '''
         '''
-        history.addLog('Open PRP Folder requested')
+        history.addLog('Open PRP File requested')
 
-        flags = QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks
-        title = 'Choose PRP folder'
+        flags = QtGui.QFileDialog.DontResolveSymlinks
+        title = 'Open PRP file'
 
-        prp_path = self.settings.getByKey('prp_path')
-        path = QtGui.QFileDialog.getExistingDirectory(None, title, prp_path, options=flags)
-        if os.path.exists(path):
-            self.settings.setPrpPath(path)
-            self.openPrpFolder(path)
-            history.addLog('selected PRP Folder: ' + path)
+        prp_file = self.settings.getByKey('prp_file').strip()
+        if len(prp_file) == 0:
+            prp_path = ''
+        else:
+            prp_path = os.path.dirname(prp_file)
+
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
+
+        if os.path.exists(filename):
+            self.settings.setPrpFile(filename)
+            self.openPrpFile(filename)
+            history.addLog('selected PRP file: ' + filename)
     
-    def openPrpFolder(self, path):
+    def openPrpFile(self, filename):
         '''
-        choose the directory that holds the files for this PRP review
+        choose the XML file with data for this PRP review
         '''
-        history.addLog('Opening PRP folder: ' + path)
-        self.setPrpPathText(path)
-
-        prop_filename = os.path.join(path, 'proposals.xml')
-        reviewers_filename = os.path.join(path, 'panel.xml')
-        analysis_filename = os.path.join(path, 'analysis.xml')
-
-        if not os.path.exists(prop_filename):
-            return
-        history.addLog('Importing Proposals file: ' + prop_filename)
-        self.importProposals(prop_filename)
-
-        if not os.path.exists(reviewers_filename):
-            return
-        history.addLog('Importing Reviewers file: ' + reviewers_filename)
-        self.importReviewers(reviewers_filename)
-
-        if not os.path.exists(analysis_filename):
-            return
-        history.addLog('Importing Analyses file: ' + analysis_filename)
-        self.importAnalyses(analysis_filename)
+        history.addLog('Opening PRP file: ' + filename)
+        if self.agup.openPrpFile(filename):
+            self.setPrpFileText(filename)
+            self.setReviewCycleText(self.agup.getCycle())
+            history.addLog('Open PRP file: ' + filename)
 
     def doImportProposals(self):
         '''
         '''
         history.addLog('Import Proposals requested')
         title = 'Choose XML file with proposals'
-        prp_path = self.settings.getByKey('prp_path')
+        prp_file = self.settings.getByKey('prp_file')
+        # TODO: fix the auto path again
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)
         if os.path.exists(path):
@@ -257,7 +236,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog(traceback.format_exc())
             return
 
-        self.setProposalsFileText(filename)
         txt = self.getReviewCycleText()
         if self.getReviewCycleText() == '':
             self.setReviewCycleText(self.proposals.cycle)
@@ -266,27 +244,34 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         '''
         if self.proposal_view is None:
-            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.proposals, self.topics)
+            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
+                                                                   self.agup.proposals, 
+                                                                   self.agup.topics)
         self.proposal_view.show()
 
     def doEditReviewers(self):
         '''
         '''
         if self.reviewer_view is None:
-            self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.reviewers, self.topics)
+            self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, 
+                                                                   self.agup.reviewers, 
+                                                                   self.agup.topics)
         self.reviewer_view.show()
+
+    def doImportReviewers(self):
+        '''
+        '''
+        history.addLog('Import Reviewers selected: NOT IMPLEMENTED NOW')
 
     def importReviewers(self, filename):
         '''
         '''
         history.addLog('Importing Reviewers file: NOT IMPLEMENTED NOW')
-        self.setReviewersFileText(filename)
 
     def importAnalyses(self, filename):
         '''
         '''
         history.addLog('Importing Analyses file: NOT IMPLEMENTED NOW')
-        self.setAnalysesFileText(filename)
 
     def doEditTopics(self):
         '''
@@ -298,7 +283,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.proposal_view.close()
             self.proposal_view = None
         
-        known_topics = self.topics.getList()
+        known_topics = self.agup.topics.getList()
         edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics)
         edit_topics_ui.exec_()   # Modal Dialog
         
@@ -325,15 +310,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         #---
         # TODO: merge final list form editor with
-        # x self.topics
+        # x topics
         # x proposals    TODO: need to re-check this one
         # - reviewers
         for key in added:
-            self.topics.add(key)
-            self.proposals.addTopic(key)
+            self.agup.topics.add(key)       # TODO: refactor this to the self.agup class
+            self.agup.proposals.addTopic(key)
         for key in removed:
-            self.topics.remove(key)
-            self.proposals.removeTopic(key)
+            self.agup.topics.remove(key)
+            self.agup.proposals.removeTopic(key)
         history.addLog('added topics: ' + ' '.join(added))
         history.addLog('deleted topics: ' + ' '.join(removed))
         self.modified = True
@@ -363,28 +348,19 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.settings.write()
         history.addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
         self.adjustMainWindowTitle()
-    
-    def doResetDefaults(self):
-        '''
-        '''
-        history.addLog('requested to reset default settings')
-        self.settings.resetDefaults()
-        history.addLog('default settings reset')
-        history.addLog('NOTE: default settings reset NOT IMPLEMENTED YET')
-        # TODO: what about Save?
-        self.adjustMainWindowTitle()
 
-    def doNewPrpFolder(self):
+    def doNewPrpFile(self):
         '''
         '''
-        history.addLog('New PRP Folder requested')
+        history.addLog('New PRP File requested')
+        self.setPrpFileText('')
         self.adjustMainWindowTitle()
 
     # widget getters and setters
 
-    def setPrpPathText(self, text):
-        self.prp_path.setText(text)
-        self.settings.setPrpPath(text)
+    def setPrpFileText(self, text):
+        self.prp_file.setText(text)
+        self.settings.setPrpFile(text)
         self.adjustMainWindowTitle()
 
     def setRcFileText(self, text):
@@ -398,18 +374,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def setReviewCycleText(self, text):
         self.review_cycle.setText(text)
         self.settings.setReviewCycle(text)
-        self.adjustMainWindowTitle()
-
-    def setReviewersFileText(self, text):
-        self.reviewers_file.setText(text)
-        self.adjustMainWindowTitle()
-
-    def setProposalsFileText(self, text):
-        self.proposals_file.setText(text)
-        self.adjustMainWindowTitle()
-
-    def setAnalysesFileText(self, text):
-        self.analyses_file.setText(text)
         self.adjustMainWindowTitle()
 
 

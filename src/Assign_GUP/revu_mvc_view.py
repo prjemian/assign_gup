@@ -34,11 +34,10 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        if reviewers is not None:
+        if reviewers is not None:  # FIXME: generalize, not just 0-Myers
             self.topics = reviewers.reviewers['0-Myers'].db['topics']
      
             for topic in self.topics:
-    #             reviewers.addTopic(topic)
                 value = reviewers.reviewers['0-Myers'].db['topics'][topic]
                 self.details_panel.addTopic(topic, value)
     

@@ -6,6 +6,7 @@ Proposals: underlying data class for the MVC model
 from PyQt4 import QtCore
 from lxml import etree
 import os
+import agup_data
 import proposal
 import resources
 import xml_utility
@@ -13,8 +14,7 @@ import xml_utility
 
 XML_SCHEMA_FILE = resources.resource_file('proposals.xsd')
 ROOT_TAG = 'Review_list'
-AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
-AGUP_ROOT_TAG = 'AGUP_Review_Session'
+
 
 class AGUP_Proposals_List(QtCore.QObject):
     '''
@@ -58,15 +58,16 @@ class AGUP_Proposals_List(QtCore.QObject):
         :param str filename: name of XML file with proposals
         '''
         doc = xml_utility.readValidXmlDoc(filename, 
-                                          AGUP_ROOT_TAG, AGUP_XML_SCHEMA_FILE,
+                                          agup_data.AGUP_MASTER_ROOT_TAG, 
+                                          agup_data.AGUP_XML_SCHEMA_FILE,
                                           alt_root_tag=ROOT_TAG, 
                                           alt_schema=XML_SCHEMA_FILE,
                                           )
         root = doc.getroot()
-        if root.tag == AGUP_ROOT_TAG:
-            proposals_node = root.find(ROOT_TAG)    # pre-agup reviewers file
+        if root.tag == agup_data.AGUP_MASTER_ROOT_TAG:
+            proposals_node = root.find('Proposal_list')
         else:
-            proposals_node = root
+            proposals_node = root    # pre-agup reviewers file
 
         db = {}
         self.prop_id_list = []

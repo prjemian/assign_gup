@@ -29,23 +29,6 @@
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>PRP path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="prp_path">
-           <property name="styleSheet">
-            <string notr="true">background: #F5FFFA</string>
-           </property>
-           <property name="text">
-            <string>/path/to/PRP/data/for/this/cycle</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
@@ -63,54 +46,20 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_4">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Reviewers File</string>
+            <string>PRP file</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Proposals File</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Analyses File</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="reviewers_file">
+         <item row="2" column="1">
+          <widget class="QLabel" name="prp_file">
            <property name="styleSheet">
             <string notr="true">background: #F5FFFA</string>
            </property>
            <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLabel" name="proposals_file">
-           <property name="styleSheet">
-            <string notr="true">background: #F5FFFA</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="analyses_file">
-           <property name="styleSheet">
-            <string notr="true">background: #F5FFFA</string>
-           </property>
-           <property name="text">
-            <string/>
+            <string>/path/to/PRP/file/for/this/cycle.xml</string>
            </property>
           </widget>
          </item>
@@ -186,19 +135,31 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_PRP_Folder"/>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Importers</string>
+     </property>
+     <addaction name="actionImport_Proposals"/>
+     <addaction name="actionImport_Reviewers"/>
+    </widget>
+    <widget class="QMenu" name="menuEditors">
+     <property name="title">
+      <string>Editors</string>
+     </property>
+     <addaction name="actionEdit_proposals"/>
+     <addaction name="actionEdit_Reviewers"/>
+     <addaction name="actionEdit_Topics"/>
+    </widget>
+    <addaction name="actionNew_PRP_Project"/>
     <addaction name="separator"/>
-    <addaction name="actionOpen_Folder"/>
-    <addaction name="actionImport_proposals"/>
-    <addaction name="separator"/>
-    <addaction name="actionEdit_proposals"/>
-    <addaction name="actionEdit_Reviewers"/>
-    <addaction name="actionEdit_Topics"/>
-    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="menuEditors"/>
+    <addaction name="menuImport"/>
+    <addaction name="separator"/>
     <addaction name="actionSave_settings"/>
-    <addaction name="actionReset_Defaults"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -225,17 +186,23 @@
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionOpen_Folder">
+  <action name="actionOpen">
    <property name="text">
-    <string>&amp;Open Folder ...</string>
+    <string>&amp;Open PRP file ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open PRP File</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionNew_PRP_Folder">
+  <action name="actionNew_PRP_Project">
    <property name="text">
-    <string>New PRP Folder ...</string>
+    <string>New PRP Project ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New PRP Project</string>
    </property>
   </action>
   <action name="actionSave_settings">
@@ -246,17 +213,15 @@
     <string>Ctrl+Alt+S</string>
    </property>
   </action>
-  <action name="actionImport_proposals">
+  <action name="actionImport_Proposals">
    <property name="text">
-    <string>&amp;Import proposals ...</string>
+    <string>&amp;Import Proposals ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Proposals</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I</string>
-   </property>
-  </action>
-  <action name="actionReset_Defaults">
-   <property name="text">
-    <string>Reset Defaults</string>
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="actionSave">
@@ -294,6 +259,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionImport_Reviewers">
+   <property name="text">
+    <string>Import Reviewers ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
  </widget>

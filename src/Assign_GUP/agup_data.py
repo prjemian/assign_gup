@@ -24,6 +24,7 @@ RC_SECTION = 'Assign_GUP'
 DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
 TEST_OUTPUT_FILE = os.path.join('project', 'agup_project.xml')
 AGUP_MASTER_ROOT_TAG = 'AGUP_Review_Session'
+AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_MASTER_VERSION = '1.0'
 
 
@@ -32,15 +33,32 @@ class AGUP_Data(QtCore.QObject):
     Complete data for a PRP review session
     '''
 
-    def __init__(self):
+    def __init__(self, config = None):
         QtCore.QObject.__init__(self)
 
-        self.settings = settings.ApplicationSettings(RC_FILE, RC_SECTION)
+        self.settings = config or settings.ApplicationSettings(RC_FILE, RC_SECTION)
         self.analyses = None
         self.modified = False
         self.proposals = None
         self.reviewers = None
         self.topics = None
+    
+    def openPrpFile(self, filename):
+        '''
+        '''
+        if not os.path.exists(filename):
+            history.addLog('PRP File not found: ' + filename)
+            return False
+        filename = str(filename)
+        self.importReviewers(filename)
+        self.importProposals(filename)
+        self.importAnalyses(filename)
+
+        # FIXME: nobody is reading the topics yet!
+#         if len(self.topics.getList()) == 0:
+#             self.topics.addItems()
+
+        return True
     
     def write(self, filename):
         '''
@@ -69,7 +87,7 @@ class AGUP_Data(QtCore.QObject):
 
         node = etree.SubElement(root, 'Review_panel')
         self.reviewers.writeXmlNode(node)
-        node = etree.SubElement(root, 'Review_list')      # or  Proposal_list
+        node = etree.SubElement(root, 'Proposal_list')
         self.proposals.writeXmlNode(node)
 
         # provide this data in a second place, in case imported proposals destroy the original
@@ -168,11 +186,16 @@ class AGUP_Data(QtCore.QObject):
             return
 
         self.reviewers = rvwrs
+    
+    def getCycle(self):
+        '''the review cycle, as defined by the proposals'''
+        if self.proposals is None:
+            return ''
+        return self.proposals.cycle
 
 
-def main():
+def developer_testing_of_this_module():
     '''simple starter program to develop this code'''
-    import pprint
     agup = AGUP_Data()
     history.addLog( agup )
     history.addLog( agup.settings )
@@ -200,7 +223,7 @@ def main():
     history.addLog()
 
     # import review panelists, cycle does not have to match
-    agup.settings.setPrpPath(os.path.abspath('project/prp'))
+    #agup.settings.setPrpPath(os.path.abspath('project/prp'))
     agup.importReviewers(os.path.abspath('project/2015-2/panel.xml'))
     history.addLog( 'reviewers: ' + str(agup.reviewers) )
     if agup.reviewers is not None:
@@ -222,6 +245,11 @@ def main():
         history.addLog( '# analyses: ' + str(len(agup.analyses)))
 
     agup.write(TEST_OUTPUT_FILE)
+    
+    
+    agup = AGUP_Data()
+    agup.openPrpFile('project/agup_project.xml')
+    print agup
 
 if __name__ == '__main__':
-    main()
+    developer_testing_of_this_module()

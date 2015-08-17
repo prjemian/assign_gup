@@ -5,7 +5,7 @@
       <xs:sequence>
         <xs:element ref="Topics"/>
         <xs:element ref="Review_panel"/>
-        <xs:element ref="Review_list"/>
+        <xs:element ref="Proposal_list"/>
         <xs:element ref="Assignments"/>
       </xs:sequence>
       <xs:attribute name="cycle" use="required" type="xs:NMTOKEN"/>
@@ -20,7 +20,7 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Review_list">
+  <xs:element name="Proposal_list">
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" ref="Proposal"/>

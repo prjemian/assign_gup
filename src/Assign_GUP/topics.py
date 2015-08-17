@@ -5,6 +5,8 @@ Support AGUP topics
 
 DEFAULT_TOPIC_VALUE = 0.0
 
+# FIXME: there is confused use of these two classes
+
 
 class Topics(object):
     '''

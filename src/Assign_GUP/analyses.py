@@ -7,6 +7,7 @@ Data for all analyses, assignments, & assessments
 from lxml import etree
 import os
 import traceback
+import agup_data
 import reviewer
 import resources
 import topics
@@ -43,13 +44,21 @@ class AGUP_Analyses(topics.Topic_MixinClass):
             the_dict = {_:None for _ in the_list}
             return sorted( the_dict.keys() )
 
-        # TODO: plan to import from master XML file (different schema)
-        doc = xml_utility.readValidXmlDoc(filename, ROOT_TAG, XML_SCHEMA_FILE)
+        doc = xml_utility.readValidXmlDoc(filename, 
+                                          agup_data.AGUP_MASTER_ROOT_TAG, 
+                                          agup_data.AGUP_XML_SCHEMA_FILE,
+                                          alt_root_tag=ROOT_TAG, 
+                                          alt_schema=XML_SCHEMA_FILE,
+                                          )
+        root = doc.getroot()
+        if root.tag == agup_data.AGUP_MASTER_ROOT_TAG:
+            proposals_node = root.find('Assignments')
+        else:
+            proposals_node = root.find('Proposals')    # pre-agup reviewers file
 
         ref_topics = None
         db = {}
         root = doc.getroot()
-        proposals_node = root.find('Proposals')
         if proposals_node is not None:
             for node in proposals_node.findall('Proposal'):
                 prop_id = node.attrib['id'].strip()
@@ -57,7 +66,7 @@ class AGUP_Analyses(topics.Topic_MixinClass):
                 # assessed topic weights
                 topics_dict = {}
                 t_node = node.find('Topics')
-                if t_node is not None:
+                if t_node is not None:      # FIXME: learn how to read the topics again (format changed today)
                     for topic in t_node.attrib.keys():
                         value = t_node.attrib[topic]
                         try:
@@ -127,7 +136,6 @@ def main():
     findings.importXml(os.path.join('project', '2015-2', 'analysis.xml'))
     if findings is not None:
         print len(findings)
-
 
 if __name__ == '__main__':
     main()

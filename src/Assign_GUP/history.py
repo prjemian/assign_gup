@@ -99,7 +99,7 @@ class Logger(object):
 def addLog(message = ''):
     global addMessageToHistory
     if addMessageToHistory is not None:
-        for line in message.splitlines():
+        for line in str(message).splitlines():
             addMessageToHistory(line)
     else:
         print message

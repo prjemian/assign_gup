@@ -13,12 +13,9 @@ Maintains a resource configuration file such as the following:
     host = laptop
     
     [Assign_GUP]
-    analyses_file = 
-    proposals_file = 
-    prp_path = C:\Users\Developer\Documents\PRP\reviews
+    prp_file = C:\Users\Developer\Documents\PRP\reviews\2015-2.xml
     rcfile = C:\Users\Developer\.assign_gup.rc
     review_cycle = 2015-2
-    reviewers_file = 
     version = 1.0
 
 '''
@@ -50,10 +47,7 @@ class ApplicationSettings(object):
             # these are the supported keys
             'rcfile':         self.rc.rcfile,
             'review_cycle':   '',           # redundant, treat as non-authoritative
-            'prp_path':       os.path.abspath(os.getcwd()),
-            'reviewers_file': '',
-            'proposals_file': '',
-            'analyses_file':  '',
+            'prp_file':       '',
             'version':        '1.0',
         }
         self.source = 'defaults'
@@ -97,9 +91,9 @@ class ApplicationSettings(object):
             self.modified = True
         self.config['review_cycle'] = review_cycle
 
-    def setPrpPath(self, prp_path):
-        if not os.path.exists(prp_path):
-            raise RuntimeError('Directory not found: ' + prp_path)
-        if prp_path != self.config['prp_path']:
+    def setPrpFile(self, prp_file):
+#         if not os.path.exists(prp_file):
+#             raise IOError('File not found: ' + prp_file)
+        if prp_file != self.config['prp_file']:
             self.modified = True
-        self.config['prp_path'] = prp_path
+        self.config['prp_file'] = prp_file
