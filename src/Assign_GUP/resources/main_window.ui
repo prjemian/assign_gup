@@ -190,7 +190,9 @@
     <addaction name="separator"/>
     <addaction name="actionOpen_Folder"/>
     <addaction name="actionImport_proposals"/>
+    <addaction name="separator"/>
     <addaction name="actionEdit_proposals"/>
+    <addaction name="actionEdit_Reviewers"/>
     <addaction name="actionEdit_Topics"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
@@ -284,6 +286,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionEdit_Reviewers">
+   <property name="text">
+    <string>Edit Reviewers ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>

@@ -1,6 +1,26 @@
 
 '''
 Support for AGUP program settings
+
+Maintains a resource configuration file such as the following:
+
+.. code-block:: generic
+    :linenos:
+
+    [metadata]
+    timestamp = 2015-08-05 11:39:43.128000
+    rcfile = C:\Users\Developer\.assign_gup.rc
+    host = laptop
+    
+    [Assign_GUP]
+    analyses_file = 
+    proposals_file = 
+    prp_path = C:\Users\Developer\Documents\PRP\reviews
+    rcfile = C:\Users\Developer\.assign_gup.rc
+    review_cycle = 2015-2
+    reviewers_file = 
+    version = 1.0
+
 '''
 
 import datetime
@@ -29,7 +49,7 @@ class ApplicationSettings(object):
         self.config = {
             # these are the supported keys
             'rcfile':         self.rc.rcfile,
-            'review_cycle':   '',
+            'review_cycle':   '',           # redundant, treat as non-authoritative
             'prp_path':       os.path.abspath(os.getcwd()),
             'reviewers_file': '',
             'proposals_file': '',
@@ -72,7 +92,7 @@ class ApplicationSettings(object):
             self.modified = True
         self.config['rcfile'] = filename
 
-    def setReviewCycle(self, review_cycle):
+    def setReviewCycle(self, review_cycle):     # redundant, treat as non-authoritative
         if review_cycle != self.config['review_cycle']:
             self.modified = True
         self.config['review_cycle'] = review_cycle

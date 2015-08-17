@@ -6,11 +6,14 @@
 
 import os, sys
 from PyQt4 import QtCore, QtGui, uic
+import traceback
+
 import about
 import history
 import prop_mvc_data
 import prop_mvc_view
 import resources
+import revu_mvc_view
 import settings
 import topics
 import topics_editor
@@ -38,7 +41,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.modified = False
         self.forced_exit = False
 
+        self.proposals = None
         self.proposal_view = None
+        self.reviewers = None
         self.reviewer_view = None
         self.topics = topics.Topics()
         
@@ -85,10 +90,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def _init_connections_(self):
         self.actionNew_PRP_Folder.triggered.connect(self.doNewPrpFolder)
-        self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionOpen_Folder.triggered.connect(self.doOpenPrpFolder)
         self.actionImport_proposals.triggered.connect(self.doImportProposals)
-        self.actionEdit_proposals.triggered.connect(self.editProposals)
+        self.actionEdit_proposals.triggered.connect(self.doEditProposals)
+        self.actionEdit_Reviewers.triggered.connect(self.doEditReviewers)
+        self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionSave.triggered.connect(self.doSave)
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
@@ -123,8 +129,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         decision |= self.settings.modified
         if self.proposal_view is not None:
             decision |= self.proposal_view.isProposalListModified()
-        # if self.reviewer_view is not None:
-        #     decision |= self.reviewer_view.isReviewerListModified()
+        if self.reviewer_view is not None:
+            decision |= self.reviewer_view.isReviewerListModified()
         return decision
 
     def closeEvent(self, event):
@@ -247,7 +253,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         try:
            self.proposals.importXml(filename)
         except exception_list, exc:
-            history.addLog(str(exc))
+            history.addLog(traceback.format_exc())
             return
 
         self.setProposalsFileText(filename)
@@ -255,12 +261,19 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.getReviewCycleText() == '':
             self.setReviewCycleText(self.proposals.cycle)
 
-    def editProposals(self):
+    def doEditProposals(self):
         '''
         '''
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.proposals, self.topics)
         self.proposal_view.show()
+
+    def doEditReviewers(self):
+        '''
+        '''
+        if self.reviewer_view is None:
+            self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.reviewers, self.topics)
+        self.reviewer_view.show()
 
     def importReviewers(self, filename):
         '''

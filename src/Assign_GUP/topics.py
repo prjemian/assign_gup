@@ -16,6 +16,9 @@ class Topics(object):
         for key in sorted(self.topics):
             yield key
     
+    def __len__(self):
+        return len(self.topics)
+    
     def exists(self, key):
         '''
         Is ``key`` already known?

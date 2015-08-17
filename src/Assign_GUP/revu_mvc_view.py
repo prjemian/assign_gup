@@ -34,14 +34,15 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        self.topics = reviewers.reviewers['0-Myers'].db['topics']
- 
-        for topic in self.topics:
-#             reviewers.addTopic(topic)
-            value = reviewers.reviewers['0-Myers'].db['topics'][topic]
-            self.details_panel.addTopic(topic, value)
-
-        self.setModel(reviewers)
+        if reviewers is not None:
+            self.topics = reviewers.reviewers['0-Myers'].db['topics']
+     
+            for topic in self.topics:
+    #             reviewers.addTopic(topic)
+                value = reviewers.reviewers['0-Myers'].db['topics'][topic]
+                self.details_panel.addTopic(topic, value)
+    
+            self.setModel(reviewers)
 
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)

@@ -6,6 +6,7 @@ Reviewers: underlying data class for the MVC model
 from PyQt4 import QtCore
 from lxml import etree
 import os
+import traceback
 import reviewer
 import resources
 import xml_utility
@@ -22,7 +23,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
     def __init__(self):
         QtCore.QObject.__init__(self)
 
-        self.reviewers = {}.clear()
+        self.reviewers = {}     # .clear()
         self.reviewer_sort_list = []
     
     def __len__(self):
@@ -43,12 +44,17 @@ class AGUP_Reviewers_List(QtCore.QObject):
         '''
         if not os.path.exists(filename):
             raise IOError, 'file not found: ' + filename
+
         try:
             doc = etree.parse(filename)
         except etree.XMLSyntaxError, exc:
             raise xml_utility.XmlSyntaxError, str(exc)
 
-        self.validateXml(doc)
+        try:
+            self.validateXml(doc)
+        except Exception, exc:
+            msg = 'In ' + filename + ': ' + traceback.format_exc()
+            raise Exception, msg
 
         db = {}
         self.reviewer_sort_list = []
@@ -66,6 +72,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
     
     def validateXml(self, xmlDoc):
         '''validateXml XML document for correct root tag & XML Schema'''
+        # TODO: plan to import from master XML file (different schema)
         root = xmlDoc.getroot()
         if root.tag != ROOT_TAG:
             msg = 'expected=' + ROOT_TAG

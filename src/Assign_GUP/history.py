@@ -96,7 +96,7 @@ class Logger(object):
         self.add("PID              = " + str(os.getpid()) )
 
 
-def addLog(message):
+def addLog(message = ''):
     global addMessageToHistory
     if addMessageToHistory is not None:
         for line in message.splitlines():

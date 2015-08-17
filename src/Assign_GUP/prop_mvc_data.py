@@ -41,15 +41,18 @@ class AGUP_Proposals_List(QtCore.QObject):
         '''
         if not os.path.exists(filename):
             raise IOError, 'file not found: ' + filename
+
         try:
             doc = etree.parse(filename)
         except etree.XMLSyntaxError, exc:
             raise xml_utility.XmlSyntaxError, str(exc)
+
         self.validateXml(doc)
-        root = doc.getroot()
-        self.cycle = root.attrib['period']
+
         db = {}
         self.prop_id_list = []
+        root = doc.getroot()
+        self.cycle = root.attrib['period']
         for node in doc.findall('Proposal'):
             prop_id = xml_utility.getXmlText(node, 'proposal_id')
             prop = proposal.AGUP_Proposal_Data(node, filename)
