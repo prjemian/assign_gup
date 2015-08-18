@@ -54,10 +54,6 @@ class AGUP_Data(QtCore.QObject):
         self.importProposals(filename)
         self.importAnalyses(filename)
 
-        # FIXME: nobody is reading the topics yet!
-#         if len(self.topics.getList()) == 0:
-#             self.topics.addItems()
-
         return True
     
     def write(self, filename):
@@ -120,8 +116,8 @@ class AGUP_Data(QtCore.QObject):
         findings = analyses.AGUP_Analyses()
         try:
             findings.importXml(xmlFile)
-        except Exception, _exc:
-            history.addLog(_exc)
+        except Exception:
+            history.addLog(traceback.format_exc())
             return
 
         self.topics = topics.Topics()
@@ -159,8 +155,8 @@ class AGUP_Data(QtCore.QObject):
         props = prop_mvc_data.AGUP_Proposals_List()
         try:
             props.importXml(xmlFile)
-        except Exception, _exc:
-            history.addLog(_exc)
+        except Exception:
+            history.addLog(traceback.format_exc())
             return
 
         cycle = self.settings.getByKey('review_cycle')
@@ -181,7 +177,7 @@ class AGUP_Data(QtCore.QObject):
         rvwrs = revu_mvc_data.AGUP_Reviewers_List()
         try:
             rvwrs.importXml(xmlFile)
-        except Exception, _exc:
+        except Exception:
             history.addLog(traceback.format_exc())
             return
 
@@ -246,10 +242,13 @@ def developer_testing_of_this_module():
 
     agup.write(TEST_OUTPUT_FILE)
     
-    
+
+def dev_test2():
     agup = AGUP_Data()
     agup.openPrpFile('project/agup_project.xml')
     print agup
 
+
 if __name__ == '__main__':
-    developer_testing_of_this_module()
+#     developer_testing_of_this_module()
+    dev_test2()

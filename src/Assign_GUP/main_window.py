@@ -216,7 +216,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('Import Proposals requested')
         title = 'Choose XML file with proposals'
         prp_file = self.settings.getByKey('prp_file')
-        # TODO: fix the auto path again
+
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)
         if os.path.exists(path):

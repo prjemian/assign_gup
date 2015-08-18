@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>969</width>
-    <height>737</height>
+    <width>735</width>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -127,37 +127,19 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>969</width>
-     <height>38</height>
+     <width>735</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuImport">
-     <property name="title">
-      <string>Importers</string>
-     </property>
-     <addaction name="actionImport_Proposals"/>
-     <addaction name="actionImport_Reviewers"/>
-    </widget>
-    <widget class="QMenu" name="menuEditors">
-     <property name="title">
-      <string>Editors</string>
-     </property>
-     <addaction name="actionEdit_proposals"/>
-     <addaction name="actionEdit_Reviewers"/>
-     <addaction name="actionEdit_Topics"/>
-    </widget>
     <addaction name="actionNew_PRP_Project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
-    <addaction name="separator"/>
-    <addaction name="menuEditors"/>
-    <addaction name="menuImport"/>
     <addaction name="separator"/>
     <addaction name="actionSave_settings"/>
     <addaction name="separator"/>
@@ -169,7 +151,32 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuTopics">
+    <property name="title">
+     <string>Topics</string>
+    </property>
+    <addaction name="actionEdit_Topics"/>
+   </widget>
+   <widget class="QMenu" name="menuReviewers">
+    <property name="title">
+     <string>Reviewers</string>
+    </property>
+    <addaction name="actionImport_Reviewers"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Reviewers"/>
+   </widget>
+   <widget class="QMenu" name="menuProposals">
+    <property name="title">
+     <string>Proposals</string>
+    </property>
+    <addaction name="actionImport_Proposals"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_proposals"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTopics"/>
+   <addaction name="menuReviewers"/>
+   <addaction name="menuProposals"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

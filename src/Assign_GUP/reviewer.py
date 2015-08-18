@@ -49,10 +49,15 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
         for k in self.tagList:
             self.db[k] = xml_utility.getXmlText(reviewer, k)
         self.db['topics'] = {}
-        node = reviewer.find('topics')
+        node = reviewer.find('Topics')
         if node is not None:
-            for k, v in node.attrib.items():
-                self.addTopic(k, v)
+            for t_node in node.findall('Topic'):
+                key = t_node.attrib['name']
+                try:
+                    value = float( t_node.attrib['value'])
+                except ValueError:
+                    value = 0.0
+                self.addTopic(key, value)
     
     def writeXmlNode(self, specified_node):
         '''

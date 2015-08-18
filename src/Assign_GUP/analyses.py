@@ -65,12 +65,12 @@ class AGUP_Analyses(topics.Topic_MixinClass):
 
                 # assessed topic weights
                 topics_dict = {}
-                t_node = node.find('Topics')
-                if t_node is not None:      # FIXME: learn how to read the topics again (format changed today)
-                    for topic in t_node.attrib.keys():
-                        value = t_node.attrib[topic]
+                ts_node = node.find('Topics')
+                if ts_node is not None:
+                    for t_node in ts_node.findall('Topic'):
+                        topic = t_node.attrib['name']
                         try:
-                            value = float(value)
+                            value = float(t_node.attrib['value'])
                         except (TypeError, ValueError):
                             value = 0.0
                         topics_dict[topic] = value
@@ -98,10 +98,11 @@ class AGUP_Analyses(topics.Topic_MixinClass):
 
                 # assigned reviewers
                 reviewers_dict = {}
-                r_node = node.find('Reviewers')
-                if r_node is not None:
-                    for key in ('reviewer1', 'reviewer2'):
-                        reviewers_dict[key] = r_node.get(key, '')
+                rs_node = node.find('Reviewers')
+                if rs_node is not None:
+                    for r_node in rs_node.findall('Reviewer'):
+                        for k, v in r_node.items():
+                            reviewers_dict[k] = v
 
                 db[prop_id] = dict(Topics = topics_dict, Reviewers = reviewers_dict)
 
