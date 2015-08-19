@@ -88,7 +88,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.actionExit.triggered.connect(self.doClose)
-        self.actionAbout.triggered.connect(self.doAbout)
+        self.actionAboutAgup.triggered.connect(self.doAbout)
 
     def doAbout(self, *args, **kw):
         '''
