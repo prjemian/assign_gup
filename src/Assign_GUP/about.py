@@ -29,7 +29,7 @@ class AboutBox(QtGui.QDialog):
 
     def doUrl(self):
         '''opening documentation URL in default browser'''
-        history.addLog(self.__doc__)
+        history.addLog('opening documentation URL in default browser')
         url = QtCore.QUrl(DOCS_URL)
         service = QtGui.QDesktopServices()
         service.openUrl(url)
@@ -39,6 +39,6 @@ class AboutBox(QtGui.QDialog):
         history.addLog('opening License in new window')
         license_text = open(resources.resource_file('../' + LICENSE_FILE), 'r').read()
         ui = plainTextEdit.TextWindow('LICENSE', license_text, self)
-        ui.setMinimumSize(1100, 500)
+        ui.setMinimumSize(700, 500)
         ui.setWindowModality(QtCore.Qt.ApplicationModal)
         ui.show()
