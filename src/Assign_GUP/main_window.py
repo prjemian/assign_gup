@@ -147,9 +147,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 return
 
         if self.reviewer_view is not None:
-            self.reviewer_view.destroy()
+            self.reviewer_view.close()
         if self.proposal_view is not None:
-            self.proposal_view.destroy()
+            self.proposal_view.close()
         self.close()
     
     def doNotQuitNow(self):
@@ -292,6 +292,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.proposal_view is not None:
             self.proposal_view.close()
             self.proposal_view = None
+        if self.reviewer_view is not None:
+            self.reviewer_view.close()
+            self.reviewer_view = None
         
         known_topics = self.agup.topics.getTopicList()
         edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics)
