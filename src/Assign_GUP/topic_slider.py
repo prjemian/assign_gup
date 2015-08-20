@@ -4,16 +4,16 @@ add label, slider, value to a QGridLayout
 
 Coordinate the action of a slider with the topic value::
 
-  label   slider                    value
-  bio     -|---|---|---|[-]|---|-   0.7
-  phys    -|--[|]--|---|---|---|-   0.2
+  label   value   slider                 
+  bio     0.7     -|---|---|---|[-]|---|-
+  phys    0.2     -|--[|]--|---|---|---|-
 
 ======  =========  ====================================================
 widget  type       description
 ======  =========  ====================================================
 label   QLabel     mnemonic name (no white space)
-slider  QSlider    graphical adjustment of value
 value   QLineEdit  string with floating point value: 0 <= value <= 1.0
+slider  QSlider    graphical adjustment of value
 ======  =========  ====================================================
 
 These three widgets will be added to the *parent* widget,
@@ -61,8 +61,8 @@ class AGUP_TopicSlider(QtCore.QObject):
         self.value = value
 
         parent.addWidget(QtGui.QLabel(label), row, 0)
-        parent.addWidget(self.slider, row, 1)
-        parent.addWidget(self.value_widget, row, 2)
+        parent.addWidget(self.value_widget, row, 1)
+        parent.addWidget(self.slider, row, 2)
         
         # connect slider changes with value_widget and vice versa
         self.slider.valueChanged.connect(self.onSliderChange)
