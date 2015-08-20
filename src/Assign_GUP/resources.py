@@ -29,12 +29,16 @@ def loadUi(ui_file, baseinstance=None, **kw):
     inspired by:
     http://stackoverflow.com/questions/14892713/how-do-you-load-ui-files-onto-python-classes-with-pyside?lq=1
     
-    Basic Procedure
-    1. Use Qt Designer to create a .ui file.
-    2. Create a python class of the same type as the widget you created in the .ui file.
-    3. When initializing the python class, use uic to dynamically load the .ui file onto the class.
+    .. rubric:: Basic Procedure
 
-    Here is an example from this code::
+    #. Use Qt Designer to create a .ui file.
+    #. Create a python class of the same type as the widget you created in the .ui file.
+    #. When initializing the python class, use uic to dynamically load the .ui file onto the class.
+
+    Here is an example from this code:
+
+    .. code-block:: python
+        :linenos:
 
         from PyQt4 import QtGui
         import resources
@@ -45,7 +49,7 @@ def loadUi(ui_file, baseinstance=None, **kw):
         
             def __init__(self, title, text):
                 QtGui.QDialog.__init__(self, parent)
-                qt_form_support.loadUi(UI_FILE, baseinstance=self)
+                resources.loadUi(UI_FILE, baseinstance=self)
                 self.setWindowTitle(title)
                 self.plainTextEdit.setPlainText(text)
 

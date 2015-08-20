@@ -7,7 +7,10 @@ application-specific section.
 Metadata (time stamp, filename, host computer name)
 are written into a separate *metadata* section.
 
-EXAMPLE::
+EXAMPLE:
+
+.. code-block:: python
+    :linenos:
 
     RC_FILE = '.assign_gup.rc'
     SECTION = 'Assign_GUP'
@@ -24,7 +27,10 @@ EXAMPLE::
     import pprint
     pprint.pprint(kw)
 
-RC FILE::
+RC FILE:
+
+.. code-block:: ini
+    :linenos:
 
     [metadata]
     timestamp = 2015-07-27 22:25:03.898000
@@ -39,7 +45,10 @@ RC FILE::
     tuesday = three
     wednesday = 4.0
 
-OUTPUT::
+OUTPUT:
+
+.. code-block:: python
+    :linenos:
 
     {'monday': '2',
      'rcfile': 'C:\\Users\\Pete\\.assign_gup.rc',
@@ -69,6 +78,8 @@ class RcSectionNameReserved(ValueError):
 
 
 class RcFile(object):
+    '''
+    '''
     
     def __init__(self, rcfile, section):
         if section == METADATA_SECTION:
@@ -78,6 +89,8 @@ class RcFile(object):
         self.section = section
     
     def getRcFileName(self, basename = None):
+        '''
+        '''
         if basename is None:
             return self.rcfile
         if sys.platform in ('win32', ):

@@ -2,10 +2,10 @@
 Main
 ----
 
-.. automodule:: Main
+.. automodule:: main_window
      :synopsis: Runs the GUI.
      :members:
 
 ..
-   .. autoclass:: Main
+   .. autoclass:: AGUP_MainWindow
         :members:

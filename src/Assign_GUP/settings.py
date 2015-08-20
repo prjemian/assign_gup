@@ -1,23 +1,25 @@
 
-'''
+r'''
 Support for AGUP program settings
 
 Maintains a resource configuration file such as the following:
 
-.. code-block:: generic
+.. code-block:: ini
     :linenos:
-
+ 
     [metadata]
     timestamp = 2015-08-05 11:39:43.128000
     rcfile = C:\Users\Developer\.assign_gup.rc
     host = laptop
-    
+     
     [Assign_GUP]
     prp_file = C:\Users\Developer\Documents\PRP\reviews\2015-2.xml
     rcfile = C:\Users\Developer\.assign_gup.rc
     review_cycle = 2015-2
     version = 1.0
 
+This file is used to preserve settings of the application.
+Remove this file to clear any settings.
 '''
 
 import datetime

@@ -17,6 +17,7 @@ __url__                 = u'http://Assign_GUP.readthedocs.org'
 __download_url__        = u'https://github.com/prjemian/assign_gup.git'
 __keywords__            = ['APS', 'GUP', 'PRP']
 __requires__            = ['PyQt4', 'lxml', 'pyRestTable']
+__documentation_mocks__ = ['lxml', 'pyRestTable']
 
 __classifiers__ = [
             'Development Status :: 5 - Production/Stable',

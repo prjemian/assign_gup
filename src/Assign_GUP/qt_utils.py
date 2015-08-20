@@ -8,16 +8,16 @@ from PyQt4 import QtGui, QtCore
 
 BACKGROUND_DEFAULT = '#efefef'
 
+#             QPushButton { 
+#                    background-color: red;
+#                    color: black;
+#                    text-align: center;
+#                    }
 
-'''
-            QPushButton { 
-                   background-color: red;
-                   color: black;
-                   text-align: center;
-                   }
-'''
 
 def setButtonBackground(widget, color = BACKGROUND_DEFAULT):
+    '''
+    '''
     css = 'background-color: %s;' % color
     widget.setStyleSheet(css)
 

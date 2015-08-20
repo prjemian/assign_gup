@@ -46,10 +46,7 @@ class Mock(object):
         else:
             return Mock()
 
-MOCK_MODULES = Assign_GUP.__requires__
-MOCK_MODULES.append('wx.grid')
-
-for mod_name in MOCK_MODULES:
+for mod_name in Assign_GUP.__documentation_mocks__:
     sys.modules[mod_name] = Mock()
 
 # -- General configuration -----------------------------------------------------
@@ -59,7 +56,11 @@ for mod_name in MOCK_MODULES:
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode']
+extensions = []
+extensions.append('sphinx.ext.autodoc')
+extensions.append('sphinx.ext.todo')
+extensions.append('sphinx.ext.ifconfig')
+extensions.append('sphinx.ext.viewcode')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -127,8 +128,8 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
-html_theme = 'sphinxdoc'
+#html_theme = 'classic'
+#html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
