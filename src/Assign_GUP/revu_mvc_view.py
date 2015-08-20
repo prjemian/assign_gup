@@ -13,11 +13,11 @@ import general_mvc_model
 import reviewer_details
 import qt_utils
 import resources
-from topics import Topics
+import topics
 
 UI_FILE = 'proposals_listview.ui'
 NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
-REVIEWERS_TEST_FILE = os.path.join('project', '2015-2', 'panel.xml')
+REVIEWERS_TEST_FILE = os.path.join('project', 'agup_project.xml')
 
 
 class AGUP_Reviewers_View(QtGui.QWidget):
@@ -25,8 +25,10 @@ class AGUP_Reviewers_View(QtGui.QWidget):
     Manage the list of Reviewers, including assignments of topic weights
     '''
     
-    def __init__(self, parent=None, reviewers=None, topics=None):
+    def __init__(self, parent=None, reviewers=None, topics_object=None):
         self.parent = parent
+        self.topics = topics_object or topics.Topics()
+
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
 
@@ -34,14 +36,15 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        if reviewers is not None:  # FIXME: generalize, not just 0-Myers
-            self.topics = reviewers.reviewers['0-Myers'].db['topics']
-     
-            for topic in self.topics:
-                value = reviewers.reviewers['0-Myers'].db['topics'][topic]
-                self.details_panel.addTopic(topic, value)
-    
+        for topic in self.topics:
+            self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
+
+        if reviewers is not None:
             self.setModel(reviewers)
+            if len(reviewers) > 0:
+                sort_name = reviewers.keyOrder()[0]
+                self.editReviewer(sort_name, None)
+                self.selectFirstListItem()
 
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
@@ -69,7 +72,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         '''OK to select a different reviewer now?'''
         return self.details_panel.modified
 
-    def selectReviewer(self, sort_name, prev_index):
+    def editReviewer(self, sort_name, prev_index):
         '''
         select Reviewer for editing as referenced by sort_name
         '''
@@ -78,7 +81,9 @@ class AGUP_Reviewers_View(QtGui.QWidget):
 #             history.addLog('need to save modified reviewer details')
 #             pass
             
-        panelist = self.reviewers.reviewers[str(sort_name)]
+        if sort_name is None:
+            return
+        panelist = self.reviewers.getReviewer(str(sort_name))
 
         self.details_panel.setFullName(panelist.db['full_name'])
         self.details_panel.setSortName(panelist.db['name'])
@@ -88,17 +93,14 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.details_panel.setJoined(panelist.db['joined'])
         self.details_panel.setUrl(panelist.db['URL'])
 
-        topics_dict = panelist.getTopics()
-        for topic, value in topics_dict.items():
+        topics_list = panelist.getTopicList()
+        for topic in topics_list:
+            value = panelist.getTopic(topic)
             self.details_panel.setTopic(topic, value)
         # set reviewers
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
         history.addLog('selected reviewer: ' + str(sort_name))
-    
-    def index_to_ID(self, index):
-        '''convert QListView index to sort_name string'''
-        return str(index.data().toPyObject())
 
     def selectReviewerByIndex(self, curr, prev):
         '''
@@ -108,18 +110,26 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         :param index prev: QListView index of previously selected reviewer
         '''
         sort_name = self.index_to_ID(curr)
-        self.selectReviewer(sort_name, prev)
+        if sort_name is None:
+            return
+        self.editReviewer(sort_name, prev)
+    
+    def selectFirstListItem(self):
+        idx = self.listView.indexAt(QtCore.QPoint(0,0))
+        self.listView.setCurrentIndex(idx)
+        return idx
+    
+    def index_to_ID(self, index):
+        '''convert QListView index to sort_name string'''
+        obj = index.data().toPyObject()
+        if obj is None:
+            return obj
+        return str(obj)
         
     def setModel(self, model):
         self.reviewers = model
         self.reviewers_model = general_mvc_model.AGUP_MVC_Model(self.reviewers, parent=self)
         self.listView.setModel(self.reviewers_model)
-
-        # select the first item in the list
-        idx = self.listView.indexAt(QtCore.QPoint(0,0))
-        self.listView.setCurrentIndex(idx)
-        self.prior_selection_index = idx
-        self.selectReviewerByIndex(idx, None)
     
     def isReviewerListModified(self):
         # TODO: support reviewer editing
@@ -140,7 +150,7 @@ class ArrowKeysEventFilter(QtCore.QObject):
                 prev = listView.currentIndex()
                 listView.keyPressEvent(event)
                 curr = listView.currentIndex()
-                parent = listView.parent().parent()     # FIXME: fragile!
+                parent = listView.parent().parent()     # FIXME: AGUP_Reviewers_View: fragile if UI is redesigned!
                 parent.selectReviewerByIndex(curr, prev)
                 return True
         return False
@@ -151,12 +161,13 @@ def main():
     import sys
     import os
     import revu_mvc_data
-    TEST_FILE = os.path.join('project', '2015-2', 'panel.xml')
     reviewers = revu_mvc_data.AGUP_Reviewers_List()
-    reviewers.importXml(TEST_FILE)
+    reviewers.importXml(REVIEWERS_TEST_FILE)
+    sort_name = reviewers.keyOrder()[0]
+    reviewer = reviewers.getReviewer(sort_name)
 
     app = QtGui.QApplication(sys.argv)
-    mw = AGUP_Reviewers_View(reviewers=reviewers)
+    mw = AGUP_Reviewers_View(None, reviewers, reviewer.topics)
     mw.show()
     _r = app.exec_()
     sys.exit(_r)

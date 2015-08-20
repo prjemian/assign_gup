@@ -9,6 +9,7 @@ import os
 import agup_data
 import proposal
 import resources
+import topics
 import xml_utility
 
 
@@ -30,8 +31,14 @@ class AGUP_Proposals_List(QtCore.QObject):
         return len(self.proposals)
 
     def __iter__(self):
-        for prop in self.proposals.values():
-            yield prop
+        for prop_id in self.keyOrder():
+            yield self.proposals[prop_id]
+
+    def inOrder(self):
+        return sorted(self.proposals.values())
+
+    def keyOrder(self):
+        return sorted(self.proposals.keys())
 
     def exists(self, prop_id):
         '''given ID string, does proposal exist?'''
@@ -88,31 +95,38 @@ class AGUP_Proposals_List(QtCore.QObject):
         for prop in self.inOrder():
             prop.writeXmlNode(etree.SubElement(specified_node, 'Proposal'))
 
-    def inOrder(self):
-        return sorted(self.proposals.values())
-
-    def addTopic(self, key, initial_value=0.0):
+    def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
         '''
         add a new topic key and initial value to all proposals
         '''
-        if initial_value < 0 or initial_value >= 1.0:
-            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
         for prop in self.inOrder():
             prop.addTopic(key, initial_value)
-
-    def removeTopic(self, key):
+    
+    def addTopics(self, key_list):
         '''
-        remove an existing topic key from all proposals
+        add several topics at once (with default values)
         '''
-        for prop in self.inOrder():
-            prop.removeTopic(key)
+        for key in key_list:
+            self.addTopic(key)
 
     def setTopicValue(self, prop_id, topic, value):
         '''
         set the topic value on a proposal identified by GUP ID
         '''
-        if value < 0 or value > 1.0:
-            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
         if prop_id not in self.proposals:
             raise KeyError, 'Proposal ID not found: ' + str(prop_id)
         self.proposals[prop_id].setTopic(topic, value)
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key from all proposals
+        '''
+        for prop in self:
+            prop.removeTopic(key)
+
+    def removeTopics(self, key_list):
+        '''
+        remove several topics at once
+        '''
+        for prop in self:
+            prop.removeTopic(key)

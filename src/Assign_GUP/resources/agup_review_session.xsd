@@ -58,9 +58,7 @@
         <xs:element ref="URL"/>
         <xs:element ref="Topics"/>
       </xs:sequence>
-      <xs:attribute name="name" type="xs:NMTOKEN"/>
-      <xs:attribute name="reviewer1"/>
-      <xs:attribute name="reviewer2"/>
+      <xs:attribute name="name" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="full_name" type="xs:string"/>
@@ -84,7 +82,13 @@
           <xs:element ref="reviewer"/>
         </xs:sequence>
         <xs:element ref="Topics"/>
-        <xs:element minOccurs="0" ref="Reviewers"/>
+        <xs:choice>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="Reviewer"/>
+          <xs:sequence>
+            <xs:element ref="Reviewer1"/>
+            <xs:element ref="Reviewer2"/>
+          </xs:sequence>
+        </xs:choice>
       </xs:sequence>
       <xs:attribute name="id" type="xs:integer"/>
     </xs:complexType>
@@ -110,11 +114,14 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Reviewers">
+  <xs:element name="Reviewer1">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="Reviewer"/>
-      </xs:sequence>
+      <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Reviewer2">
+    <xs:complexType>
+      <xs:attribute name="name" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="name">

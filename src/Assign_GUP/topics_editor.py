@@ -24,13 +24,13 @@ class AGUP_TopicsEditor(QtGui.QDialog):
     
     def __init__(self, parent=None, topics_list=None):
         self.parent = parent
-        self.topics_list = topics.Topics()
-        self.topics_list.addItems(topics_list or 'one two three'.split())
+        self.topics = topics.Topics()
+        self.topics.addTopics(topics_list)
 
         QtGui.QDialog.__init__(self)
         resources.loadUi(UI_FILE, self)
         self.setWindowTitle('AGUP List of Topics')
-        self.listWidget.addItems(self.topics_list.getList())
+        self.listWidget.addItems(self.topics.getTopicList())
 
         self.listWidget.currentItemChanged.connect(self.on_item_changed)
         self.add_pb.clicked.connect(self.onAdd)
@@ -44,18 +44,18 @@ class AGUP_TopicsEditor(QtGui.QDialog):
 
         self.custom_signals = CustomSignals()
     
-    def getList(self):
+    def getTopicList(self):
         '''
         when all editing is complete, call this method to get the final list
         '''
-        return self.topics_list.getList()
+        return self.topics.getTopicList()
 
     def onAdd(self, *args, **kw):
         '''
         add the text in the entry box to the list of topics
         '''
         txt = str(self.newTopic.text())
-        if self.topics_list.exists(txt):
+        if self.topics.exists(txt):
             # raise KeyError, 'This topic is already defined: ' + txt
             return
         if len(txt.strip()) == 0:
@@ -65,8 +65,11 @@ class AGUP_TopicsEditor(QtGui.QDialog):
             # raise KeyError, 'topic cannot have embedded white space: ' + txt
             return
         txt = txt.strip()
+        #
+        # FIXME: problem when adding new topic into existing list, seems to replace a topic
+        #
         self.listWidget.addItem(txt)
-        self.topics_list.add(txt)
+        self.topics.add(txt)
         self.listWidget.sortItems()
         self.newTopic.setText('')
 
@@ -78,7 +81,7 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         if curr is not None:
             row = self.listWidget.row(curr)
             self.listWidget.takeItem(row)
-            self.topics_list.remove(curr.text())
+            self.topics.remove(str(curr.text()))
 
     def on_item_changed(self, curr, prev):
         '''

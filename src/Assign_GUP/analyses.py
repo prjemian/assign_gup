@@ -19,7 +19,7 @@ ROOT_TAG = 'analysis'
 DEFAULT_TOPIC_VALUE = 0.0
 
 
-class AGUP_Analyses(topics.Topic_MixinClass):
+class AGUP_Analyses(object):
     '''
     Data for all analyses, assignments, & assessments
     '''
@@ -34,15 +34,13 @@ class AGUP_Analyses(topics.Topic_MixinClass):
         for item in self.analyses.values():
             yield item
 
+    def inOrder(self):
+        return sorted(self.analyses.values())
+
     def importXml(self, filename):
         '''
         :param str filename: name of XML file with analyses
         '''
-        def sortListUnique(the_list):
-            # make a dictionary with each list item
-            # redundancies will be overwritten
-            the_dict = {_:None for _ in the_list}
-            return sorted( the_dict.keys() )
 
         doc = xml_utility.readValidXmlDoc(filename, 
                                           agup_data.AGUP_MASTER_ROOT_TAG, 
@@ -55,16 +53,18 @@ class AGUP_Analyses(topics.Topic_MixinClass):
             proposals_node = root.find('Assignments')
         else:
             proposals_node = root.find('Proposals')    # pre-agup reviewers file
+            raise RuntimeError, 'Cannot read old-style analyses.xml files now.'
 
-        ref_topics = None
+        ref_prop_id = None
+        ref_prop_topics = topics.Topics()
         db = {}
         root = doc.getroot()
         if proposals_node is not None:
             for node in proposals_node.findall('Proposal'):
                 prop_id = node.attrib['id'].strip()
+                analysis = ProposalAnalysis()
+                analysis.setId(prop_id)
 
-                # assessed topic weights
-                topics_dict = {}
                 ts_node = node.find('Topics')
                 if ts_node is not None:
                     for t_node in ts_node.findall('Topic'):
@@ -73,38 +73,16 @@ class AGUP_Analyses(topics.Topic_MixinClass):
                             value = float(t_node.attrib['value'])
                         except (TypeError, ValueError):
                             value = 0.0
-                        topics_dict[topic] = value
+                        analysis.addTopic(topic, value)
 
-                # check that all proposals have the exact same list of topics
-                if ref_topics is None:             # first proposal defines the list of topics
-                    ref_topics = topics.Topics()
-                    ref_topics.addItems(topics_dict.keys())
-                    first_prop_id = prop_id
-                else:
-                    if not ref_topics.compareLists(topics_dict.keys()):
-                        # look at all the keys for any missing
-                        all_topics = topics_dict.keys() + ref_topics.getList()
-                        for key in sortListUnique(all_topics):
-                            if key not in topics_dict:
-                                # define new keys as needed
-                                topics_dict[key] = DEFAULT_TOPIC_VALUE
-                    # still a mismatch?
-                    if not ref_topics.compareLists(topics_dict.keys()):
-                        msg = 'In ' + filename
-                        msg += ', list topics do not match'
-                        msg += ' between proposal ' + first_prop_id
-                        msg += ' and proposal ' + prop_id
-                        raise KeyError, msg
+                topics.synchronizeTopics(analysis.topics, ref_prop_topics)
 
                 # assigned reviewers
                 reviewers_dict = {}
-                rs_node = node.find('Reviewers')
-                if rs_node is not None:
-                    for r_node in rs_node.findall('Reviewer'):
-                        for k, v in r_node.items():
-                            reviewers_dict[k] = v
+                analysis.reviewer1 = xml_utility.getXmlText(node, 'Reviewer1', '')
+                analysis.reviewer2 = xml_utility.getXmlText(node, 'Reviewer2', '')
 
-                db[prop_id] = dict(Topics = topics_dict, Reviewers = reviewers_dict)
+                db[prop_id] = analysis
 
         self.analyses = db
     
@@ -128,13 +106,87 @@ class AGUP_Analyses(topics.Topic_MixinClass):
                 subnode = etree.SubElement(node, 'Reviewer')
                 subnode.attrib[k] = str(v)
 
-    def inOrder(self):
-        return sorted(self.analyses.values())
 
+class ProposalAnalysis(object):
+    '''
+    analyses, assignments, & assessments of a single proposal
+    '''
+    
+    def __init__(self):
+        self.prop_id = None
+        self.topics = topics.Topics()
+        self.reviewer1 = ''
+        self.reviewer2 = ''
+    
+    def getId(self):
+        return self.prop_id
+    
+    def setId(self, prop_id):
+        self.prop_id = prop_id
+    
+    def getReviewer1(self):
+        return self.reviewer1
+    
+    def setReviewer1(self, reviewer):
+        self.reviewer1 = reviewer
+    
+    def getReviewer2(self):
+        return self.reviewer2
+    
+    def setReviewer2(self, reviewer):
+        self.reviewer2 = reviewer
+    
+    def getTopic(self, topic):
+        '''
+        return the value of the named topic
+        '''
+        return self.topics.get(topic)
+    
+    def getTopicList(self):
+        '''
+        return a list of all topics
+        '''
+        return self.topics.getTopicList()
+    
+    def addTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        declare a new topic and give it an initial value
+        
+        topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.add(topic, value)
+    
+    def addTopics(self, topics_list):
+        '''
+        declare several new topics and give them all default values
+        
+        each topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.addTopics(topics_list)
+    
+    def setTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        set value of an existing topic
+        
+        topic must exist or KeyError exception will be raised
+        '''
+        self.topics.set(topic, value)
+
+    def removeTopic(self, key):
+        '''
+        remove the named topic
+        '''
+        self.topics.remove(key)
+
+    def removeTopics(self, key_list):
+        '''
+        remove several topics at once
+        '''
+        self.topics.removeTopics(key)
 
 def main():
     findings = AGUP_Analyses()
-    findings.importXml(os.path.join('project', '2015-2', 'analysis.xml'))
+    findings.importXml(os.path.join('project', 'agup_project.xml'))
     if findings is not None:
         print len(findings)
 

@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 import history
 import resources
 import topic_slider
+import topics
 
 
 UI_FILE = 'reviewer_details.ui'
@@ -51,8 +52,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
     def setTopic(self, key, value):
         if key not in self.topic_list:
             raise KeyError, 'unknown Topic: ' + key
-        if value < 0 or value > 1:
-            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
+        topics.checkTopicValueRange(value)
         self.topic_widgets[key].setValue(value)
         self.topic_widgets[key].onValueChange(value)    # sets the slider
         self.modified = True
@@ -127,11 +127,16 @@ def main():
     mw.setNotes('''That URL is fake.\nDo not trust it!''')
 
     # setup some examples for testing
-    topic_dict = dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9)
-    topics = sorted(topic_dict.keys())
+    topic_object = topics.Topics()
+    for k, v in dict(SAXS=0.5, XPCS=0.1, GISAXS=0.9).items():
+        topic_object.add(k, v)
+    
     w = {}
-    for row, key in enumerate(topics):
-        w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, topic_dict[key])
+    row = 0
+    for key in topic_object:
+        value = topic_object.get(key)
+        w[key] = topic_slider.AGUP_TopicSlider(mw.topic_layout, row, key, value)
+        row += 1
     mw.topic_layout.setColumnStretch(1,3)
 
     print 'getFullName', mw.getFullName()

@@ -37,11 +37,17 @@ class AGUP_Data(QtCore.QObject):
         QtCore.QObject.__init__(self)
 
         self.settings = config or settings.ApplicationSettings(RC_FILE, RC_SECTION)
-        self.analyses = None
+        self.clearAllData()
         self.modified = False
-        self.proposals = None
-        self.reviewers = None
-        self.topics = None
+    
+    def clearAllData(self):
+        '''
+        clear all data (except for self.settings)
+        '''
+        self.analyses = None            # TODO: remove this
+        self.proposals = prop_mvc_data.AGUP_Proposals_List()
+        self.reviewers = revu_mvc_data.AGUP_Reviewers_List()
+        self.topics = topics.Topics()
     
     def openPrpFile(self, filename):
         '''
@@ -49,10 +55,13 @@ class AGUP_Data(QtCore.QObject):
         if not os.path.exists(filename):
             history.addLog('PRP File not found: ' + filename)
             return False
+        self.clearAllData()
         filename = str(filename)
+        # self.importTopics()
         self.importReviewers(filename)
         self.importProposals(filename)
         self.importAnalyses(filename)
+        self.modified = False
 
         return True
     
@@ -63,11 +72,6 @@ class AGUP_Data(QtCore.QObject):
         if self.proposals is None: return
         if self.reviewers is None: return
 
-#         if not os.path.exists(filename):
-#             # make the file
-#             doc = etree.parse( StringIO.StringIO('<' + AGUP_MASTER_ROOT_TAG + '/>') )
-#         else:
-#             doc = etree.parse(filename)
         doc = etree.parse( StringIO.StringIO('<' + AGUP_MASTER_ROOT_TAG + '/>') )
 
         root = doc.getroot()
@@ -77,7 +81,7 @@ class AGUP_Data(QtCore.QObject):
         
         node = etree.SubElement(root, 'Topics')
         if self.topics is not None:
-            for topic in sorted(self.topics):
+            for topic in self.topics:
                 subnode = etree.SubElement(node, 'Topic')
                 subnode.attrib['name'] = topic
 
@@ -124,27 +128,22 @@ class AGUP_Data(QtCore.QObject):
         define_new_topics = False
         for prop_id in findings.analyses.keys():
             proposal = self.proposals.getProposal(prop_id)      # raises exception if not found
-            define_new_topics = len(proposal.getTopics().keys()) == 0
+            define_new_topics = len(proposal.topics.getTopicList()) == 0
             break
 
         # merge findings with self.proposals and self.reviewers
         for prop_id, analysis in findings.analyses.items():
             proposal = self.proposals.getProposal(prop_id)      # raises exception if not found
-            for topic, value in analysis['Topics'].items():
+            for topic in analysis.topics:
+                value = analysis.getTopic(topic)
                 if define_new_topics:
-                    proposal.addTopic(topic, value)     # topic must NOT exist
+                    proposal.topics.add(topic, value)     # topic must NOT exist
                 else:
-                    proposal.setTopic(topic, value)     # topic must exist
+                    proposal.topics.set(topic, value)     # topic must exist
                 if not self.topics.exists(topic):
                     self.topics.add(topic)
-            for reviewer_name in analysis['Reviewers'].values():
-                if len(reviewer_name) > 0:
-                    reviewer = self.reviewers.getByFullName(reviewer_name)
-                    for topic, value in analysis['Topics'].items():
-                        if define_new_topics:
-                            reviewer.addTopic(topic, value)     # topic must NOT exist
-                        else:
-                            reviewer.setTopic(topic, value)     # topic must exist
+            
+            # TODO: check that assigned reviewers in proposal object match with proposal analysis finding
 
         self.analyses = findings
     
@@ -189,59 +188,6 @@ class AGUP_Data(QtCore.QObject):
             return ''
         return self.proposals.cycle
 
-
-def developer_testing_of_this_module():
-    '''simple starter program to develop this code'''
-    agup = AGUP_Data()
-    history.addLog( agup )
-    history.addLog( agup.settings )
-    history.addLog( agup.settings.config )
-
-    # mistake: try to import the wrong reviewers files
-    agup.importReviewers('Dilbert is a cartoon')
-    history.addLog( 'reviewers: ' + str(agup.reviewers) )
-    agup.importReviewers('Bullwinkle is a moose')
-    history.addLog( 'proposals: ' + str(agup.proposals) )
-    agup.importReviewers(os.path.abspath('project/2015-2/proposals.xml'))
-
-    # mistake: set the current cycle wrong and try to import proposals
-    agup.settings.setReviewCycle('1895-5')
-    agup.importProposals(os.path.abspath('project/2015-2/proposals.xml'))
-    history.addLog( 'proposals: ' + str(agup.proposals) )
-    if agup.proposals is not None:
-        history.addLog( '# proposals: ' + str(len(agup.proposals)) )
-
-    # mistake: try to import the analyses before importing reviewers and proposals
-    agup.importAnalyses(os.path.abspath('project/2015-2/analysis.xml'))
-
-    history.addLog()
-    history.addLog( '#'*40 + '  now, do things right, in order')
-    history.addLog()
-
-    # import review panelists, cycle does not have to match
-    #agup.settings.setPrpPath(os.path.abspath('project/prp'))
-    agup.importReviewers(os.path.abspath('project/2015-2/panel.xml'))
-    history.addLog( 'reviewers: ' + str(agup.reviewers) )
-    if agup.reviewers is not None:
-        history.addLog( '# reviewers: ' + str(len(agup.reviewers)) )
-
-    # set the current cycle right
-    agup.settings.setReviewCycle('2015-2')
-
-    # import proposals
-    agup.importProposals(os.path.abspath('project/2015-2/proposals.xml'))
-    history.addLog( 'proposals: ' + str(agup.proposals) )
-    if agup.proposals is not None:
-        history.addLog( '# proposals: ' + str(len(agup.proposals)) )
-
-    # import analyses
-    agup.importAnalyses(os.path.abspath('project/2015-2/analysis.xml'))
-    history.addLog( 'analyses: ' + str(agup.analyses) )
-    if agup.analyses is not None:
-        history.addLog( '# analyses: ' + str(len(agup.analyses)))
-
-    agup.write(TEST_OUTPUT_FILE)
-    
 
 def dev_test2():
     agup = AGUP_Data()

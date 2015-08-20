@@ -84,16 +84,17 @@ class ApplicationSettings(object):
     def setRcFile(self, filename):
         if filename != self.config['rcfile']:
             self.modified = True
-        self.config['rcfile'] = filename
+        self.config['rcfile'] = str(filename)
 
     def setReviewCycle(self, review_cycle):     # redundant, treat as non-authoritative
         if review_cycle != self.config['review_cycle']:
             self.modified = True
-        self.config['review_cycle'] = review_cycle
+        self.config['review_cycle'] = str(review_cycle)
+
+    def getPrpFile(self):
+        return self.config['prp_file']
 
     def setPrpFile(self, prp_file):
-#         if not os.path.exists(prp_file):
-#             raise IOError('File not found: ' + prp_file)
         if prp_file != self.config['prp_file']:
             self.modified = True
-        self.config['prp_file'] = prp_file
+        self.config['prp_file'] = str(prp_file)

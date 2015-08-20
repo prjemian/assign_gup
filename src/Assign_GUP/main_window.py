@@ -20,8 +20,8 @@ import topics
 import topics_editor
 import xml_utility
 
+
 UI_FILE = 'main_window.ui'
-DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
 
 
 class AGUP_MainWindow(QtGui.QMainWindow):
@@ -50,10 +50,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         history.addLog('loaded "' + UI_FILE + '"')
 
-        # assign values to each of the display widgets in the main window
         self._init_mainwindow_widget_values_()
-
         self._init_connections_()
+        
+        filename = self.settings.getPrpFile()
+        if os.path.exists(filename):
+            self.openPrpFile(filename)
 
         self.settings.modified = False
         self.modified = False
@@ -196,7 +198,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
 
         if os.path.exists(filename):
-            self.settings.setPrpFile(filename)
             self.openPrpFile(filename)
             history.addLog('selected PRP file: ' + filename)
     
@@ -205,8 +206,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         choose the XML file with data for this PRP review
         '''
         history.addLog('Opening PRP file: ' + filename)
+        if self.proposal_view is not None:
+            self.proposal_view.destroy()
+            self.proposal_view = None
+        if self.reviewer_view is not None:
+            self.reviewer_view.destroy()
+            self.reviewer_view = None
         if self.agup.openPrpFile(filename):
             self.setPrpFileText(filename)
+            self.settings.setPrpFile(filename)
             self.setReviewCycleText(self.agup.getCycle())
             history.addLog('Open PRP file: ' + filename)
 
@@ -283,46 +291,48 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.proposal_view.close()
             self.proposal_view = None
         
-        known_topics = self.agup.topics.getList()
+        known_topics = self.agup.topics.getTopicList()
         edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics)
         edit_topics_ui.exec_()   # Modal Dialog
         
         # learn what changed
-        topics_list = edit_topics_ui.getList()
-        added = [_ for _ in topics_list if _ not in known_topics]
-        removed = [_ for _ in known_topics if _ not in topics_list]
+        topics_list = edit_topics_ui.getTopicList()
+        added, removed = topics.diffLists(topics_list, known_topics)
         if len(added) + len(removed) == 0:
             history.addLog('list of topics unchanged')
             self.adjustMainWindowTitle()
             return
-        
-        # confirm before proceeding
+
+        if not self.confirmEditTopics():
+            history.addLog('revised list of topics not accepted')
+            self.adjustMainWindowTitle()
+            return False
+
+        self.agup.topics.addTopics(added)
+        self.agup.proposals.addTopics(added)
+        self.agup.reviewers.addTopics(added)
+        history.addLog('added topics: ' + ' '.join(added))
+
+        self.agup.topics.removeTopics(removed)
+        self.agup.proposals.removeTopics(removed)
+        self.agup.reviewers.removeTopics(removed)
+        history.addLog('deleted topics: ' + ' '.join(removed))
+        history.addLog('Note: Be sure to review Topics for all Proposals and Reviewers.')
+
+        self.modified = True
+        self.adjustMainWindowTitle()
+    
+    def confirmEditTopics(self):
+        '''
+        confirm before proceeding
+        '''
         box = QtGui.QMessageBox()
         box.setText('The list of topics has changed.')
         box.setInformativeText('Save the changes?')
         box.setStandardButtons(QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard)
         box.setDefaultButton(QtGui.QMessageBox.Save)
         ret = box.exec_()
-        if ret == QtGui.QMessageBox.Discard:
-            history.addLog('revised list of topics not accepted')
-            self.adjustMainWindowTitle()
-            return
-        
-        #---
-        # TODO: merge final list form editor with
-        # x topics
-        # x proposals    TODO: need to re-check this one
-        # - reviewers
-        for key in added:
-            self.agup.topics.add(key)       # TODO: refactor this to the self.agup class
-            self.agup.proposals.addTopic(key)
-        for key in removed:
-            self.agup.topics.remove(key)
-            self.agup.proposals.removeTopic(key)
-        history.addLog('added topics: ' + ' '.join(added))
-        history.addLog('deleted topics: ' + ' '.join(removed))
-        self.modified = True
-        self.adjustMainWindowTitle()
+        return ret == QtGui.QMessageBox.Save
 
     def doSave(self):
         '''

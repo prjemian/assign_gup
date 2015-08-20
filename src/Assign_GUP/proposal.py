@@ -8,7 +8,7 @@ import topics
 import xml_utility
 
 
-class AGUP_Proposal_Data(topics.Topic_MixinClass):
+class AGUP_Proposal_Data(object):
     '''
     A single General User Proposal
     '''
@@ -19,7 +19,9 @@ class AGUP_Proposal_Data(topics.Topic_MixinClass):
     )
     
     def __init__(self, xmlParentNode = None, xmlFile = None):
-        self.db = dict(topics={}, eligible_reviewers={})
+        self.db = {}
+        self.eligible_reviewers = {}
+        self.topics = topics.Topics()
         self.xmlFile = xmlFile
         if xmlParentNode != None:
             self.importXml( xmlParentNode )
@@ -38,7 +40,7 @@ class AGUP_Proposal_Data(topics.Topic_MixinClass):
         else:
             subjects = ''
         self.db['subjects'] = ", ".join(subjects)
-        eligible_reviewers = self.db['eligible_reviewers']
+        eligibles = self.eligible_reviewers
         node = proposal.find('reviewer')
         for name in node.findall('name'):
             who = name.text.strip()
@@ -46,56 +48,14 @@ class AGUP_Proposal_Data(topics.Topic_MixinClass):
             if assignment is not None:
                 assignment = int(assignment[-1])
             excluded = name.get('excluded', 'false') == 'true'
-            if who not in eligible_reviewers and not excluded:
-                eligible_reviewers[who] = assignment
-
-        if False:   # the old way
-            for reviewer_number in (1, 2):
-                position = 'reviewer%d' % reviewer_number
-                node = proposal.find(position)
-                assigned = node.attrib['assigned']
-                for name in node.findall('name'):
-                    who = name.text.strip()
-                    if who == assigned:
-                        # note this reviewer is assigned primary (1) or secondary (2) role
-                        self.db['eligible_reviewers'][who] = reviewer_number
-                    else:
-                        # not assigned
-                        if who not in self.db['eligible_reviewers']:
-                            # add to list of reviewers eligible for this proposal
-                            self.db['eligible_reviewers'][who] = None
+            if who not in eligibles and not excluded:
+                eligibles[who] = assignment
     
     def writeXmlNode(self, specified_node):
         '''
         write this Proposal's data to a specified node in the XML document
 
         :param obj specified_node: XML node to contain this data
-        
-        example::
-
-          <proposal_id>42345</proposal_id>
-          <proposal_type>GUP</proposal_type>
-          <proposal_title>Effect of Solvent on the Structure and Assembly of Kafirin</proposal_title>
-          <review_period>2015-1</review_period>
-          <notification_date>03/07/2015</notification_date>
-          <project_type>regular</project_type>
-          <spk_name>Qingrong Huang</spk_name>
-          <recent_req_period>2015-1</recent_req_period>
-          <first_choice_bl>18-ID-BIO</first_choice_bl>
-          <subject>
-            <name>Materials science</name>
-            <name>Polymers</name>
-          </subject>
-          <reviewer>
-            <name>Peter Jemian</name>
-            <name assigned="reviewer2">John Flanagan</name>
-            <name>Suresh Narayanan</name>
-            <name>Fan Zhang</name>
-            <name assigned="reviewer1">Sagar Kathuria</name>
-            <name>Deborah Myers</name>
-          </reviewer>
-        </Proposal>
-
         '''
         for tag in self.tagList:
             etree.SubElement(specified_node, tag).text = self.getKey(tag)
@@ -106,17 +66,65 @@ class AGUP_Proposal_Data(topics.Topic_MixinClass):
             subnode.text = str(v)
 
         node = etree.SubElement(specified_node, 'reviewer')
-        for k, v in sorted(self.db['eligible_reviewers'].items()):
+        for k, v in sorted(self.eligible_reviewers.items()):
             subnode = etree.SubElement(node, 'name')
             subnode.text = str(k)
             if v in (1, 2):
                 subnode.attrib['assigned'] = 'reviewer' + str(v)
 
         node = etree.SubElement(specified_node, 'Topics')
-        for k, v in sorted(self.getTopics().items()):
+        for k in self.topics:
             subnode = etree.SubElement(node, 'Topic')
             subnode.attrib['name'] = k
-            subnode.attrib['value'] = str(v)
+            subnode.attrib['value'] = str(self.topics.get(v))
     
     def getKey(self, key):
         return self.db[key]
+    
+    def getTopic(self, topic):
+        '''
+        return the value of the named topic
+        '''
+        return self.topics.get(topic)
+    
+    def getTopicList(self):
+        '''
+        return a list of all topics
+        '''
+        return self.topics.getTopicList()
+    
+    def addTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        declare a new topic and give it an initial value
+        
+        topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.add(topic, value)
+    
+    def addTopics(self, topics_list):
+        '''
+        declare several new topics and give them all default values
+        
+        each topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.addTopics(topics_list)
+    
+    def setTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        set value of an existing topic
+        
+        topic must exist or KeyError exception will be raised
+        '''
+        self.topics.set(topic, value)
+
+    def removeTopic(self, key):
+        '''
+        remove the named topic
+        '''
+        self.topics.remove(key)
+
+    def removeTopics(self, key_list):
+        '''
+        remove several topics at once
+        '''
+        self.topics.removeTopics(key)

@@ -5,8 +5,6 @@ Support AGUP topics
 
 DEFAULT_TOPIC_VALUE = 0.0
 
-# FIXME: there is confused use of these two classes
-
 
 class Topics(object):
     '''
@@ -15,13 +13,16 @@ class Topics(object):
     
     def __init__(self):
         self.clearAll()
-
-    def __iter__(self):
-        for key in sorted(self.topics):
-            yield key
     
     def __len__(self):
         return len(self.topics)
+
+    def __iter__(self):
+        for key in self.inOrder():
+            yield key
+
+    def inOrder(self):
+        return sorted(self.topics)
     
     def exists(self, key):
         '''
@@ -29,7 +30,7 @@ class Topics(object):
         '''
         return key in self.topics
     
-    def add(self, key):
+    def add(self, key, value = DEFAULT_TOPIC_VALUE):
         '''
         define a new topic (known here as ``key``)
         
@@ -37,104 +38,165 @@ class Topics(object):
         '''
         if self.exists(key):
             raise KeyError, 'This topic is already defined: ' + key
-        if len(key.strip()) == 0:
-            raise KeyError, 'Must give a value for the topic'
-        if len(key.strip().split()) != 1:
+        key = key.strip()
+        if len(key) == 0:
+            raise KeyError, 'Must give a name for the topic'
+        if len(key.split()) != 1:
             raise KeyError, 'topic cannot have embedded white space: ' + key
-        self.topics.append(key.strip())
-        self.topics_string = ' '.join(self.getList())
+        checkTopicValueRange(value)
+        self.topics[key] = value
+        self._topics_string_ = ' '.join(self.getTopicList())
     
-    def addItems(self, key_list):
-        '''add several topics at once'''
+    def addTopics(self, key_list):
+        '''
+        add several topics at once (with default values)
+        
+        :param [str] key_list: list of topics (strings) to be added
+        '''
         for key in key_list:
             self.add(key)
     
+    def get(self, key):
+        '''
+        return value of an existing topic (known here as ``key``)
+        
+        topic must exist or KeyError exception will be raised
+        '''
+        if not self.exists(key):
+            raise KeyError, 'This topic is not defined: ' + key
+        return self.topics[key]
+    
+    def getTopicList(self):
+        '''
+        return a list of all topics
+        '''
+        return sorted(self.topics.keys())
+    
+    def set(self, key, value):
+        '''
+        set value of an existing topic (known here as ``key``)
+        
+        topic must exist or KeyError exception will be raised
+        '''
+        if not self.exists(key):
+            raise KeyError, 'This topic is not defined: ' + key
+        self.topics[key] = value
+
     def clearAll(self):
         '''
         remove all keys from the list of topics
         '''
-        self.topics = []
-        self.topics_string = ''
-    
-    def getList(self):
-        return sorted(self.topics)
+        self.topics = {}
+        self._topics_string_ = ''     # to optimize comparisons of different Topics() objects
 
     def remove(self, key):
         '''
         remove the named topic
+        
+        :param str key: topic to be removed
         '''
         if self.exists(key):
-            self.topics.remove(key)
+            del self.topics[key]
         else:
             raise KeyError, 'Cannot remove (does not exist): ' + key
-
-    def compareLists(self, other_topics_list):
-        '''
-        compare topics in self.topics with the other_topics_list, return True if identical
-        
-        convert each list to a sorted string and compare them
-        '''
-        return ' '.join(sorted(other_topics_list)) == self.topics_string
-
-
-class Topic_MixinClass(object):
-    '''
-    provides common methods for topic handling in data classes: proposals & reviewers
-    '''
-
-    def importXml(self, reviewer):
-        '''
-        Fill the class variables with values from the XML node
-        
-        :param proposal: lxml node of the Reviewer
-        
-        The first step usually is to call::
-        
-          self.readValidXmlDoc(filename, expected_root_tag, XSD_Schema_file)
-        
-        '''
-        msg = 'each subclass of Topic_MixinClass() must implement importXml() method'
-        raise NotImplementedError, msg
     
-    def addTopic(self, key, initial_value=DEFAULT_TOPIC_VALUE):
+    def removeTopics(self, key_list):
         '''
-        add a new topic key and initial value
+        remove several topics at once
+        
+        :param [str] key_list: list of topics (strings) to be removed
         '''
-        if not 0 <= float(initial_value) <= 1.0:
-            msg = 'initial value must be between 0 and 1: given=' + str(initial_value)
-            raise ValueError, msg
-        if not self.topicExists(key):
-            self.db['topics'][key] = float(initial_value)
+        for key in key_list:
+            self.remove(key)
 
-    def removeTopic(self, key):
+    def compare(self, other_topics_object):
         '''
-        remove an existing topic key
+        compare topics in self.topics with the other_topics_object, return True if identical
+        
+        compares sorted list of topics between each object
+        
+        :param obj other_topics_object: instance of Topics()
         '''
-        if self.topicExists(key):
-            del self.db['topics'][key]
+        return other_topics_object._topics_string_ == self._topics_string_
 
-    def topicExists(self, key):
-        return key in self.db['topics']
+    def diff(self, other_topics_object):
+        '''
+        differences in list of topics between self.topics and other_topics_object
+        
+        Comparison assumes that self.topics is the final result.
+        Returned result shows topics added and removed from *other_topics_object*
+        to obtain current list.
+        
+        :param obj other_topics_object: instance of Topics()
+        :returns ([],[]): first list is topics added, second list is topics removed
+        '''
+        return diffLists(self.getTopicList(), other_topics_object.getTopicList())
 
-    def getTopics(self):
+    def dotProduct(self, other_topics_object):
         '''
-        return a dictionary of topics: values
+        dot product of self and other_topics_object
+        
+        :param obj other_topics_object: instance of Topics()
         '''
-        return self.db['topics']
+        if not self.compare(other_topics_object):
+            raise KeyError, 'these two lists of topics are not the same, cannot dot product'
+        if len(self.getTopicList()) == 0:
+            return 0.0      # trivial result and avoids div-by-zero error
+        value = 0.0
+        for topic in self.getTopicList():
+            value += self.get(topic) * other_topics_object.get(topic)
+        return value / len(self.getTopicList())
 
-    def setTopics(self, topic_dict):
-        '''
-        set topic values from a dictionary, each topic name must already exist
-        '''
-        for topic, value in topic_dict.items():
-            self.setTopic(topic, value)
 
-    def setTopic(self, topic, value):
-        '''
-        set the value of an existing topic
-        '''
-        if value < 0 or value > 1.0:
-            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
-        if not self.topicExists(topic):
-            raise KeyError, 'Topic not found: ' + str(topic)
-        self.db['topics'][topic] = value
+def checkTopicValueRange(value):
+    '''
+    topic values must be 0..1 inclusive: standardize this check
+
+    :param float value: topic value to be checked
+    '''
+    if not 0 <= float(value) <= 1.0:
+        msg = 'value must be between 0 and 1: given=' + str(value)
+        raise ValueError, msg
+
+
+def diffLists(new_list, old_list):
+    '''
+    differences between two lists, return tuple([items added], [items removed])
+    
+    assumes each list had only unique entries, no redundancies
+
+    :param [str] new_list: new list of strings to be compared
+    :param [str] old_list: old list of strings to be compared
+    '''
+    added_items = [_ for _ in new_list if _ not in old_list]
+    removed_items = [_ for _ in old_list if _ not in new_list]
+    return added_items, removed_items
+
+
+def sortListUnique(the_list):
+    '''
+    sort list and eliminate redundant items
+
+    * make a dictionary with each list item
+    * redundancies will be overwritten
+
+    :param [str] the_list: list of strings to be sorted
+    '''
+    the_dict = {_:None for _ in the_list}
+    return sorted( the_dict.keys() )
+
+
+def synchronizeTopics(a_list, b_list):
+    '''
+    make the topic names in each list be the same
+    
+    * assumes each topics list had only unique entries, no redundancies
+    * modifies objects in place
+    
+    :param obj a_list: instance of Topics()
+    :param obj b_list: instance of Topics()
+    '''
+    if not a_list.compare(b_list):
+        added, removed = a_list.diff(b_list)
+        b_list.addTopics(added)         # topics not in b_list
+        a_list.addTopics(removed)       # topics not in a_list

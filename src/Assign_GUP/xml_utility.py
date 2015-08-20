@@ -22,19 +22,21 @@ class XmlSyntaxError(etree.XMLSyntaxError):
     pass
 
 
-def getXmlText(parent, tag):
+def getXmlText(parent, tag, default=None):
     '''
     Read the text content of an XML node
     
-    :param reviewer: lxml node node of the Reviewer
+    :param reviewer: lxml node node
+    :param default: default value is no node text
     :return: node text or None
     '''
     node = parent.find(tag)
     if node is None:
         return None
     if node.text is None:
-        return None
-    text = node.text.strip()
+        text = default
+    else:
+        text = node.text.strip()
     return text
 
 

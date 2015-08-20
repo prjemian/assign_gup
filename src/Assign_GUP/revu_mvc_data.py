@@ -11,6 +11,7 @@ import agup_data
 import history
 import reviewer
 import resources
+import topics
 import xml_utility
 
 
@@ -34,14 +35,20 @@ class AGUP_Reviewers_List(QtCore.QObject):
         return len(self.reviewers)
 
     def __iter__(self):
-        for item in self.reviewers.values():
-            yield item
+        for item in self.keyOrder():
+            yield self.reviewers[item]
+
+    def inOrder(self):
+        return sorted(self.reviewers.values())
+
+    def keyOrder(self):
+        return sorted(self.reviewers.keys())
 
     def exists(self, sort_name):
         '''given sort_name string, does reviewer exist?'''
         return sort_name in self.reviewer_sort_list
     
-    def getProposal(self, sort_name):
+    def getReviewer(self, sort_name):
         '''return reviewer selected by sort_name string'''
         if not self.exists(sort_name):
             raise IndexError, 'Reviewer not found: ' + sort_name
@@ -49,17 +56,17 @@ class AGUP_Reviewers_List(QtCore.QObject):
     
     def getByFullName(self, full_name):
         '''return reviewer selected by full_name string'''
+        if len(full_name) == 0:
+            raise ValueError, 'no name provided'
         sort_name = None
         for rvwr in self.inOrder():
             if rvwr.getFullName() == full_name:
                 sort_name = rvwr.getKey('name')
                 break
-        if sort_name is None:
-            raise IndexError, 'Reviewer not found: ' + full_name
-        return self.reviewers[sort_name]
+        return self.getReviewer(sort_name)
 
     def getByIndex(self, index):
-        if index < 0 or index >= len(self.reviewer_sort_list):
+        if not 0 <= index < len(self.reviewer_sort_list):
             raise IndexError, 'Index not found: ' + str(index)
         return self.reviewer_sort_list[index]
 
@@ -78,15 +85,16 @@ class AGUP_Reviewers_List(QtCore.QObject):
             reviewers_node = root.find(ROOT_TAG)
         else:
             reviewers_node = root    # pre-agup reviewers file
+            raise RuntimeError, 'import of panel.xml file no longer supported'
 
         db = {}
         self.reviewer_sort_list = []
         self.cycle = reviewers_node.get('period', None)
         for node in reviewers_node.findall('Reviewer'):
             sort_name = node.attrib['name'].strip()
-            panelist = reviewer.AGUP_Reviewer_Data(node, filename)
-            db[sort_name] = panelist
+            db[sort_name] = reviewer.AGUP_Reviewer_Data(node, filename)
             self.reviewer_sort_list.append(sort_name)
+        self.reviewer_sort_list = sorted(self.reviewer_sort_list)
         self.reviewers = db
     
     def writeXmlNode(self, specified_node):
@@ -98,31 +106,38 @@ class AGUP_Reviewers_List(QtCore.QObject):
         for rvwr in self.inOrder():
             rvwr.writeXmlNode(etree.SubElement(specified_node, 'Reviewer'))
 
-    def inOrder(self):
-        return sorted(self.reviewers.values())
-
-    def addTopic(self, key, initial_value=0.0):
+    def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
         '''
         add a new topic key and initial value to all reviewers
         '''
-        if initial_value < 0 or initial_value >= 1.0:
-            raise ValueError, 'initial value must be between 0 and 1: given=' + str(initial_value)
         for item in self.inOrder():
             item.addTopic(key, initial_value)
-
-    def removeTopic(self, key):
+    
+    def addTopics(self, key_list):
         '''
-        remove an existing topic key from all reviewers
+        add several topics at once (with default values)
         '''
-        for item in self.inOrder():
-            item.removeTopic(key)
+        for key in key_list:
+            self.addTopic(key)
 
     def setTopicValue(self, sort_name, topic, value):
         '''
         set the topic value on a reviewer identified by sort_name
         '''
-        if value < 0 or value > 1.0:
-            raise ValueError, 'value must be between 0 and 1: given=' + str(value)
         if sort_name not in self.reviewers:
             raise KeyError, 'Reviewer name not found: ' + str(sort_name)
         self.reviewers[sort_name].setTopic(topic, value)
+
+    def removeTopic(self, key):
+        '''
+        remove an existing topic key from all reviewers
+        '''
+        for item in self:
+            item.removeTopic(key)
+
+    def removeTopics(self, key_list):
+        '''
+        remove several topics at once
+        '''
+        for item in self:
+            item.removeTopic(key)

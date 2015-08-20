@@ -13,7 +13,7 @@ import general_mvc_model
 import proposal_details
 import qt_utils
 import resources
-from topics import Topics
+import topics
 
 UI_FILE = 'proposals_listview.ui'
 NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
@@ -25,8 +25,10 @@ class AGUP_Proposals_View(QtGui.QWidget):
     Manage the list of proposals, including assignments of topic weights and reviewers
     '''
     
-    def __init__(self, parent=None, proposals=None, topics=None):
+    def __init__(self, parent=None, proposals=None, topics_object=None):
         self.parent = parent
+        self.topics = topics_object or topics.Topics()
+
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
 
@@ -34,13 +36,15 @@ class AGUP_Proposals_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        self.topics = topics
+        for topic in self.topics:
+            self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
 
-        for topic in topics:
-            proposals.addTopic(topic)
-            self.details_panel.addTopic(topic, 0.0)
-
-        self.setModel(proposals)
+        if proposals is not None:
+            self.setModel(proposals)
+            if len(proposals) > 0:
+                prop_id = proposals.keyOrder()[0]
+                self.editProposal(prop_id, None)
+                self.selectFirstListItem()
 
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
@@ -68,7 +72,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''OK to select a different proposal now?'''
         return self.details_panel.modified
 
-    def selectProposal(self, prop_id, prev_prop_index):
+    def editProposal(self, prop_id, prev_prop_index):
         '''
         select Proposal for editing as referenced by ID number
         '''
@@ -77,7 +81,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
 #             history.addLog('need to save modified proposal details')
 #             pass
             
-        proposal = self.proposals.proposals[str(prop_id)]
+        if prop_id is None:
+            return
+        proposal = self.proposals.getProposal(str(prop_id))
         self.details_panel.setAll(
                                 proposal.db['proposal_id'], 
                                 proposal.db['proposal_title'], 
@@ -86,17 +92,26 @@ class AGUP_Proposals_View(QtGui.QWidget):
                                 proposal.db['first_choice_bl'], 
                                 proposal.db['subjects'],
                                 )
-        topics_dict = proposal.getTopics()
-        for topic, value in topics_dict.items():
+        topics_list = proposal.getTopicList()
+        for topic in topics_list:
+            value = proposal.getTopic(topic)
             self.details_panel.setTopic(topic, value)
         # set reviewers
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
         history.addLog('selected proposal: ' + str(prop_id))
     
+    def selectFirstListItem(self):
+        idx = self.listView.indexAt(QtCore.QPoint(0,0))
+        self.listView.setCurrentIndex(idx)
+        return idx
+    
     def index_to_ID(self, index):
         '''convert QListView index to GUP ID string'''
-        return str(index.data().toPyObject())
+        obj = index.data().toPyObject()
+        if obj is None:
+            return obj
+        return str(obj)
 
     def selectProposalByIndex(self, curr, prev):
         '''
@@ -106,7 +121,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
         :param index prev: QListView index of previously selected proposal
         '''
         prop_id = self.index_to_ID(curr)
-        self.selectProposal(prop_id, prev)
+        if prop_id is None:
+            return
+        self.editProposal(prop_id, prev)
         
     def setModel(self, model):
         self.proposals = model
@@ -114,8 +131,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.listView.setModel(self.proposals_model)
 
         # select the first item in the list
-        idx = self.listView.indexAt(QtCore.QPoint(0,0))
-        self.listView.setCurrentIndex(idx)
+        idx = self.selectFirstListItem()
         self.prior_selection_index = idx
         self.selectProposalByIndex(idx, None)
     

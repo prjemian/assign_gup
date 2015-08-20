@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 import history
 import resources
 import topic_slider
+import topics
 
 
 UI_FILE = 'proposal_details.ui'
@@ -46,6 +47,10 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         topicslider = topic_slider.AGUP_TopicSlider(self.topic_layout, row, topic, value)
         self.topic_widgets[topic] = topicslider
         topicslider.slider.valueChanged.connect(lambda: self.onTopicValueChanged(topic))
+    
+    def addTopics(self, topic_list):
+        for topic in topic_list:
+            self.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
 
     def setTopic(self, key, value):
         if key not in self.topic_list:

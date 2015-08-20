@@ -8,7 +8,7 @@ import topics
 import xml_utility
 
 
-class AGUP_Reviewer_Data(topics.Topic_MixinClass):
+class AGUP_Reviewer_Data(object):
     '''
     A Reviewer of General User Proposals
     '''
@@ -22,7 +22,8 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
         :param xmlFile: name of the XML file
         :param xmlFile: str
         '''
-        self.db = { 'topics': {} }
+        self.db = {}
+        self.topics = topics.Topics()
         self.db['name'] = None
         self.xmlFile = xmlFile
 
@@ -48,7 +49,7 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
         self.db['name'] = reviewer.attrib['name'].strip()
         for k in self.tagList:
             self.db[k] = xml_utility.getXmlText(reviewer, k)
-        self.db['topics'] = {}
+        self.topics = topics.Topics()
         node = reviewer.find('Topics')
         if node is not None:
             for t_node in node.findall('Topic'):
@@ -57,7 +58,7 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
                     value = float( t_node.attrib['value'])
                 except ValueError:
                     value = 0.0
-                self.addTopic(key, value)
+                self.topics.add(key, value)
     
     def writeXmlNode(self, specified_node):
         '''
@@ -70,13 +71,61 @@ class AGUP_Reviewer_Data(topics.Topic_MixinClass):
             etree.SubElement(specified_node, tag).text = self.getKey(tag)
 
         node = etree.SubElement(specified_node, 'Topics')
-        for k, v in sorted(self.getTopics().items()):
+        for k, v in self.topics.getTopicList():
             subnode = etree.SubElement(node, 'Topic')
             subnode.attrib['name'] = k
-            subnode.attrib['value'] = str(v)
+            subnode.attrib['value'] = str(self.topics.get(k))
     
     def getFullName(self):
         return self.getKey('full_name')
     
     def getKey(self, key):
         return self.db[key]
+    
+    def getTopic(self, topic):
+        '''
+        return the value of the named topic
+        '''
+        return self.topics.get(topic)
+    
+    def getTopicList(self):
+        '''
+        return a list of all topics
+        '''
+        return self.topics.getTopicList()
+    
+    def addTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        declare a new topic and give it an initial value
+        
+        topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.add(topic, value)
+    
+    def addTopics(self, topics_list):
+        '''
+        declare several new topics and give them all default values
+        
+        each topic must not exist or KeyError exception will be raised
+        '''
+        self.topics.addTopics(topics_list)
+    
+    def setTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+        '''
+        set value of an existing topic
+        
+        topic must exist or KeyError exception will be raised
+        '''
+        self.topics.set(topic, value)
+
+    def removeTopic(self, key):
+        '''
+        remove the named topic
+        '''
+        self.topics.remove(key)
+
+    def removeTopics(self, key_list):
+        '''
+        remove several topics at once
+        '''
+        self.topics.removeTopics(key)
