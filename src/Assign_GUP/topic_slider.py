@@ -35,6 +35,8 @@ in the particular topic.
 
 
 from PyQt4 import QtGui, QtCore
+import history
+import traceback
 
 class AGUP_TopicSlider(QtCore.QObject):
     '''add topic, slider, value_entry to a QGridLayout'''
@@ -78,8 +80,8 @@ class AGUP_TopicSlider(QtCore.QObject):
             if 0 <= float_value <= 1.0:
                 self.setSliderValue(int(float_value*self.slider_factor))
         except ValueError, exc:
-            # TODO: send to the logger
-            print self.label, exc
+            history.addLog('problem with Topic: ' + str(self.label))
+            history.addLog(traceback.format_exc())
 
     def getValue(self):
         # if can't convert, get value from slider
