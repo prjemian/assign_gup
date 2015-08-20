@@ -10,7 +10,7 @@ NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
 
 class ArrowKeysEventFilter(QtCore.QObject):
     '''
-    watches for ArrowUp and ArrowDown (navigator keys) to change selection
+    watches for ArrowUp and ArrowDown (navigator keys) to change selection in QtCore.QAbstractListModel
     '''
 
     def eventFilter(self, listView, event):
@@ -23,6 +23,6 @@ class ArrowKeysEventFilter(QtCore.QObject):
                 listView.keyPressEvent(event)
                 curr = listView.currentIndex()
                 parent = listView.parent().parent()     # FIXME: fragile!
-                parent.selectProposalByIndex(curr, prev)
+                parent.selectModelByIndex(curr, prev)
                 return True
         return False

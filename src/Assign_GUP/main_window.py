@@ -146,8 +146,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if self.doNotQuitNow():
                 return
 
-        if self.proposal_view is not None:  # TODO: why is this needed?
-            self.proposal_view.close()
+        if self.reviewer_view is not None:
+            self.reviewer_view.destroy()
+        if self.proposal_view is not None:
+            self.proposal_view.destroy()
         self.close()
     
     def doNotQuitNow(self):

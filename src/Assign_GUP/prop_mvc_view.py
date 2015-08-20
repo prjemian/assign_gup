@@ -59,7 +59,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''
         if index == self.prior_selection_index:   # clicked on the current item
             return False
-        self.selectProposalByIndex(index, self.prior_selection_index)
+        self.selectModelByIndex(index, self.prior_selection_index)
 
     def onTopicValueChanged(self, prop_id, topic, value):
         '''
@@ -113,7 +113,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
             return obj
         return str(obj)
 
-    def selectProposalByIndex(self, curr, prev):
+    def selectModelByIndex(self, curr, prev):
         '''
         select Proposal for editing as referenced by QListView index
         
@@ -133,7 +133,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         # select the first item in the list
         idx = self.selectFirstListItem()
         self.prior_selection_index = idx
-        self.selectProposalByIndex(idx, None)
+        self.selectModelByIndex(idx, None)
     
     def isProposalListModified(self):
         # TODO: support proposal editing

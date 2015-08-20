@@ -59,7 +59,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         '''
         if index == self.prior_selection_index:   # clicked on the current item
             return False
-        self.selectReviewerByIndex(index, self.prior_selection_index)
+        self.selectModelByIndex(index, self.prior_selection_index)
 
     def onTopicValueChanged(self, sort_name, topic, value):
         '''
@@ -102,7 +102,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.details_panel.modified = False
         history.addLog('selected reviewer: ' + str(sort_name))
 
-    def selectReviewerByIndex(self, curr, prev):
+    def selectModelByIndex(self, curr, prev):
         '''
         select Reviewer for editing as referenced by QListView index
         
