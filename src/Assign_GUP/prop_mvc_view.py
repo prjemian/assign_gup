@@ -8,6 +8,7 @@ MVC View for proposals - test version
 
 import os, sys
 from PyQt4 import QtGui, QtCore
+import event_filters
 import history
 import general_mvc_model
 import proposal_details
@@ -16,7 +17,6 @@ import resources
 import topics
 
 UI_FILE = 'proposals_listview.ui'
-NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
 PROPOSALS_TEST_FILE = os.path.join('project', '2015-2', 'proposals.xml')
 
 
@@ -50,7 +50,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.listView.entered.connect(self.on_item_clicked)
         self.details_panel.custom_signals.topicValueChanged.connect(self.onTopicValueChanged)
 
-        self.arrowKeysEventFilter = ArrowKeysEventFilter()
+        self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
 
     def on_item_clicked(self, index):
@@ -138,23 +138,3 @@ class AGUP_Proposals_View(QtGui.QWidget):
     def isProposalListModified(self):
         # TODO: support proposal editing
         return self.details_panel.modified
-
-
-class ArrowKeysEventFilter(QtCore.QObject):
-    '''
-    custom event filter
-    '''
-
-    def eventFilter(self, listView, event):
-        '''
-        watches for ArrowUp and ArrowDown (navigator keys) to change selection
-        '''
-        if event.type() == QtCore.QEvent.KeyPress:
-            if event.key() in NAVIGATOR_KEYS:
-                prev = listView.currentIndex()
-                listView.keyPressEvent(event)
-                curr = listView.currentIndex()
-                parent = listView.parent().parent()     # FIXME: fragile!
-                parent.selectProposalByIndex(curr, prev)
-                return True
-        return False
