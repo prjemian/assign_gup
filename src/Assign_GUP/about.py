@@ -15,7 +15,7 @@ DOCS_URL = 'http://Assign_GUP.readthedocs.org'
 LICENSE_FILE = 'LICENSE'
 
 
-class AboutBox(QtGui.QDialog):
+class InfoBox(QtGui.QDialog):
     '''
     a Qt GUI for the About box
     '''

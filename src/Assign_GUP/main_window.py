@@ -90,14 +90,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.actionExit.triggered.connect(self.doClose)
-        self.actionAboutAgup.triggered.connect(self.doAbout)
+        self.actionAgupInfo.triggered.connect(self.doAgupInfo)
 
-    def doAbout(self, *args, **kw):
+    def doAgupInfo(self, *args, **kw):
         '''
         describe this application and where to get more info
         '''
-        history.addLog('About... box requested')
-        ui = about.AboutBox(self)
+        history.addLog('Info... box requested')
+        ui = about.InfoBox(self)    # bless the Mac that it handles "about" differently
         ui.show()
     
     def adjustMainWindowTitle(self):

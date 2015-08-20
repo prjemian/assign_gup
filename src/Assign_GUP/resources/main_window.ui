@@ -149,7 +149,7 @@
     <property name="title">
      <string>Docs</string>
     </property>
-    <addaction name="actionAboutAgup"/>
+    <addaction name="actionAgupInfo"/>
    </widget>
    <widget class="QMenu" name="menuTopics">
     <property name="title">
@@ -180,9 +180,12 @@
    <addaction name="menuDocs"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAboutAgup">
+  <action name="actionAgupInfo">
    <property name="text">
-    <string>About AGUP ...</string>
+    <string>AGUP Info ...</string>
+   </property>
+   <property name="toolTip">
+    <string>AGUP info, docs, and license</string>
    </property>
   </action>
   <action name="actionExit">
