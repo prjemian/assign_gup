@@ -1,14 +1,10 @@
-.. Assign_GUP documentation master file, created by
-   sphinx-quickstart on Thu Apr 14 11:48:34 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome!
-========
+-----------------
+Assign_GUP (AGUP)
+-----------------
 
-~~~~~~~~
 Overview
-~~~~~~~~
+========
 
 Assign_GUP is a tool for the Proposal Review Panel of the 
 Advanced Photon Source Small-Angle X-ray Scattering
@@ -36,7 +32,10 @@ Contents:
    :glob:
    
    instructions
-   code
+   source_code/Assign_GUP
+   readme
+   changes
+   license
 
 Indices and tables
 ==================

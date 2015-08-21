@@ -1,5 +1,13 @@
-Assign_GUP package
-==================
+Assign_GUP package: source code documentation
+=============================================
+
+Module contents
+---------------
+
+.. automodule:: Assign_GUP
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Submodules
 ----------
@@ -30,11 +38,3 @@ Submodules
    topics
    topics_editor
    xml_utility
-
-Module contents
----------------
-
-.. automodule:: Assign_GUP
-    :members:
-    :undoc-members:
-    :show-inheritance:

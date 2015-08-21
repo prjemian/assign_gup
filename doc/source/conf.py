@@ -86,7 +86,7 @@ copyright = Assign_GUP.__copyright__
 # built documents.
 #
 # The short X.Y version.
-version = '2013-11'
+version = Assign_GUP.__version__
 # The full version, including alpha/beta/rc tags.
 release = '2011-3'
 release = version
