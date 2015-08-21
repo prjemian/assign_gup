@@ -25,6 +25,9 @@ Remove this file to clear any settings.
 # TODO: consider using QSettings instead
 # :see: http://doc.qt.io/qt-4.8/qsettings.html
 # :see: http://youku.io/questions/4849068/python-pyqt4-functions-to-save-and-restore-ui-widget-values
+import __init__
+orgName = __init__.__settings_orgName__
+appName = __init__.__package_name__
 '''
 example::
 
@@ -148,6 +151,9 @@ class ApplicationSettings(object):
             self.modified = True
 
     # set methods are used to control the modified flag
+
+    def getRcFile(self):
+        return self.getByKey('rcfile')
 
     def setRcFile(self, filename):
         self.setKey('rcfile', str(filename))

@@ -12,6 +12,7 @@ __release__             = __version__
 __author__              = u'Pete R. Jemian'
 __email__               = u'jemian@anl.gov'
 __institution__         = u"Advanced Photon Source, Argonne National Laboratory"
+__settings_orgName__    = u'Advanced_Photon_Source'
 __author_name__         = __author__
 __author_email__        = __email__
 

@@ -72,8 +72,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def _init_mainwindow_widget_values_(self):
         self.settings_box.setTitle('settings from ' + self.settings.source)
-        self.setPrpFileText(self.settings.getByKey('prp_file'))
-        self.setRcFileText(self.settings.getByKey('rcfile'))
+        self.setPrpFileText(self.settings.getPrpFile())
+        self.setRcFileText(self.settings.getRcFile())
         self.setReviewCycleText(self.settings.getByKey('review_cycle'))
  
         for key in sorted(self.settings.getKeys()):
@@ -365,7 +365,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.saveWindowGeometry()
         # TODO: what about other window geometries?
         self.settings.write()
-        history.addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
+        history.addLog('Settings written to: ' + self.settings.getRcFile())
         self.adjustMainWindowTitle()
 
     def doNewPrpFile(self):
@@ -406,7 +406,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def setRcFileText(self, text):
         self.rcfile.setText(text)
-        self.settings.setRcFile(text)
         self.adjustMainWindowTitle()
 
     def getReviewCycleText(self):
