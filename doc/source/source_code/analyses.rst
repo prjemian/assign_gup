@@ -1,7 +1,7 @@
-rcfile module
-=============
+analyses module
+===============
 
-.. automodule:: rcfile
+.. automodule:: analyses
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-------------------------------------------
-Widget support for editing topic strengths
-------------------------------------------
+topic_slider module
+===================
 
 .. automodule:: topic_slider
-     :synopsis: correlates label, slider, and text entry for a topic
-     :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:

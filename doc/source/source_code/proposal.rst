@@ -1,7 +1,7 @@
-rcfile module
-=============
+proposal module
+===============
 
-.. automodule:: rcfile
+.. automodule:: proposal
     :members:
     :undoc-members:
     :show-inheritance:

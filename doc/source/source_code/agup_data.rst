@@ -1,7 +1,7 @@
-resources module
+agup_data module
 ================
 
-.. automodule:: resources
+.. automodule:: agup_data
     :members:
     :undoc-members:
     :show-inheritance:

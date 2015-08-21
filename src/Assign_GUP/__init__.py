@@ -1,3 +1,8 @@
+
+'''
+Source code for the Assign_GUP (AGUP) package
+'''
+
 __package_name__        = u'Assign_GUP'
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__

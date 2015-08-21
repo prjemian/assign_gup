@@ -1,7 +1,7 @@
-rcfile module
-=============
+qt_utils module
+===============
 
-.. automodule:: rcfile
+.. automodule:: qt_utils
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
----------------------------
-Application History Logging
----------------------------
+history module
+==============
 
 .. automodule:: history
-     :synopsis: log events
-     :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:

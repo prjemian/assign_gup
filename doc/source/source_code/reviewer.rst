@@ -1,7 +1,7 @@
-rcfile module
-=============
+reviewer module
+===============
 
-.. automodule:: rcfile
+.. automodule:: reviewer
     :members:
     :undoc-members:
     :show-inheritance:

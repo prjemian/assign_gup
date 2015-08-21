@@ -1,7 +1,7 @@
--------------------------
-Application Settings file
--------------------------
+settings module
+===============
 
 .. automodule:: settings
-     :synopsis: AGUP application settings
-     :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:

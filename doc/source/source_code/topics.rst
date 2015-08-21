@@ -1,7 +1,7 @@
-rcfile module
+topics module
 =============
 
-.. automodule:: rcfile
+.. automodule:: topics
     :members:
     :undoc-members:
     :show-inheritance:

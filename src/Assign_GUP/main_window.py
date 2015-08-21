@@ -125,7 +125,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def closeEvent(self, event):
         '''
-        'called when user clicks the big [X] to quit
+        called when user clicks the big [X] to quit
         '''
         history.addLog('application forced quit requested')
         if self.cannotExit():
@@ -139,7 +139,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doClose(self, *args, **kw):
         '''
-        'called when user chooses exit (or quit), or from closeEvent()
+        called when user chooses exit (or quit), or from closeEvent()
         '''
         history.addLog('application exit requested')
         if self.cannotExit():

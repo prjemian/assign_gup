@@ -1,7 +1,7 @@
-rcfile module
-=============
+about module
+============
 
-.. automodule:: rcfile
+.. automodule:: about
     :members:
     :undoc-members:
     :show-inheritance:

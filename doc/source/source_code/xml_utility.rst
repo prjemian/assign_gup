@@ -1,7 +1,7 @@
-main_window module
+xml_utility module
 ==================
 
-.. automodule:: main_window
+.. automodule:: xml_utility
     :members:
     :undoc-members:
     :show-inheritance:
