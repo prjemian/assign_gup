@@ -16,7 +16,7 @@ import qt_utils
 import resources
 import topics
 
-UI_FILE = 'proposals_listview.ui'
+UI_FILE = 'listview.ui'
 REVIEWERS_TEST_FILE = os.path.join('project', 'agup_project.xml')
 
 
@@ -31,6 +31,10 @@ class AGUP_Reviewers_View(QtGui.QWidget):
 
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
+        
+        self.setWindowTitle('Assign_GUP - Reviewers')
+        self.listview_gb.setTitle('Reviewers')
+        self.details_gb.setTitle('Reviewer Details')
 
         self.details_panel = reviewer_details.AGUP_ReviewerDetails(self)
         layout = self.details_gb.layout()
@@ -49,6 +53,13 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
         self.details_panel.custom_signals.topicValueChanged.connect(self.onTopicValueChanged)
+        self.details_panel.full_name.textEdited.connect(self.onTextChanged)
+        self.details_panel.sort_name.textEdited.connect(self.onTextChanged)
+        self.details_panel.phone.textEdited.connect(self.onTextChanged)
+        self.details_panel.email.textEdited.connect(self.onTextChanged)
+        self.details_panel.joined.textEdited.connect(self.onTextChanged)
+        self.details_panel.url.textEdited.connect(self.onTextChanged)
+        self.details_panel.notes.textChanged.connect(self.onTextChanged)
 
         self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
@@ -66,6 +77,9 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         called when user changed a topic value in the details panel
         '''
         self.reviewers.setTopicValue(str(sort_name), str(topic), value)
+        self.details_panel.modified = True
+    
+    def onTextChanged(self, qtext):
         self.details_panel.modified = True
     
     def details_modified(self):

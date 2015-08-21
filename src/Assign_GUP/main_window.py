@@ -37,6 +37,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         resources.loadUi(UI_FILE, baseinstance=self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.main_window_title = self.windowTitle()
+        self.restoreWindowGeometry()
 
         self.modified = False
         self.forced_exit = False
@@ -59,6 +60,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.settings.modified = False
         self.modified = False
+        self.saveWindowGeometry()
         self.adjustMainWindowTitle()
 
     def _init_history_(self):
@@ -360,6 +362,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         '''
         history.addLog('Save Settings requested')
+        self.saveWindowGeometry()
+        # TODO: what about other window geometries?
         self.settings.write()
         history.addLog('Settings written to: ' + self.settings.getByKey('rcfile'))
         self.adjustMainWindowTitle()
@@ -370,6 +374,28 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('New PRP File requested')
         self.setPrpFileText('')
         self.adjustMainWindowTitle()
+    
+    def saveWindowGeometry(self):
+        '''
+        not implemented now
+        '''
+        if False:   # TODO: remove when implemented
+            key = 'main_window_geometry'
+            pos = self.mapToGlobal(self.pos())  # FIXME: Why is this ALWAYS (0,0)?
+            geo = self.geometry()
+            xywh = map(str, [pos.x(), pos.y(), geo.width(), geo.height()])
+            self.settings.setKey(key, ' '.join(xywh))
+    
+    def restoreWindowGeometry(self):
+        '''
+        not implemented now
+        '''
+        if False:   # TODO: remove when implemented
+            key = 'main_window_geometry'
+            if self.settings.keyExists(key):
+                xywh = self.settings.getByKey(key)
+                geo = QtCore.QRect(*map(int, xywh.split()))
+                self.setGeometry(geo)
 
     # widget getters and setters
 

@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,5">
      <item>
-      <widget class="QGroupBox" name="proposals_gb">
+      <widget class="QGroupBox" name="listview_gb">
        <property name="minimumSize">
         <size>
          <width>200</width>

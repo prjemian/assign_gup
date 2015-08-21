@@ -16,7 +16,7 @@ import qt_utils
 import resources
 import topics
 
-UI_FILE = 'proposals_listview.ui'
+UI_FILE = 'listview.ui'
 PROPOSALS_TEST_FILE = os.path.join('project', '2015-2', 'proposals.xml')
 
 
@@ -31,6 +31,10 @@ class AGUP_Proposals_View(QtGui.QWidget):
 
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
+        
+        self.setWindowTitle('Assign_GUP - Proposals')
+        self.listview_gb.setTitle('Proposals')
+        self.details_gb.setTitle('Proposal Details')
 
         self.details_panel = proposal_details.AGUP_ProposalDetails(self)
         layout = self.details_gb.layout()

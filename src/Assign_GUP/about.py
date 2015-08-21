@@ -6,6 +6,8 @@ show the About box
 
 import os, sys
 from PyQt4 import QtCore, QtGui
+
+import __init__
 import history
 import plainTextEdit
 import resources
@@ -23,6 +25,8 @@ class InfoBox(QtGui.QDialog):
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         resources.loadUi(UI_FILE, baseinstance=self)
+        
+        self.version.setText('software version: ' + str(__init__.__version__))
 
         self.docs_pb.clicked.connect(self.doUrl)
         self.license_pb.clicked.connect(self.doLicense)
