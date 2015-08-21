@@ -60,7 +60,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.settings.modified = False
         self.modified = False
-        self.saveWindowGeometry()
         self.adjustMainWindowTitle()
 
     def _init_history_(self):
@@ -90,6 +89,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionSave.triggered.connect(self.doSave)
         self.actionSaveAs.triggered.connect(self.doSaveAs)
+        self.actionReset_settings.triggered.connect(self.doResetDefaultSettings)
         self.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAgupInfo.triggered.connect(self.doAgupInfo)
@@ -343,8 +343,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doSave(self):
         '''
+        save the self.agup data to the known data file name
         '''
-        # TODO: consider saving window geometries
         history.addLog('Save requested')
         self.modified = False
         self.adjustMainWindowTitle()
@@ -352,6 +352,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doSaveAs(self):
         '''
+        save the self.agup data to the data file name selected from a dialog box
         '''
         history.addLog('Save As requested')
         self.modified = False
@@ -360,42 +361,53 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doSaveSettings(self):
         '''
+        user requested to save the settings to the rcfile
         '''
         history.addLog('Save Settings requested')
-        self.saveWindowGeometry()
-        # TODO: what about other window geometries?
+        self.saveWindowGeometry()        # TODO: what about other window geometries?
         self.settings.write()
         history.addLog('Settings written to: ' + self.settings.getRcFile())
         self.adjustMainWindowTitle()
 
+    def doResetDefaultSettings(self):
+        '''
+        user requested to reset the settings to their default values
+        
+        Note: does not write to the rcfile
+        '''
+        history.addLog('Reset to Default Settings requested')
+        self.settings.resetDefaults()
+        self.adjustMainWindowTitle()
+
     def doNewPrpFile(self):
         '''
+        clear the data in self.agup
         '''
         history.addLog('New PRP File requested')
-        self.setPrpFileText('')
+        if False:
+            self.agup.clearAllData()
+            self.setPrpFileText('')
+        history.addLog('New PRP File: NOT IMPLEMENTED YET')
         self.adjustMainWindowTitle()
     
     def saveWindowGeometry(self):
         '''
-        not implemented now
+        remember where the window was
         '''
-        if False:   # TODO: remove when implemented
-            key = 'main_window_geometry'
-            pos = self.mapToGlobal(self.pos())  # FIXME: Why is this ALWAYS (0,0)?
-            geo = self.geometry()
-            xywh = map(str, [pos.x(), pos.y(), geo.width(), geo.height()])
-            self.settings.setKey(key, ' '.join(xywh))
-    
+        key = 'main_window_geometry'
+        geo = self.geometry()
+        xywh = [geo.x(), geo.y(), geo.width(), geo.height()]
+        self.settings.setKey(key, ' '.join(map(str, xywh)))
+
     def restoreWindowGeometry(self):
         '''
-        not implemented now
+        put the window back where it was
         '''
-        if False:   # TODO: remove when implemented
-            key = 'main_window_geometry'
-            if self.settings.keyExists(key):
-                xywh = self.settings.getByKey(key)
-                geo = QtCore.QRect(*map(int, xywh.split()))
-                self.setGeometry(geo)
+        key = 'main_window_geometry'
+        if self.settings.keyExists(key):
+            xywh = self.settings.getByKey(key)
+            geo = QtCore.QRect(*map(int, xywh.split()))
+            self.setGeometry(geo)
 
     # widget getters and setters
 
