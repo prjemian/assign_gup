@@ -113,16 +113,11 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
 
     def saveSplitterDetails(self):
         if self.settings is not None:
-            group = self.__class__.__name__ + '_splitter'
-            sizes = map(int, self.splitter.sizes())
-            self.settings.setKey(group + '/widths', ' '.join(map(str, sizes)))
+            self.settings.saveSplitterDetails(self)
 
     def restoreSplitterDetails(self):
         if self.settings is not None:
-            group = self.__class__.__name__ + '_splitter'
-            sizes = self.settings.getKey(group + '/widths')
-            if sizes is not None:
-                self.splitter.setSizes(map(int, str(sizes).split()))
+            self.settings.restoreSplitterDetails(self)
 
 
 class CustomSignals(QtCore.QObject):

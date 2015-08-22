@@ -170,6 +170,27 @@ class ApplicationQSettings(QtCore.QSettings):
         # see: http://doc.qt.io/qt-4.8/application-windows.html#window-geometry
         window.move(point)
 
+    def saveSplitterDetails(self, window):
+        '''
+        remember where the splitter was
+        
+        :param obj window: instance of QWidget
+        '''
+        group = self.__class__.__name__ + '_splitter'
+        sizes = map(int, window.splitter.sizes())
+        self.setKey(group + '/widths', ' '.join(map(str, sizes)))
+
+    def restoreSplitterDetails(self, window):
+        '''
+        put the splitter back where it was
+        
+        :param obj window: instance of QWidget
+        '''
+        group = self.__class__.__name__ + '_splitter'
+        sizes = self.getKey(group + '/widths')
+        if sizes is not None:
+            window.splitter.setSizes(map(int, str(sizes).split()))
+
 
 def qmain():
     ss = ApplicationQSettings()
