@@ -22,13 +22,16 @@ class CustomSignals(QtCore.QObject):
 class AGUP_TopicsEditor(QtGui.QDialog):
     '''add topic, slider, value_entry to a QGridLayout'''
     
-    def __init__(self, parent=None, topics_list=None):
+    def __init__(self, parent=None, topics_list=None, settings=None):
         self.parent = parent
         self.topics = topics.Topics()
         self.topics.addTopics(topics_list)
+        self.settings = settings
 
         QtGui.QDialog.__init__(self)
         resources.loadUi(UI_FILE, self)
+        self.restoreWindowGeometry()
+
         self.setWindowTitle('AGUP List of Topics')
         self.listWidget.addItems(self.topics.getTopicList())
 
@@ -95,4 +98,19 @@ class AGUP_TopicsEditor(QtGui.QDialog):
     
     def closeEvent(self, event):
         self.custom_signals.closed.emit()   # this window is closing - needed?
+        self.saveWindowGeometry()
         event.accept()
+    
+    def saveWindowGeometry(self):
+        '''
+        remember where the window was
+        '''
+        if self.settings is not None:
+            self.settings.saveWindowGeometry(self)
+
+    def restoreWindowGeometry(self):
+        '''
+        put the window back where it was
+        '''
+        if self.settings is not None:
+            self.settings.restoreWindowGeometry(self)

@@ -30,7 +30,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     '''
 
     def __init__(self):
-        self.settings = settings.ApplicationSettings(agup_data.RC_FILE, agup_data.RC_SECTION)
+        self.settings = settings.ApplicationQSettings()
         self.agup = agup_data.AGUP_Data(self.settings)
 
         QtGui.QMainWindow.__init__(self)
@@ -58,7 +58,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if os.path.exists(filename):
             self.openPrpFile(filename)
 
-        self.settings.modified = False
         self.modified = False
         self.adjustMainWindowTitle()
 
@@ -70,14 +69,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addMessageToHistory = self.history_logger.add
 
     def _init_mainwindow_widget_values_(self):
-        self.settings_box.setTitle('settings from ' + self.settings.source)
         self.setPrpFileText(self.settings.getPrpFile())
-        self.setRcFileText(self.settings.getRcFile())
-        self.setReviewCycleText(self.settings.getByKey('review_cycle'))
+        self.setRcFileText(self.settings.fileName())
+        self.setReviewCycleText(self.settings.getReviewCycle())
  
-        for key in sorted(self.settings.getKeys()):
-            value = self.settings.getByKey(key)
-            history.addLog('Configuration option: %s = %s' % (key, value))
+        for key in sorted(self.settings.allKeys()):
+            value = self.settings.getKey(key)
+            history.addLog('Configuration option: %s = %s' % (key, str(value)))
 
     def _init_connections_(self):
         self.actionNew_PRP_Project.triggered.connect(self.doNewPrpFile)
@@ -90,7 +88,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionSave.triggered.connect(self.doSave)
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionReset_settings.triggered.connect(self.doResetDefaultSettings)
-        self.actionSave_settings.triggered.connect(self.doSaveSettings)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAgupInfo.triggered.connect(self.doAgupInfo)
 
@@ -118,7 +115,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.forced_exit:
             return False
         decision = self.modified
-        decision |= self.settings.modified
         if self.proposal_view is not None:
             decision |= self.proposal_view.isProposalListModified()
         if self.reviewer_view is not None:
@@ -148,6 +144,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if self.doNotQuitNow():
                 return
 
+        self.saveWindowGeometry()
         if self.reviewer_view is not None:
             self.reviewer_view.close()
         if self.proposal_view is not None:
@@ -193,7 +190,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         flags = QtGui.QFileDialog.DontResolveSymlinks
         title = 'Open PRP file'
 
-        prp_file = self.settings.getByKey('prp_file').strip()
+        prp_file = self.settings.getPrpFile().strip()
         if len(prp_file) == 0:
             prp_path = ''
         else:
@@ -227,7 +224,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Import Proposals requested')
         title = 'Choose XML file with proposals'
-        prp_file = self.settings.getByKey('prp_file')
+        prp_file = self.settings.getPrpFile()
 
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
         path = str(path)
@@ -258,7 +255,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
                                                                    self.agup.proposals, 
-                                                                   self.agup.topics)
+                                                                   self.agup.topics,
+                                                                   self.settings)
         self.proposal_view.show()
 
     def doEditReviewers(self):
@@ -267,7 +265,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.reviewer_view is None:
             self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, 
                                                                    self.agup.reviewers, 
-                                                                   self.agup.topics)
+                                                                   self.agup.topics,
+                                                                   self.settings)
         self.reviewer_view.show()
 
     def doImportReviewers(self):
@@ -299,7 +298,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.reviewer_view = None
         
         known_topics = self.agup.topics.getTopicList()
-        edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics)
+        edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics, self.settings)
         edit_topics_ui.exec_()   # Modal Dialog
         
         # learn what changed
@@ -359,16 +358,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.adjustMainWindowTitle()
         history.addLog('NOTE: Save As NOT IMPLEMENTED YET')
 
-    def doSaveSettings(self):
-        '''
-        user requested to save the settings to the rcfile
-        '''
-        history.addLog('Save Settings requested')
-        self.saveWindowGeometry()        # TODO: what about other window geometries?
-        self.settings.write()
-        history.addLog('Settings written to: ' + self.settings.getRcFile())
-        self.adjustMainWindowTitle()
-
     def doResetDefaultSettings(self):
         '''
         user requested to reset the settings to their default values
@@ -394,20 +383,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         remember where the window was
         '''
-        key = 'main_window_geometry'
-        geo = self.geometry()
-        xywh = [geo.x(), geo.y(), geo.width(), geo.height()]
-        self.settings.setKey(key, ' '.join(map(str, xywh)))
+        if self.settings is not None:
+            self.settings.saveWindowGeometry(self)
 
     def restoreWindowGeometry(self):
         '''
         put the window back where it was
         '''
-        key = 'main_window_geometry'
-        if self.settings.keyExists(key):
-            xywh = self.settings.getByKey(key)
-            geo = QtCore.QRect(*map(int, xywh.split()))
-            self.setGeometry(geo)
+        if self.settings is not None:
+            self.settings.restoreWindowGeometry(self)
 
     # widget getters and setters
 
@@ -424,7 +408,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         return str(self.review_cycle.text())
     
     def setReviewCycleText(self, text):
-        self.review_cycle.setText(text)
+        self.review_cycle.setText(text or '')
         self.settings.setReviewCycle(text)
         self.adjustMainWindowTitle()
 

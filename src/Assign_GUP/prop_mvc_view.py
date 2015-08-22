@@ -25,12 +25,14 @@ class AGUP_Proposals_View(QtGui.QWidget):
     Manage the list of proposals, including assignments of topic weights and reviewers
     '''
     
-    def __init__(self, parent=None, proposals=None, topics_object=None):
+    def __init__(self, parent=None, proposals=None, topics_object=None, settings=None):
         self.parent = parent
         self.topics = topics_object or topics.Topics()
+        self.settings = settings
 
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
+        self.restoreWindowGeometry()
         
         self.setWindowTitle('Assign_GUP - Proposals')
         self.listview_gb.setTitle('Proposals')
@@ -142,3 +144,22 @@ class AGUP_Proposals_View(QtGui.QWidget):
     def isProposalListModified(self):
         # TODO: support proposal editing
         return self.details_panel.modified
+
+    def closeEvent(self, event):
+        self.saveWindowGeometry()
+        event.accept()
+        self.close()
+    
+    def saveWindowGeometry(self):
+        '''
+        remember where the window was
+        '''
+        if self.settings is not None:
+            self.settings.saveWindowGeometry(self)
+
+    def restoreWindowGeometry(self):
+        '''
+        put the window back where it was
+        '''
+        if self.settings is not None:
+            self.settings.restoreWindowGeometry(self)

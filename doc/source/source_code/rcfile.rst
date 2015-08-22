@@ -1,7 +1,0 @@
-rcfile module
-=============
-
-.. automodule:: rcfile
-    :members:
-    :undoc-members:
-    :show-inheritance:

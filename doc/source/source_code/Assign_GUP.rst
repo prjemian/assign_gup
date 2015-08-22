@@ -27,7 +27,6 @@ Submodules
    proposal
    proposal_details
    qt_utils
-   rcfile
    resources
    reviewer
    reviewer_details

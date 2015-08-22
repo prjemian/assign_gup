@@ -25,12 +25,14 @@ class AGUP_Reviewers_View(QtGui.QWidget):
     Manage the list of Reviewers, including assignments of topic weights
     '''
     
-    def __init__(self, parent=None, reviewers=None, topics_object=None):
+    def __init__(self, parent=None, reviewers=None, topics_object=None, settings=None):
         self.parent = parent
         self.topics = topics_object or topics.Topics()
+        self.settings = settings
 
         QtGui.QWidget.__init__(self)
         resources.loadUi(UI_FILE, self)
+        self.restoreWindowGeometry()
         
         self.setWindowTitle('Assign_GUP - Reviewers')
         self.listview_gb.setTitle('Reviewers')
@@ -148,6 +150,24 @@ class AGUP_Reviewers_View(QtGui.QWidget):
     def isReviewerListModified(self):
         # TODO: support reviewer editing
         return self.details_panel.modified
+
+    def closeEvent(self, event):
+        self.saveWindowGeometry()
+        event.accept()
+    
+    def saveWindowGeometry(self):
+        '''
+        remember where the window was
+        '''
+        if self.settings is not None:
+            self.settings.saveWindowGeometry(self)
+
+    def restoreWindowGeometry(self):
+        '''
+        put the window back where it was
+        '''
+        if self.settings is not None:
+            self.settings.restoreWindowGeometry(self)
 
 
 def main():

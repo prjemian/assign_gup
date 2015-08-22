@@ -19,10 +19,10 @@ import topics
 import xml_utility
 
 UI_FILE = 'main_window.ui'
-RC_FILE = '.assign_gup.rc'
-RC_SECTION = 'Assign_GUP'
-DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
-TEST_OUTPUT_FILE = os.path.join('project', 'agup_project.xml')
+# RC_FILE = '.assign_gup.rc'
+# RC_SECTION = 'Assign_GUP'
+# DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
+# TEST_OUTPUT_FILE = os.path.join('project', 'agup_project.xml')
 AGUP_MASTER_ROOT_TAG = 'AGUP_Review_Session'
 AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_MASTER_VERSION = '1.0'
@@ -36,7 +36,7 @@ class AGUP_Data(QtCore.QObject):
     def __init__(self, config = None):
         QtCore.QObject.__init__(self)
 
-        self.settings = config or settings.ApplicationSettings(RC_FILE, RC_SECTION)
+        self.settings = config or settings.ApplicationQSettings()
         self.clearAllData()
         self.modified = False
     
@@ -158,8 +158,8 @@ class AGUP_Data(QtCore.QObject):
             history.addLog(traceback.format_exc())
             return
 
-        cycle = self.settings.getByKey('review_cycle')
-        if len(cycle) == 0 or cycle == props.cycle:
+        cycle = self.settings.getReviewCycle()
+        if cycle in (None, '', props.cycle):
             self.proposals = props
             self.settings.setReviewCycle(props.cycle)
         else:
