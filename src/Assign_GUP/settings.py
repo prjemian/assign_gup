@@ -2,10 +2,23 @@
 r'''
 Support for AGUP program settings
 
-This file is used to preserve settings of the application.
-Remove this file to clear any settings.
+The ".rc" (resource configuration) file is used to preserve settings of the application.
+Remove the .rc file to clear any settings.
+Note, the .rc file may have the suffix ".ini" on some operating systems.
 
 This module uses QSettings (http://doc.qt.io/qt-4.8/qsettings.html).
+        
+..  note:: Multi-monitor support : method restoreWindowGeometry()
+    
+    On multi-monitor systems such as laptops, window may be
+    restored to offscreen position.  Here is how it happens:
+    
+    * geo was saved while window was on 2nd screen while docked
+    * now re-opened on laptop display and window is off-screen
+    
+    For now, keep the windows on the main screen 
+    or learn how to edit the .rc file.
+
 '''
 
 
@@ -139,15 +152,6 @@ class ApplicationQSettings(QtCore.QSettings):
         put the window back where it was
         
         :param obj window: instance of QWidget
-        
-        ..  note:: Multi-monitor support
-            
-            On multi-monitor systems such as laptops, window may be
-            restored to offscreen position.  Here is how it happens:
-            
-            * geo was saved while window was on 2nd screen while docked
-            * now re-opened on laptop display and window is off-screen
-
         '''
         group = window.__class__.__name__ + '_geometry'
         x = self.getKey(group + '/x')
