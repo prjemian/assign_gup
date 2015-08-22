@@ -51,7 +51,10 @@ class AGUP_TopicSlider(QtCore.QObject):
                                 pageStep=10,
                                 tracking=False,
                                 orientation=QtCore.Qt.Horizontal,
-                                tickPosition=QtGui.QSlider.TicksBothSides,
+                                tickPosition=QtGui.QSlider.TicksAbove,  # looks like a user preference
+                                #tickPosition=QtGui.QSlider.TicksBothSides,
+                                #tickPosition=QtGui.QSlider.TicksBelow,
+                                #tickPosition=QtGui.QSlider.NoTicks,
                                 tickInterval=20
                                )
 

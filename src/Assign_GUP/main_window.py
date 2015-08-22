@@ -284,6 +284,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Importing Analyses file: NOT IMPLEMENTED NOW')
 
+    def importTopics(self, filename):
+        '''
+        '''
+        history.addLog('Importing Topics file: NOT IMPLEMENTED NOW')
+
     def doEditTopics(self):
         '''
         Create Window to edit list of Topics

@@ -82,6 +82,19 @@ class AGUP_Reviewer_Data(object):
     def getKey(self, key):
         return self.db[key]
     
+    def setKey(self, key, value):
+        '''
+        save a value to a known key
+        
+        example::
+        
+            self.setKey('full_name', 'Pete Jemian')
+        
+        '''
+        if key not in self.db:
+            raise KeyError, 'unknown key: ' + key
+        self.db[key] = value
+    
     def getTopic(self, topic):
         '''
         return the value of the named topic

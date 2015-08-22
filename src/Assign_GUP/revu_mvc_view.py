@@ -38,7 +38,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.listview_gb.setTitle('Reviewers')
         self.details_gb.setTitle('Reviewer Details')
 
-        self.details_panel = reviewer_details.AGUP_ReviewerDetails(self)
+        self.details_panel = reviewer_details.AGUP_ReviewerDetails(self, self.settings)
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
@@ -55,13 +55,13 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
         self.details_panel.custom_signals.topicValueChanged.connect(self.onTopicValueChanged)
-        self.details_panel.full_name.textEdited.connect(self.onTextChanged)
-        self.details_panel.sort_name.textEdited.connect(self.onTextChanged)
-        self.details_panel.phone.textEdited.connect(self.onTextChanged)
-        self.details_panel.email.textEdited.connect(self.onTextChanged)
-        self.details_panel.joined.textEdited.connect(self.onTextChanged)
-        self.details_panel.url.textEdited.connect(self.onTextChanged)
-        self.details_panel.notes.textChanged.connect(self.onTextChanged)
+        self.details_panel.full_name.textEdited.connect(self.onDetailsModified)
+        self.details_panel.sort_name.textEdited.connect(self.onDetailsModified)
+        self.details_panel.phone.textEdited.connect(self.onDetailsModified)
+        self.details_panel.email.textEdited.connect(self.onDetailsModified)
+        self.details_panel.joined.textEdited.connect(self.onDetailsModified)
+        self.details_panel.url.textEdited.connect(self.onDetailsModified)
+        self.details_panel.notes.textChanged.connect(self.onDetailsModified)
 
         self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
@@ -81,7 +81,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.reviewers.setTopicValue(str(sort_name), str(topic), value)
         self.details_panel.modified = True
     
-    def onTextChanged(self, qtext):
+    def onDetailsModified(self, *args):
         self.details_panel.modified = True
     
     def details_modified(self):
@@ -92,22 +92,20 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         '''
         select Reviewer for editing as referenced by sort_name
         '''
-#         if self.details_modified():
-#             # TODO: get values from details panel and store in main
-#             history.addLog('need to save modified reviewer details')
-#             pass
+        if self.details_modified():
+            self.saveReviewerDetails()
             
         if sort_name is None:
             return
         panelist = self.reviewers.getReviewer(str(sort_name))
 
-        self.details_panel.setFullName(panelist.db['full_name'])
-        self.details_panel.setSortName(panelist.db['name'])
-        self.details_panel.setPhone(panelist.db['phone'])
-        self.details_panel.setEmail(panelist.db['email'])
-        self.details_panel.setNotes(panelist.db['notes'])
-        self.details_panel.setJoined(panelist.db['joined'])
-        self.details_panel.setUrl(panelist.db['URL'])
+        self.details_panel.setFullName(panelist.getKey('full_name'))
+        self.details_panel.setSortName(panelist.getKey('name'))
+        self.details_panel.setPhone(panelist.getKey('phone'))
+        self.details_panel.setEmail(panelist.getKey('email'))
+        self.details_panel.setNotes(panelist.getKey('notes'))
+        self.details_panel.setJoined(panelist.getKey('joined'))
+        self.details_panel.setUrl(panelist.getKey('URL'))
 
         topics_list = panelist.getTopicList()
         for topic in topics_list:
@@ -117,6 +115,27 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
         history.addLog('selected reviewer: ' + str(sort_name))
+    
+    def saveReviewerDetails(self):
+        '''
+        copied Reviewer details from editor panel to main data structure
+        '''
+        sort_name = str(self.details_panel.getSortName())
+        panelist = self.reviewers.getReviewer(sort_name)    # raises IndexError if not found
+
+        kv = dict(
+            full_name=self.details_panel.getFullName,
+            name=self.details_panel.getSortName,
+            phone=self.details_panel.getPhone,
+            email=self.details_panel.getEmail,
+            notes=self.details_panel.getNotes,
+            joined=self.details_panel.getJoined,
+            URL=self.details_panel.getUrl,
+        )
+        for k, v in kv.items():
+            panelist.setKey(k, v())
+        history.addLog('saved reviewer details: ' + sort_name)
+        self.details_panel.modified = False
 
     def selectModelByIndex(self, curr, prev):
         '''
@@ -152,6 +171,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         return self.details_panel.modified
 
     def closeEvent(self, event):
+        self.saveReviewerDetails()
+        self.details_panel.saveSplitterDetails()
         self.saveWindowGeometry()
         event.accept()
     

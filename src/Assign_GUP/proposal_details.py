@@ -19,13 +19,15 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     QtGui widget to edit one Proposal instance
     '''
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, settings=None):
         '''
         '''
         self.parent = parent
+        self.settings = settings
 
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
+        self.restoreSplitterDetails()
 
         self.modified = False
         self.topic_list = []
@@ -103,6 +105,19 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     def setSubjects(self, value):
         self.subjects.setPlainText(value)
         self.modified = True
+
+    def saveSplitterDetails(self):
+        if self.settings is not None:
+            group = self.__class__.__name__ + '_splitter'
+            sizes = map(int, self.splitter.sizes())
+            self.settings.setKey(group + '/widths', ' '.join(map(str, sizes)))
+
+    def restoreSplitterDetails(self):
+        if self.settings is not None:
+            group = self.__class__.__name__ + '_splitter'
+            sizes = self.settings.getKey(group + '/widths')
+            if sizes is not None:
+                self.splitter.setSizes(map(int, str(sizes).split()))
 
 
 class CustomSignals(QtCore.QObject):
