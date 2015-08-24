@@ -255,6 +255,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
                                                                    self.agup.proposals, 
+                                                                   self.agup.reviewers, 
                                                                    self.agup.topics,
                                                                    self.settings)
         self.proposal_view.show()

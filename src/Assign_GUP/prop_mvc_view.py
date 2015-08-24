@@ -25,8 +25,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
     Manage the list of proposals, including assignments of topic weights and reviewers
     '''
     
-    def __init__(self, parent=None, proposals=None, topics_object=None, settings=None):
+    def __init__(self, parent=None, proposals=None, reviewers=None, topics_object=None, settings=None):
         self.parent = parent
+        self.reviewers = reviewers
         self.topics = topics_object or topics.Topics()
         self.settings = settings
 
@@ -90,18 +91,21 @@ class AGUP_Proposals_View(QtGui.QWidget):
         if prop_id is None:
             return
         proposal = self.proposals.getProposal(str(prop_id))
-        self.details_panel.setAll(
-                                proposal.db['proposal_id'], 
-                                proposal.db['proposal_title'], 
-                                proposal.db['review_period'], 
-                                proposal.db['spk_name'], 
-                                proposal.db['first_choice_bl'], 
-                                proposal.db['subjects'],
-                                )
-        topics_list = proposal.getTopicList()
-        for topic in topics_list:
-            value = proposal.getTopic(topic)
-            self.details_panel.setTopic(topic, value)
+        self.details_panel.setupProposal(proposal, self.reviewers)
+        for t in proposal.topics:
+            self.details_panel.addTopic(t, proposal.getTopic(t))
+#         self.details_panel.setAll(
+#                                 proposal.db['proposal_id'], 
+#                                 proposal.db['proposal_title'], 
+#                                 proposal.db['review_period'], 
+#                                 proposal.db['spk_name'], 
+#                                 proposal.db['first_choice_bl'], 
+#                                 proposal.db['subjects'],
+#                                 )
+#         topics_list = proposal.getTopicList()
+#         for topic in topics_list:
+#             value = proposal.getTopic(topic)
+#             self.details_panel.setTopic(topic, value)
         # set reviewers
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False

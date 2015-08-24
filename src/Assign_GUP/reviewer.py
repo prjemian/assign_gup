@@ -66,7 +66,7 @@ class AGUP_Reviewer_Data(object):
 
         :param obj specified_node: XML node to contain this data
         '''
-        specified_node.attrib['name'] = self.getKey('name')
+        specified_node.attrib['name'] = self.getSortName()
         for tag in self.tagList:
             etree.SubElement(specified_node, tag).text = self.getKey(tag)
 
@@ -75,6 +75,9 @@ class AGUP_Reviewer_Data(object):
             subnode = etree.SubElement(node, 'Topic')
             subnode.attrib['name'] = k
             subnode.attrib['value'] = str(self.topics.get(k))
+    
+    def getSortName(self):
+        return self.getKey('name')
     
     def getFullName(self):
         return self.getKey('full_name')

@@ -19,10 +19,6 @@ import topics
 import xml_utility
 
 UI_FILE = 'main_window.ui'
-# RC_FILE = '.assign_gup.rc'
-# RC_SECTION = 'Assign_GUP'
-# DUMMY_TOPICS_LIST = '''bio chem geo eng mater med phys poly'''.split()
-# TEST_OUTPUT_FILE = os.path.join('project', 'agup_project.xml')
 AGUP_MASTER_ROOT_TAG = 'AGUP_Review_Session'
 AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_MASTER_VERSION = '1.0'
