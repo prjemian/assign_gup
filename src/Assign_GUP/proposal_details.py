@@ -118,7 +118,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         # widgets for reviewers, topics
         groupbox = self.reviewers_gb
         layout = groupbox.layout()
-        layout.clearLayout()
+        layout.clearLayout()    # FIXME: unnecessary blinking, re-use widgets instead: disable ineligible reviewers instead
         layout.proposal = proposal
 
         kv = dict(

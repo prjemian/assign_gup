@@ -19,6 +19,7 @@ This module uses QSettings (http://doc.qt.io/qt-4.8/qsettings.html).
     For now, keep the windows on the main screen 
     or learn how to edit the .rc file.
 
+---------
 '''
 
 

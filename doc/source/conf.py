@@ -63,6 +63,7 @@ extensions.append('sphinx.ext.autodoc')
 extensions.append('sphinx.ext.todo')
 extensions.append('sphinx.ext.ifconfig')
 extensions.append('sphinx.ext.viewcode')
+extensions.append('sphinx.ext.mathjax')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

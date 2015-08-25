@@ -133,26 +133,14 @@ class Topics(object):
         return diffLists(self.getTopicList(), other_topics_object.getTopicList())
 
     def dotProduct(self, other):
-        '''
-        dot product of self (proposals) and other (reviewers)
-        
+        r'''
+        normalized dot product of Proposal (*self*) and Reviewer (*other*) topic strengths, :math:`\vec{p} \cdot \vec{r}`
+
         :param obj other: instance of Topics()
+        :returns: :math:`\sum{\vec{p} \cdot \vec{r}} / \sum{\vec{p}}`
         
-        ::
-
-            :param float value: topic value to be checked
-        
-                    weights = [getAsFloat(proposal_topic_dict[topic]) for topic in keyList]
-                    denominator = sum(weights)
-                    if denominator == 0.0:
-                        return 0.0            # this proposal has no assigned weights
-                
-                    strengths = [getAsFloat(reviewer_strength_dict[topic]) for topic in keyList]
-                    numerator = sum([u*v for u, v in zip(weights, strengths)])
-            
-                    dot_product = numerator / denominator   # sum(proposal_weight * reviewer_strength)
-                return dot_product
-
+        * :math:`\vec{p}` is array of topic value strengths for Proposal
+        * :math:`\vec{r}` is array of topic value strengths for Reviewer
         '''
         if not self.compare(other):
             raise KeyError, 'these two lists of topics are not the same, cannot dot product'
