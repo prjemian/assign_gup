@@ -163,12 +163,13 @@ class ApplicationQSettings(QtCore.QSettings):
         window.resize(QtCore.QSize(int(width), int(height)))
         if x is None or y is None:
             return
-        # TODO: what if (x,y) is off-screen?  Check here is point is off-screen
+        # TODO: what if (x,y) is off-screen?  Check here if point is off-screen.  How?
         point = QtCore.QPoint(int(x), int(y))
         # TODO: only do this if point is on-screen
         # see: http://doc.qt.io/qt-4.8/qdesktopwidget.html#screen-geometry
         # see: http://doc.qt.io/qt-4.8/application-windows.html#window-geometry
-        window.move(point)
+        # window.move(point)
+        window.setGeometry(QtCore.QRect(int(x), int(y), int(width), int(height)))
 
     def saveSplitterDetails(self, window):
         '''

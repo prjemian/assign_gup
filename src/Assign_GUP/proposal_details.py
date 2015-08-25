@@ -7,7 +7,7 @@ QtGui widget to edit one Proposal instance
 from PyQt4 import QtGui, QtCore
 
 import history
-import prop_revu_row
+import prop_revu_grid
 import resources
 import topic_slider
 import topics
@@ -38,7 +38,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.reviewer_widgets = {}
 
         groupbox = self.reviewers_gb
-        layout = prop_revu_row.ReviewerAssignmentGridLayout(None, None)
+        layout = prop_revu_grid.ReviewerAssignmentGridLayout(None, None)
         groupbox.setLayout(layout)
 
         self.custom_signals = CustomSignals()

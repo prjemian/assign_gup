@@ -151,15 +151,28 @@
             </item>
            </layout>
           </item>
+          <item row="1" column="0">
+           <widget class="QGroupBox" name="reviewers_gb">
+            <property name="title">
+             <string>Reviewer Assignment and combined Topic Strengths</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="reviewers_gb">
-         <property name="title">
-          <string>Reviewer Assignment and combined Topic Strengths</string>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

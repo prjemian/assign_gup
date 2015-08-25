@@ -132,20 +132,47 @@ class Topics(object):
         '''
         return diffLists(self.getTopicList(), other_topics_object.getTopicList())
 
-    def dotProduct(self, other_topics_object):
+    def dotProduct(self, other):
         '''
-        dot product of self and other_topics_object
+        dot product of self (proposals) and other (reviewers)
         
-        :param obj other_topics_object: instance of Topics()
+        :param obj other: instance of Topics()
+        
+        ::
+
+            :param float value: topic value to be checked
+        
+                    weights = [getAsFloat(proposal_topic_dict[topic]) for topic in keyList]
+                    denominator = sum(weights)
+                    if denominator == 0.0:
+                        return 0.0            # this proposal has no assigned weights
+                
+                    strengths = [getAsFloat(reviewer_strength_dict[topic]) for topic in keyList]
+                    numerator = sum([u*v for u, v in zip(weights, strengths)])
+            
+                    dot_product = numerator / denominator   # sum(proposal_weight * reviewer_strength)
+                return dot_product
+
         '''
-        if not self.compare(other_topics_object):
+        if not self.compare(other):
             raise KeyError, 'these two lists of topics are not the same, cannot dot product'
         if len(self.getTopicList()) == 0:
             return 0.0      # trivial result and avoids div-by-zero error
-        value = 0.0
-        for topic in self.getTopicList():
-            value += self.get(topic) * other_topics_object.get(topic)
-        return value / len(self.getTopicList())
+        if False:
+            value = 0.0
+            for topic in self.getTopicList():
+                value += self.get(topic) * other.get(topic)
+            return value / len(self.getTopicList())
+        
+        props = [self.get(topic) for topic in self.getTopicList()]      # proposals
+        denominator = sum(props)
+        if denominator == 0.0:
+            return 0.0
+
+        rvwrs = [other.get(topic) for topic in self.getTopicList()]     # reviewers
+        numerator = sum([u*v for u, v in zip(props, rvwrs)])
+        dot_product = numerator / denominator   # sum(proposal_weight * reviewer_strength)
+        return dot_product
 
 
 def checkTopicValueRange(value):

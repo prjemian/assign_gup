@@ -165,7 +165,10 @@ class ProposalReviewerRow(QtCore.QObject):
         '''
         dot product of reviewer and proposal topic strengths
         '''
-        dot = self.proposal.topics.dotProduct(self.reviewer.topics)
+        if self.proposal and self.reviewer:
+            dot = self.proposal.topics.dotProduct(self.reviewer.topics)
+        else:
+            dot = 0.0
         self.setValue(int(100*dot+0.5))
 
 
@@ -205,9 +208,12 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         '''
         add a list of reviewers
         '''
-        for rvwr in reviewers:
-            self.addReviewer(rvwr)
-            dot = self.proposal.topics.dotProduct(rvwr.topics)
+        # FIXME: AttributeError: 'ReviewerAssignmentGridLayout' object has no attribute 'proposals'
+        if self.proposal is not None:
+            for rvwr in reviewers:
+                if rvwr is not None:
+                    self.addReviewer(rvwr)
+                    dot = self.proposal.topics.dotProduct(rvwr.topics)
 
     def clearLayout(self):
         '''
@@ -274,7 +280,7 @@ def project_main():
     proposal = agup.proposals.proposals[test_gup_id]
 
     app = QtGui.QApplication(sys.argv)
-    grid = QtGui.QGroupBox('prop_revu_row demo')
+    grid = QtGui.QGroupBox('prop_revu_grid demo')
 
     assignments = ReviewerAssignmentGridLayout(grid, proposal)
     assignments.addReviewers(agup.reviewers)
