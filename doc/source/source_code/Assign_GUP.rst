@@ -7,6 +7,7 @@ Module contents
 .. automodule:: Assign_GUP
     :members:
     :undoc-members:
+    :special-members:
     :show-inheritance:
 
 Submodules
@@ -24,6 +25,7 @@ Submodules
    plainTextEdit
    prop_mvc_data
    prop_mvc_view
+   prop_revu_grid
    proposal
    proposal_details
    qt_utils
