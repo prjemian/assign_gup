@@ -253,21 +253,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         '''
         if self.proposal_view is None:
-            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, 
-                                                                   self.agup.proposals, 
-                                                                   self.agup.reviewers, 
-                                                                   self.agup.topics,
-                                                                   self.settings)
+            self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
         self.proposal_view.show()
 
     def doEditReviewers(self):
         '''
         '''
         if self.reviewer_view is None:
-            self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, 
-                                                                   self.agup.reviewers, 
-                                                                   self.agup.topics,
-                                                                   self.settings)
+            self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
         self.reviewer_view.show()
 
     def doImportReviewers(self):

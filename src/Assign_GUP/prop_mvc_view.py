@@ -23,12 +23,16 @@ PROPOSALS_TEST_FILE = os.path.join('project', '2015-2', 'proposals.xml')
 class AGUP_Proposals_View(QtGui.QWidget):
     '''
     Manage the list of proposals, including assignments of topic weights and reviewers
+    
+    :param obj parent: instance of main_window.AGUP_MainWindow or None
+    :param obj agup: instance of agup_data.AGUP_Data
+    :param obj settings: instance of settings.ApplicationQSettings
     '''
     
-    def __init__(self, parent=None, proposals=None, reviewers=None, topics_object=None, settings=None):
+    def __init__(self, parent=None, agup=None, settings=None):
         self.parent = parent
-        self.reviewers = reviewers
-        self.topics = topics_object or topics.Topics()
+        self.reviewers = agup.reviewers
+        self.topics = agup.topics
         self.settings = settings
 
         QtGui.QWidget.__init__(self)
@@ -46,10 +50,10 @@ class AGUP_Proposals_View(QtGui.QWidget):
         for topic in self.topics:
             self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
 
-        if proposals is not None:
-            self.setModel(proposals)
-            if len(proposals) > 0:
-                prop_id = proposals.keyOrder()[0]
+        if agup.proposals is not None:
+            self.setModel(agup.proposals)
+            if len(agup.proposals) > 0:
+                prop_id = agup.proposals.keyOrder()[0]
                 self.editProposal(prop_id, None)
                 self.selectFirstListItem()
 

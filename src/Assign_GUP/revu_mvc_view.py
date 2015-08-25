@@ -23,11 +23,15 @@ REVIEWERS_TEST_FILE = os.path.join('project', 'agup_project.xml')
 class AGUP_Reviewers_View(QtGui.QWidget):
     '''
     Manage the list of Reviewers, including assignments of topic weights
+    
+    :param obj parent: instance of main_window.AGUP_MainWindow or None
+    :param obj agup: instance of agup_data.AGUP_Data
+    :param obj settings: instance of settings.ApplicationQSettings
     '''
     
-    def __init__(self, parent=None, reviewers=None, topics_object=None, settings=None):
+    def __init__(self, parent=None, agup=None, settings=None):
         self.parent = parent
-        self.topics = topics_object or topics.Topics()
+        self.topics = agup.topics
         self.settings = settings
 
         QtGui.QWidget.__init__(self)
@@ -45,10 +49,10 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         for topic in self.topics:
             self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
 
-        if reviewers is not None:
-            self.setModel(reviewers)
-            if len(reviewers) > 0:
-                sort_name = reviewers.keyOrder()[0]
+        if agup.reviewers is not None:
+            self.setModel(agup.reviewers)
+            if len(agup.reviewers) > 0:
+                sort_name = agup.reviewers.keyOrder()[0]
                 self.editReviewer(sort_name, None)
                 self.selectFirstListItem()
 
@@ -195,14 +199,13 @@ def main():
     '''simple starter program to develop this code'''
     import sys
     import os
-    import revu_mvc_data
-    reviewers = revu_mvc_data.AGUP_Reviewers_List()
-    reviewers.importXml(REVIEWERS_TEST_FILE)
-    sort_name = reviewers.keyOrder()[0]
-    reviewer = reviewers.getReviewer(sort_name)
+    import agup_data
+
+    agup = agup_data.AGUP_Data()
+    agup.openPrpFile('project/agup_project.xml')
 
     app = QtGui.QApplication(sys.argv)
-    mw = AGUP_Reviewers_View(None, reviewers, reviewer.topics)
+    mw = AGUP_Reviewers_View(None, agup)
     mw.show()
     _r = app.exec_()
     sys.exit(_r)
