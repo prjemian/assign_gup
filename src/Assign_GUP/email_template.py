@@ -16,6 +16,7 @@ import xml_utility
 DEFAULT_PROJECT_FILE = os.path.abspath('project/agup_project.xml')
 DEFAULT_TEMPLATE_FILE = os.path.abspath('resources/email_template.txt')
 DEFAULT_TEMPLATE_FIELDS = dict(
+    # these are example values
     PANEL_CHAIR = 'Pete Jemian',
     REVIEW_CYCLE = '2015-2',
     PRP_DATE = '2015-03-24',
@@ -26,12 +27,9 @@ DEFAULT_TEMPLATE_FIELDS = dict(
        
        We've discussed the responsibilities for reviewing project proposals.
        If you have any questions, call or write me.
+
+    This is no PUP to review this cycle.
     ''',
-    # these to be completed during mail merge step
-    # FULL_NAME = 'Ima Reviewer',
-    # EMAIL = 'reviewer@institution.net',
-    # ASSIGNED_PRIMARY_PROPOSALS = '11111 22222 33333',
-    # ASSIGNED_SECONDARY_PROPOSALS = '44444 55555 66666',
 )
 
 
@@ -51,6 +49,15 @@ class EmailTemplate(object):
     def mail_merge(self, **kw_dict):
         '''
         create one email with a mail merge of self.keyword_dict and kw_dict into self.email_template
+        
+        suggest defining at least these four keywords, to be applied for each reviewer 
+        during mail merge step (values filled in programmatically)::
+
+            FULL_NAME = 'Ima Reviewer',
+            EMAIL = 'reviewer@institution.net',
+            ASSIGNED_PRIMARY_PROPOSALS = '11111 22222 33333',
+            ASSIGNED_SECONDARY_PROPOSALS = '44444 55555 66666',
+        
         '''
         kw = self.keyword_dict.copy()   # start with this keyword dictionary
         kw.update(kw_dict)              # add/replace with supplied kw_dict
