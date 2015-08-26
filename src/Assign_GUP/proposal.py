@@ -76,7 +76,7 @@ class AGUP_Proposal_Data(object):
         for k in self.topics:
             subnode = etree.SubElement(node, 'Topic')
             subnode.attrib['name'] = k
-            subnode.attrib['value'] = str(self.topics.get(v))
+            subnode.attrib['value'] = str(self.topics.get(k))
     
     def getKey(self, key):
         return self.db[key]

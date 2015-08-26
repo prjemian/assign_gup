@@ -96,15 +96,17 @@ class AGUP_Analyses(object):
             prop_node = etree.SubElement(specified_node, 'Proposal')
             prop_node.attrib['id'] = str(prop_id)
             node = etree.SubElement(prop_node, 'Topics')
-            for k, v in sorted(finding['Topics'].items()):
+            for k in finding.topics.getTopicList():
+                v = finding.topics.get(k)
                 subnode = etree.SubElement(node, 'Topic')
                 subnode.attrib['name'] = k
                 subnode.attrib['value'] = str(v)
 
-            node = etree.SubElement(prop_node, 'Reviewers')
-            for k, v in sorted(finding['Reviewers'].items()):
-                subnode = etree.SubElement(node, 'Reviewer')
-                subnode.attrib[k] = str(v)
+            # FIXME: self.analyses does not have the reviewer assignments!
+            subnode = etree.SubElement(prop_node, 'Reviewer1')
+            subnode.attrib['name'] = str(finding.reviewer1)
+            subnode = etree.SubElement(prop_node, 'Reviewer2')
+            subnode.attrib['name'] = str(finding.reviewer2)
 
 
 class ProposalAnalysis(object):

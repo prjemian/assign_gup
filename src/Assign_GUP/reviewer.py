@@ -71,7 +71,8 @@ class AGUP_Reviewer_Data(object):
             etree.SubElement(specified_node, tag).text = self.getKey(tag)
 
         node = etree.SubElement(specified_node, 'Topics')
-        for k, v in self.topics.getTopicList():
+        for k in self.topics.getTopicList():
+            v = self.topics.get(k)
             subnode = etree.SubElement(node, 'Topic')
             subnode.attrib['name'] = k
             subnode.attrib['value'] = str(self.topics.get(k))
