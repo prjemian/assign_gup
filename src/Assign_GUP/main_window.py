@@ -56,7 +56,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         filename = self.settings.getPrpFile()
         if os.path.exists(filename):
-            self.openPrpFile(filename)
+            self.agup.openPrpFile(filename)
 
         self.modified = False
         self.adjustMainWindowTitle()
