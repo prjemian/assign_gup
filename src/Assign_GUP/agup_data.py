@@ -10,7 +10,9 @@ import history
 from PyQt4 import QtCore
 import StringIO
 import traceback
+
 import analyses
+import email_template
 import prop_mvc_data
 import resources
 import revu_mvc_data
@@ -44,6 +46,7 @@ class AGUP_Data(QtCore.QObject):
         self.proposals = prop_mvc_data.AGUP_Proposals_List()
         self.reviewers = revu_mvc_data.AGUP_Reviewers_List()
         self.topics = topics.Topics()
+        self.email = email_template.EmailTemplate()
     
     def openPrpFile(self, filename):
         '''
@@ -57,6 +60,7 @@ class AGUP_Data(QtCore.QObject):
         self.importReviewers(filename)
         self.importProposals(filename)
         self.importAnalyses(filename)
+        self.importEmailTemplate(filename)
         self.modified = False
 
         return True
@@ -89,6 +93,8 @@ class AGUP_Data(QtCore.QObject):
         # provide this data in a second place, in case imported proposals destroy the original
         node = etree.SubElement(root, 'Assignments')
         self.analyses.writeXmlNode(node)
+        
+        self.email.writeXmlNode(root)
 
         s = etree.tostring(doc, pretty_print=True, xml_declaration=True, encoding='UTF-8')
         open(filename, 'w').write(s)
@@ -177,6 +183,16 @@ class AGUP_Data(QtCore.QObject):
             return
 
         self.reviewers = rvwrs
+    
+    def importEmailTemplate(self, xmlFile):
+        '''
+        import the email template support
+        '''
+        try:
+            self.email.importXml(xmlFile)
+        except Exception:
+            history.addLog(traceback.format_exc())
+            return
     
     def getCycle(self):
         '''the review cycle, as defined by the proposals'''
