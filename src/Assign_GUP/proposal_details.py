@@ -1,6 +1,16 @@
 
 '''
 QtGui widget to edit one Proposal instance
+
+.. rubric:: :class:`AGUP_ProposalDetails`
+
+adds one row of widgets for possible Reviewer of Proposal
+
+====================================================  ============================================================
+Method                                                Description
+====================================================  ============================================================
+:meth:`~AGUP_ProposalDetails.addReviewer`             add a Reviewer to the panel
+====================================================  ============================================================
 '''
 
 
@@ -9,6 +19,7 @@ from PyQt4 import QtGui, QtCore
 import history
 import prop_revu_grid
 import resources
+import signals
 import topic_slider
 import topics
 
@@ -37,23 +48,16 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.reviewer_list = []
         self.reviewer_widgets = {}
 
-        groupbox = self.reviewers_gb
-        layout = prop_revu_grid.ReviewerAssignmentGridLayout(None, None)
-        groupbox.setLayout(layout)
+        layout = prop_revu_grid.ReviewerAssignmentGridLayout(None)
+        self.reviewers_gb.setLayout(layout)
 
-        self.custom_signals = CustomSignals()
+        self.custom_signals = signals.CustomSignals()
     
-    def addReviewer(self, reviewer):
+    def addReviewers(self, reviewers):
         '''
+        Add the list of Reviewers to the details panel
         '''
-        sort_name = reviewer.getSortName()
-        if sort_name not in self.reviewer_widgets:
-            self.reviewer_list.append(sort_name)
-        widget = None # display widget, not reviewer object
-        self.reviewer_widgets[sort_name] = widget
-        # watch the widget for any changes
-        # signal the percentages if any of them change
-        history.addLog('addReviewer() NOT IMPLEMENTED YET: ' + str(reviewer))
+        self.reviewers_gb.layout().addReviewers(reviewers)
     
     def onTopicValueChanged(self, topic):
         '''
@@ -111,16 +115,10 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.setFirstChoiceBl(choice)
         self.setSubjects(subjects)
     
-    def setupProposal(self, proposal, reviewers):
+    def setupProposal(self, proposal):
         '''
         install proposal data in the editor's widgets
         '''
-        # widgets for reviewers, topics
-        groupbox = self.reviewers_gb
-        layout = groupbox.layout()
-        layout.clearLayout()    # FIXME: unnecessary blinking, re-use widgets instead: disable ineligible reviewers instead
-        layout.proposal = proposal
-
         kv = dict(
             proposal_id = self.setProposalId,
             proposal_title = self.setProposalTitle,
@@ -129,10 +127,20 @@ class AGUP_ProposalDetails(QtGui.QWidget):
             first_choice_bl = self.setFirstChoiceBl,
             subjects = self.setSubjects,
         )
+
+        layout = self.reviewers_gb.layout()
+        layout.proposal = proposal
+
+        # set all the text entry widget fields
         for k, v in kv.items():
             v(proposal.getKey(str(k)))
+        # set all the topic values
+        for topic in proposal.getTopicList():
+            v = proposal.getTopic(topic)
+            self.topic_widgets[topic].setValue(v)
+            self.topic_widgets[topic].onValueChange(v)
 
-        layout.addReviewers(reviewers)
+        layout.setProposal(proposal)
 
     def getProposalId(self):
         return self.proposal_id.text()
@@ -170,12 +178,6 @@ class AGUP_ProposalDetails(QtGui.QWidget):
             self.settings.restoreSplitterDetails(self)
 
 
-class CustomSignals(QtCore.QObject):
-    '''custom signals'''
-    
-    topicValueChanged = QtCore.pyqtSignal(str, str, float)
-
-
 def project_main():
     import sys
     import os
@@ -191,9 +193,9 @@ def project_main():
     proposal = agup.proposals.proposals[test_gup_id]
 
     mw = AGUP_ProposalDetails()
-    mw.setupProposal(proposal, agup.reviewers)
-    for t in proposal.topics:
-        mw.addTopic(t, proposal.getTopic(t))
+    mw.addTopics(agup.topics.getTopicList())
+    mw.addReviewers(agup.reviewers)
+    mw.setupProposal(proposal)
   
     mw.show()
     sys.exit(app.exec_())

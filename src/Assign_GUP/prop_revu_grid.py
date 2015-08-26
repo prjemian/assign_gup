@@ -37,14 +37,7 @@ Method                                                Description
 '''
 
 from PyQt4 import QtCore, QtGui
-
-# TODO: refactor to setup widgets rows for all reviewers first
-# edit contents for each proposal
-
-class CustomSignals(QtCore.QObject):
-    '''custom signals'''
-    
-    checkBoxGridChanged = QtCore.pyqtSignal()
+import signals
 
 
 class ProposalReviewerRow(QtCore.QObject):
@@ -68,7 +61,7 @@ class ProposalReviewerRow(QtCore.QObject):
         QtCore.QObject.__init__(self, parent)
 
         self.comfort = ""
-        self.custom_signals = CustomSignals()
+        self.custom_signals = signals.CustomSignals()
         self._init_controls_()
         self.dotProduct()
 
@@ -125,6 +118,12 @@ class ProposalReviewerRow(QtCore.QObject):
         else:   # MUST be secondary, then
             if self.isSecondaryChecked():
                 self.setPrimaryState(False)
+    
+    def setProposal(self, proposal):
+        '''
+        define the proposal to be used with this row
+        '''
+        self.proposal = proposal
     
     def getAssignment(self):
         '''
@@ -210,7 +209,7 @@ class ProposalReviewerRow(QtCore.QObject):
         * :math:`\vec{r}` is array of topic value strengths for Reviewer
         
         '''
-        if self.proposal and self.reviewer:
+        if self.enabled and self.proposal and self.reviewer:
             dot = self.proposal.topics.dotProduct(self.reviewer.topics)
         else:
             dot = 0.0
@@ -222,9 +221,10 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
     display and manage the assignment checkboxes and reported percentages for each reviewer on this proposal
     '''
     
-    def __init__(self, parent, proposal):
+    def __init__(self, parent):
         self.parent = parent
         self.proposal = None
+        self.reviewers = None
 
         QtGui.QGridLayout.__init__(self, parent)
 
@@ -246,28 +246,50 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         add this reviewer object for display
         '''
         row_widget = ProposalReviewerRow(self.parent, self, rvwr, self.proposal)
-        self.rvrw_widgets[rvwr.getSortName()] = row_widget
+        
         row_widget.custom_signals.checkBoxGridChanged.connect(lambda: self.onCheck(row_widget))
+        return row_widget
 
     def addReviewers(self, reviewers):
         '''
         add a list of reviewers
         '''
-        if self.proposal is not None:
-            for rvwr in reviewers:
+        self.rvrw_widgets = {}
+        self.reviewers = reviewers
+        for rvwr in reviewers:
+            if rvwr is not None:
+                self.rvrw_widgets[rvwr.getSortName()] = self.addReviewer(rvwr)
+
+    def setReviewersValues(self, reviewers):
+        '''
+        set the widget values for all Reviewers
+        '''
+        for rvwr in reviewers:
+            if self.proposal is None or rvwr is None:
                 if rvwr is not None:
-                    self.addReviewer(rvwr)
-                    dot = self.proposal.topics.dotProduct(rvwr.topics)
-            for full_name, assignment in self.proposal.eligible_reviewers.items():
-                rvwr = reviewers.getByFullName(full_name)
+                    sort_name = rvwr.getSortName()
+                    row_widget = self.rvrw_widgets[sort_name]
+                    row_widget.setEnabled(False)
+                    row_widget.setAssignment(0)
+            else:
                 sort_name = rvwr.getSortName()
-                self.rvrw_widgets[sort_name].setEnabled(True)   # eligible means True
-                self.rvrw_widgets[sort_name].setAssignment(assignment or 0)
+                full_name = rvwr.getFullName()
+                row_widget = self.rvrw_widgets[sort_name]
+                row_widget.setProposal(self.proposal)
+                eligible = full_name in self.proposal.eligible_reviewers
+                row_widget.setEnabled(eligible)
+                assignment = None
+                if eligible:
+                    assignment = self.proposal.eligible_reviewers[full_name]
+                row_widget.setAssignment(assignment or 0)
+                row_widget.dotProduct()
+                dot = self.proposal.topics.dotProduct(rvwr.topics)
 
     def clearLayout(self):
         '''
         remove all the reviewer rows in the layout
         '''
+        raise RuntimeError, 'deprecated'
         # thanks: http://www.gulon.co.uk/2013/05/01/clearing-a-qlayout/
         # TODO: causes unnecessary widget blinking, refactor to reuse widgets instead
         # enable/disable eligible reviewers per each proposal
@@ -280,6 +302,7 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         declare which proposal is associated with this grid
         '''
         self.proposal = proposal
+        self.setReviewersValues(self.reviewers)
     
     def setAssignment(self, sort_name, code):
         '''
@@ -314,10 +337,16 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         All eligible Reviewers are enabled.
         Reviewers become ineligible when they are named as part of the Proposal team.
         '''
-        self.rvrw_widgets[sort_name].setEnabled(state)
+        widget = self.rvrw_widgets[sort_name]
+        widget.setEnabled(state)
+        widget.dotProduct()
+    
+    def calcDotProducts(self):
+        for widget in self.rvrw_widgets.values():
+            widget.dotProduct()
 
 
-def project_main():
+def developer_main():
     '''
         create QGroupBox + QGridLayout and run the panel
 
@@ -333,37 +362,50 @@ def project_main():
     import sys
     import os
     import agup_data
-    global layout
+    global layout, agup
 
     testfile = os.path.abspath('project/agup_project.xml')
-    test_gup_id = str(941*9*5)
 
     agup = agup_data.AGUP_Data()    
     agup.openPrpFile(testfile)
-    proposal = agup.proposals.proposals[test_gup_id]
 
     app = QtGui.QApplication(sys.argv)
     grid = QtGui.QGroupBox('prop_revu_grid demo')
 
-    layout = ReviewerAssignmentGridLayout(grid, proposal)
-    layout.setProposal(proposal)
+    layout = ReviewerAssignmentGridLayout(grid)
     layout.addReviewers(agup.reviewers)
-#     layout.clearLayout()
-#     layout.addReviewers(agup.reviewers)
-    layout.setEnabled('0-Myers', False)
+    
     timer = QtCore.QTimer()
-    timer.singleShot(2000, onDelay)
+    timer.singleShot(2000, _onDelay1)
+    timer.singleShot(5000, _onDelay2)
+    timer.singleShot(7500, _onDelay3)
 
     grid.show()
     sys.exit(app.exec_())
 
 
-def onDelay():
-    global layout
+def _onDelay1():
+    global layout, agup
+    test_gup_id = str(941*9*5)
+    proposal = agup.proposals.proposals[test_gup_id]
+    layout.setProposal(proposal)
+    layout.setEnabled('0-Myers', False)
+    layout.setEnabled('Jemian', True)
+
+
+def _onDelay2():
+    global layout, agup
     layout.setEnabled('0-Myers', True)
     layout.setEnabled('Jemian', False)
 
 
+def _onDelay3():
+    global layout, agup
+    test_gup_id = str(pow(207,2) + 271)
+    proposal = agup.proposals.proposals[test_gup_id]
+    layout.setProposal(proposal)
+    layout.setEnabled('Jemian', True)
+
+
 if __name__ == '__main__':
-    # AGUP_main()
-    project_main()
+    developer_main()

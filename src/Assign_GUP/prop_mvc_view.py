@@ -47,8 +47,8 @@ class AGUP_Proposals_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        for topic in self.topics:
-            self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
+        self.details_panel.addTopics(self.topics.getTopicList())
+        self.details_panel.addReviewers(self.reviewers)
 
         if agup.proposals is not None:
             self.setModel(agup.proposals)
@@ -77,6 +77,8 @@ class AGUP_Proposals_View(QtGui.QWidget):
         called when user changed a topic value in the details panel
         '''
         self.proposals.setTopicValue(str(prop_id), str(topic), value)
+        rvwr_grid = self.details_panel.reviewers_gb.layout()
+        rvwr_grid.calcDotProducts()
         self.details_panel.modified = True
     
     def details_modified(self):
@@ -87,30 +89,11 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''
         select Proposal for editing as referenced by ID number
         '''
-#         if self.details_modified():
-#             # TODO: get values from details panel and store in main
-#             history.addLog('need to save modified proposal details')
-#             pass
-            
         if prop_id is None:
             return
         proposal = self.proposals.getProposal(str(prop_id))
-        self.details_panel.setupProposal(proposal, self.reviewers)
-        for t in proposal.topics:
-            self.details_panel.addTopic(t, proposal.getTopic(t))
-#         self.details_panel.setAll(
-#                                 proposal.db['proposal_id'], 
-#                                 proposal.db['proposal_title'], 
-#                                 proposal.db['review_period'], 
-#                                 proposal.db['spk_name'], 
-#                                 proposal.db['first_choice_bl'], 
-#                                 proposal.db['subjects'],
-#                                 )
-#         topics_list = proposal.getTopicList()
-#         for topic in topics_list:
-#             value = proposal.getTopic(topic)
-#             self.details_panel.setTopic(topic, value)
-        # set reviewers
+        self.details_panel.setupProposal(proposal)
+        #self.details_panel.addTopics(proposal.getTopicList())
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
         history.addLog('selected proposal: ' + str(prop_id))
