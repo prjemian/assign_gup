@@ -13,10 +13,10 @@ for your willingness and diligence in reviewing these proposals.
 Here are your assigned proposals:
 
 primary
-PRIMARY_PROPOSALS
+ASSIGNED_PRIMARY_PROPOSALS
 
 secondary
-SECONDARY_PROPOSALS
+ASSIGNED_SECONDARY_PROPOSALS
 
 
 (Let me know if there is a discrepancy between what is
@@ -67,7 +67,7 @@ your reviews as well.  Be sure to comment on the proposal, give a score
 proposal, averages are typically 1.8-2.0), and also a recommended
 number of shifts (both for this cycle and for the 2-year life of the proposal).
 
-PROJECT_PROPOSAL_COMMENTS
+OTHER_COMMENTS
 
 Thanks again for your participation and help in
 advancing the science at the APS.
