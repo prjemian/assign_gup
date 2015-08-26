@@ -8,16 +8,12 @@ from PyQt4 import QtGui, QtCore
 import history
 import qt_utils
 import resources
+import signals
 import topics
 
 
 UI_FILE = 'topics_editor.ui'
 
-
-class CustomSignals(QtCore.QObject):
-    '''custom signals'''
-    
-    closed = QtCore.pyqtSignal()
 
 class AGUP_TopicsEditor(QtGui.QDialog):
     '''add topic, slider, value_entry to a QGridLayout'''
@@ -45,7 +41,7 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         idx = self.listWidget.indexAt(QtCore.QPoint(0,0))
         self.listWidget.setCurrentIndex(idx)
 
-        self.custom_signals = CustomSignals()
+        self.custom_signals = signals.CustomSignals()
     
     def getTopicList(self):
         '''

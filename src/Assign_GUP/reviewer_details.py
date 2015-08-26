@@ -7,6 +7,7 @@ QtGui widget to edit one Reviewer instance
 from PyQt4 import QtGui, QtCore
 import history
 import resources
+import signals
 import topic_slider
 import topics
 
@@ -34,7 +35,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.topic_list = []
         self.topic_widgets = {}
 
-        self.custom_signals = CustomSignals()
+        self.custom_signals = signals.CustomSignals()
     
     def onTopicValueChanged(self, topic):
         value = self.topic_widgets[topic].getValue()
@@ -118,12 +119,6 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
     def restoreSplitterDetails(self):
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
-
-
-class CustomSignals(QtCore.QObject):
-    '''custom signals'''
-    
-    topicValueChanged = QtCore.pyqtSignal(str, str, float)
 
 
 def main():
