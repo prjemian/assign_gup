@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
   <xs:element name="Review_list">
     <xs:complexType>
       <xs:sequence>
@@ -9,50 +10,42 @@
       <xs:attribute name="version" use="required" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
+
   <xs:element name="Proposal">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="proposal_id"/>
-        <xs:element ref="proposal_type"/>
-        <xs:element ref="proposal_title"/>
-        <xs:element ref="review_period"/>
-        <xs:element minOccurs="0" ref="notification_date"/>
-        <xs:element ref="project_type"/>
-        <xs:element ref="spk_name"/>
-        <xs:element ref="recent_req_period"/>
-        <xs:element ref="first_choice_bl"/>
-        <xs:element ref="subject"/>
-        <xs:element ref="reviewer"/>
+        <xs:element name="proposal_id" type="xs:integer"/>
+        <xs:element name="proposal_type" type="xs:NCName"/>
+        <xs:element name="proposal_title" type="xs:string"/>
+        <xs:element name="review_period" type="xs:NMTOKEN"/>
+        <xs:element name="notification_date" type="xs:string"/>
+        <xs:element name="project_type" type="xs:NCName"/>
+        <xs:element name="spk_name" type="xs:string"/>
+        <xs:element name="recent_req_period" type="xs:NMTOKEN"/>
+        <xs:element name="first_choice_bl" type="xs:string"/>
+        <xs:element name="subject">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" ref="name"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="reviewer">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" ref="name"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="proposal_id" type="xs:integer"/>
-  <xs:element name="proposal_type" type="xs:NCName"/>
-  <xs:element name="proposal_title" type="xs:string"/>
-  <xs:element name="review_period" type="xs:NMTOKEN"/>
-  <xs:element name="notification_date" type="xs:string"/>
-  <xs:element name="project_type" type="xs:NCName"/>
-  <xs:element name="spk_name" type="xs:string"/>
-  <xs:element name="recent_req_period" type="xs:NMTOKEN"/>
-  <xs:element name="first_choice_bl" type="xs:string"/>
-  <xs:element name="subject">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="name"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="reviewer">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="name"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+
   <xs:element name="name">
     <xs:complexType mixed="true">
       <xs:attribute name="assigned" type="xs:NCName"/>
       <xs:attribute name="excluded" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
+
 </xs:schema>
