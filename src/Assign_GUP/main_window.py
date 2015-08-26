@@ -147,8 +147,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.saveWindowGeometry()
         if self.reviewer_view is not None:
             self.reviewer_view.close()
+            self.reviewer_view.destroy()
+            self.reviewer_view = None
         if self.proposal_view is not None:
             self.proposal_view.close()
+            self.proposal_view.destroy()
+            self.proposal_view = None
         self.close()
     
     def doNotQuitNow(self):
@@ -208,9 +212,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Opening PRP file: ' + filename)
         if self.proposal_view is not None:
+            self.proposal_view.close()
             self.proposal_view.destroy()
             self.proposal_view = None
         if self.reviewer_view is not None:
+            self.reviewer_view.close()
             self.reviewer_view.destroy()
             self.reviewer_view = None
         if self.agup.openPrpFile(filename):
@@ -261,6 +267,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         if self.reviewer_view is None:
             self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
+            self.reviewer_view.custom_signals.recalc.connect(self.doRecalc)
         self.reviewer_view.show()
 
     def doImportReviewers(self):
@@ -344,6 +351,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         save the self.agup data to the known data file name
         '''
         history.addLog('Save requested')
+        # FIXME: self.agup.write(self.settings.getPrpFile())
         self.modified = False
         self.adjustMainWindowTitle()
         history.addLog('NOTE: Save NOT IMPLEMENTED YET')
@@ -391,6 +399,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         if self.settings is not None:
             self.settings.restoreWindowGeometry(self)
+
+    def doRecalc(self):
+        if self.proposal_view is not None:
+            self.proposal_view.recalc()
 
     # widget getters and setters
 

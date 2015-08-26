@@ -8,12 +8,14 @@ MVC View for reviewers
 
 import os, sys
 from PyQt4 import QtGui, QtCore
+
 import event_filters
-import history
 import general_mvc_model
-import reviewer_details
+import history
 import qt_utils
 import resources
+import reviewer_details
+import signals
 import topics
 
 UI_FILE = 'listview.ui'
@@ -69,6 +71,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
 
         self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
+        
+        self.custom_signals = signals.CustomSignals()
 
     def on_item_clicked(self, index):
         '''
@@ -83,6 +87,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         called when user changed a topic value in the details panel
         '''
         self.reviewers.setTopicValue(str(sort_name), str(topic), value)
+        self.custom_signals.recalc.emit()
         self.details_panel.modified = True
     
     def onDetailsModified(self, *args):

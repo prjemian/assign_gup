@@ -93,7 +93,6 @@ class AGUP_Proposals_View(QtGui.QWidget):
             return
         proposal = self.proposals.getProposal(str(prop_id))
         self.details_panel.setupProposal(proposal)
-        #self.details_panel.addTopics(proposal.getTopicList())
         self.prior_selection_index = self.listView.currentIndex()
         self.details_panel.modified = False
         history.addLog('selected proposal: ' + str(prop_id))
@@ -133,8 +132,14 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.selectModelByIndex(idx, None)
     
     def isProposalListModified(self):
-        # TODO: support proposal editing
         return self.details_panel.modified
+
+    def recalc(self):
+        '''
+        recalculate dot products
+        '''
+        rvwr_grid = self.details_panel.reviewers_gb.layout()
+        rvwr_grid.calcDotProducts()
 
     def closeEvent(self, event):
         self.saveWindowGeometry()

@@ -13,4 +13,5 @@ class CustomSignals(QtCore.QObject):
 
     checkBoxGridChanged = QtCore.pyqtSignal()
     closed = QtCore.pyqtSignal()                # topics_editor
+    recalc = QtCore.pyqtSignal()
     topicValueChanged = QtCore.pyqtSignal(str, str, float)
