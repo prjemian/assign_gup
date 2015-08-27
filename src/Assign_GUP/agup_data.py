@@ -184,6 +184,21 @@ class AGUP_Data(QtCore.QObject):
 
         self.reviewers = rvwrs
     
+    def importTopics(self, xmlFile):
+        '''
+        import a complete set of Topics (usually from a previous PRP Project file)
+        
+        Completely replace the set of Topics currently in place.
+        '''
+        topics_obj = topics.Topics()
+        try:
+            topics_obj.importXml(xmlFile, False)
+        except Exception:
+            history.addLog(traceback.format_exc())
+            return
+
+        self.topics = topics_obj
+    
     def importEmailTemplate(self, xmlFile):
         '''
         import the email template support

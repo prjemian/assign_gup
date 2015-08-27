@@ -80,8 +80,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def _init_connections_(self):
         self.actionNew_PRP_Project.triggered.connect(self.doNewPrpFile)
         self.actionOpen.triggered.connect(self.doOpenPrpFile)
-        self.actionImport_Proposals.triggered.connect(self.doImportProposals)
+        # self.actionUndo.triggered.connect()
+        # self.actionCut.triggered.connect()
+        # self.actionCopy.triggered.connect()
+        # self.actionPaste.triggered.connect()
+        # self.actionSelect_All.triggered.connect()
+        self.actionImport_Topics.triggered.connect(self.doImportTopics)
         self.actionImport_Reviewers.triggered.connect(self.doImportReviewers)
+        self.actionImport_Proposals.triggered.connect(self.doImportProposals)
         self.actionEdit_proposals.triggered.connect(self.doEditProposals)
         self.actionEdit_Reviewers.triggered.connect(self.doEditReviewers)
         self.actionEdit_Topics.triggered.connect(self.doEditTopics)
@@ -135,6 +141,19 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.doClose()
             event.accept() # let the window close
 
+    def closeSubwindows(self):
+        '''
+        close all other windows created by this code
+        '''
+        if self.reviewer_view is not None:
+            self.reviewer_view.close()
+            self.reviewer_view.destroy()
+            self.reviewer_view = None
+        if self.proposal_view is not None:
+            self.proposal_view.close()
+            self.proposal_view.destroy()
+            self.proposal_view = None
+
     def doClose(self, *args, **kw):
         '''
         called when user chooses exit (or quit), or from closeEvent()
@@ -145,14 +164,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 return
 
         self.saveWindowGeometry()
-        if self.reviewer_view is not None:
-            self.reviewer_view.close()
-            self.reviewer_view.destroy()
-            self.reviewer_view = None
-        if self.proposal_view is not None:
-            self.proposal_view.close()
-            self.proposal_view.destroy()
-            self.proposal_view = None
+        self.closeSubwindows()
         self.close()
     
     def doNotQuitNow(self):
@@ -186,21 +198,55 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             raise ValueError, msg
         return False    # application should exit
 
+    def doResetDefaultSettings(self):
+        '''
+        user requested to reset the settings to their default values
+        
+        Note: does not write to the rcfile
+        '''
+        history.addLog('Reset to Default Settings requested')
+        self.settings.resetDefaults()
+        self.adjustMainWindowTitle()
+
+    def doNewPrpFile(self):
+        '''
+        clear the data in self.agup
+        '''
+        history.addLog('New PRP File requested')
+
+        if self.cannotExit():
+            box = QtGui.QMessageBox()
+            box.setText('There are unsaved changes.')
+            box.setInformativeText('Forget about them?')
+            box.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+            box.setDefaultButton(QtGui.QMessageBox.Cancel)
+            ret = box.exec_()
+            if ret == QtGui.QMessageBox.Cancel:
+                return
+
+        self.closeSubwindows()
+        self.agup.clearAllData()
+        self.setPrpFileText('')
+        self.setReviewCycleText('')
+        history.addLog('New PRP File')
+        self.adjustMainWindowTitle()
+
     def doOpenPrpFile(self):
         '''
+        open an existing PRP file
         '''
         history.addLog('Open PRP File requested')
 
         flags = QtGui.QFileDialog.DontResolveSymlinks
         title = 'Open PRP file'
 
-        prp_file = str(self.settings.getPrpFile()).strip()
+        prp_file = self.settings.getPrpFile()
         if len(prp_file) == 0:
             prp_path = ''
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP project (*.xml)")
 
         if os.path.exists(filename):
             self.openPrpFile(filename)
@@ -211,52 +257,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         choose the XML file with data for this PRP review
         '''
         history.addLog('Opening PRP file: ' + filename)
-        if self.proposal_view is not None:
-            self.proposal_view.close()
-            self.proposal_view.destroy()
-            self.proposal_view = None
-        if self.reviewer_view is not None:
-            self.reviewer_view.close()
-            self.reviewer_view.destroy()
-            self.reviewer_view = None
+        self.closeSubwindows()
         if self.agup.openPrpFile(filename):
             self.setPrpFileText(filename)
-            self.settings.setPrpFile(filename)
             self.setReviewCycleText(self.agup.getCycle())
             history.addLog('Open PRP file: ' + filename)
 
-    def doImportProposals(self):
-        '''
-        '''
-        history.addLog('Import Proposals requested')
-        title = 'Choose XML file with proposals'
-        prp_file = self.settings.getPrpFile()
-
-        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Images (*.xml)")
-        path = str(path)
-        if os.path.exists(path):
-            history.addLog('selected file: ' + path)
-            self.importProposals(path)
-            history.addLog('imported proposals file: ' + path)
-
-    def importProposals(self, filename):
-        '''read a proposals XML file and set the model accordingly'''
-        self.proposals = prop_mvc_data.AGUP_Proposals_List()
-
-        exception_list = (xml_utility.IncorrectXmlRootTag, 
-                          xml_utility.InvalidWithXmlSchema)
-        try:
-           self.proposals.importXml(filename)
-        except exception_list, exc:
-            history.addLog(traceback.format_exc())
-            return
-
-        txt = self.getReviewCycleText()
-        if self.getReviewCycleText() == '':
-            self.setReviewCycleText(self.proposals.cycle)
-
     def doEditProposals(self):
         '''
+        edit the list of Proposals
         '''
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
@@ -264,31 +273,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doEditReviewers(self):
         '''
+        edit the list of Reviewers
         '''
         if self.reviewer_view is None:
             self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
             self.reviewer_view.custom_signals.recalc.connect(self.doRecalc)
         self.reviewer_view.show()
-
-    def doImportReviewers(self):
-        '''
-        '''
-        history.addLog('Import Reviewers selected: NOT IMPLEMENTED NOW')
-
-    def importReviewers(self, filename):
-        '''
-        '''
-        history.addLog('Importing Reviewers file: NOT IMPLEMENTED NOW')
-
-    def importAnalyses(self, filename):
-        '''
-        '''
-        history.addLog('Importing Analyses file: NOT IMPLEMENTED NOW')
-
-    def importTopics(self, filename):
-        '''
-        '''
-        history.addLog('Importing Topics file: NOT IMPLEMENTED NOW')
 
     def doEditTopics(self):
         '''
@@ -296,12 +286,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         # post the editor GUI
         history.addLog('Edit Topics ... requested')
-        if self.proposal_view is not None:
-            self.proposal_view.close()
-            self.proposal_view = None
-        if self.reviewer_view is not None:
-            self.reviewer_view.close()
-            self.reviewer_view = None
+        self.closeSubwindows()
         
         known_topics = self.agup.topics.getTopicList()
         edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics, self.settings)
@@ -346,12 +331,85 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         ret = box.exec_()
         return ret == QtGui.QMessageBox.Save
 
+    def doImportProposals(self):
+        '''
+        import the proposal file as downloaded from the APS web site
+        '''
+        history.addLog('Import Proposals requested')
+        title = 'Choose XML file with proposals'
+        prp_path = os.path.dirname(self.settings.getPrpFile())
+
+        path = filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Proposals (*.xml)")
+        path = str(path)
+        if os.path.exists(path):
+            history.addLog('selected file: ' + path)
+            self.importProposals(path)
+            history.addLog('imported proposals file: ' + path)
+
+    def importProposals(self, filename):
+        '''read a proposals XML file and set the model accordingly'''
+        self.proposals = prop_mvc_data.AGUP_Proposals_List()    # TODO: refactor to use self.agup.importProposals(filename)
+
+        exception_list = (xml_utility.IncorrectXmlRootTag, 
+                          xml_utility.InvalidWithXmlSchema)
+        try:
+           self.proposals.importXml(filename)
+        except exception_list, exc:
+            history.addLog(traceback.format_exc())
+            return
+
+        txt = self.getReviewCycleText()
+        if self.getReviewCycleText() == '':
+            self.setReviewCycleText(self.proposals.cycle)
+
+    def doImportReviewers(self):
+        '''
+        copy the list of Reviewers into this project from another PRP Project file
+        '''
+        history.addLog('Import Reviewers requested')
+        title = 'Choose a PRP Project file (XML) to copy its Reviewers'
+        prp_path = os.path.dirname(self.settings.getPrpFile())
+
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP Project (*.xml)")
+        path = str(path)
+        if os.path.exists(path):
+            self.importReviewers(path)
+            history.addLog('imported Reviewers from file: ' + path)
+    
+    def importReviewers(self, filename):
+        '''read Reviewers from a PRP Project XML file and set the model accordingly'''
+        # TODO: use self.agup.importReviewers(filename)
+        history.addLog('NOT IMPLEMENTED yet')
+
+    def doImportTopics(self, filename):
+        '''
+        copy the list of Topics from another PRP file into this project
+        '''
+        history.addLog('Import Topics requested')
+        title = 'Choose a PRP Project file (XML) to copy its Topics'
+        prp_path = os.path.dirname(self.settings.getPrpFile())
+
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP Project (*.xml)")
+        path = str(path)
+        if os.path.exists(path):
+            self.importTopics(path)
+            history.addLog('imported Topics from file: ' + path)
+    
+    def importTopics(self, filename):
+        '''read Topics from a PRP Project XML file and set the model accordingly'''
+        self.agup.importTopics(filename)
+        history.addLog('imported topics from: ' + filename)
+
+    def doRecalc(self):
+        if self.proposal_view is not None:
+            self.proposal_view.recalc()
+
     def doSave(self):
         '''
         save the self.agup data to the known data file name
         '''
         history.addLog('Save requested')
-        filename = str(self.settings.getPrpFile())
+        filename = self.settings.getPrpFile()
         self.agup.write(filename)
         self.modified = False
         self.adjustMainWindowTitle()
@@ -370,31 +428,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         filename = str(os.path.abspath(filename))
         if len(filename) > 0:
             self.agup.write(filename)
-            self.settings.setPrpFile(filename)
             self.setPrpFileText(filename)
             self.modified = False
         history.addLog('saved: ' + filename)
-        self.adjustMainWindowTitle()
-
-    def doResetDefaultSettings(self):
-        '''
-        user requested to reset the settings to their default values
-        
-        Note: does not write to the rcfile
-        '''
-        history.addLog('Reset to Default Settings requested')
-        self.settings.resetDefaults()
-        self.adjustMainWindowTitle()
-
-    def doNewPrpFile(self):
-        '''
-        clear the data in self.agup
-        '''
-        history.addLog('New PRP File requested')
-        if False:
-            self.agup.clearAllData()
-            self.setPrpFileText('')
-        history.addLog('New PRP File: NOT IMPLEMENTED YET')
         self.adjustMainWindowTitle()
     
     def saveWindowGeometry(self):
@@ -410,10 +446,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         if self.settings is not None:
             self.settings.restoreWindowGeometry(self)
-
-    def doRecalc(self):
-        if self.proposal_view is not None:
-            self.proposal_view.recalc()
 
     # widget getters and setters
 

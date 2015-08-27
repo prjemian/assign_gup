@@ -161,6 +161,29 @@ class Topics(object):
         numerator = sum([u*v for u, v in zip(props, rvwrs)])
         dot_product = numerator / denominator   # sum(proposal_weight * reviewer_strength)
         return dot_product
+    
+    def importXml(self, xmlFile, read_values=True):
+        '''
+        :param str filename: name of XML file with Topics
+        :param bool read_values: import topic values?
+        '''
+        import agup_data
+        import xml_utility
+        from lxml import etree
+        doc = xml_utility.readValidXmlDoc(xmlFile, 
+                                          agup_data.AGUP_MASTER_ROOT_TAG, 
+                                          agup_data.AGUP_XML_SCHEMA_FILE,
+                                          )
+        self.clearAll()
+        root = doc.getroot()
+        node = root.find('Topics')
+        if node is not None:
+            for subnode in node.findall('Topic'):
+                topic = subnode.attrib['name']
+                value = DEFAULT_TOPIC_VALUE
+                if read_values:
+                    value = subnode.attrib['value']
+                self.add(topic, value)
 
 
 def checkTopicValueRange(value):
