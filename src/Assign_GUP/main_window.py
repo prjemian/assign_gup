@@ -194,7 +194,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         flags = QtGui.QFileDialog.DontResolveSymlinks
         title = 'Open PRP file'
 
-        prp_file = self.settings.getPrpFile().strip()
+        prp_file = str(self.settings.getPrpFile()).strip()
         if len(prp_file) == 0:
             prp_path = ''
         else:
@@ -351,19 +351,30 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         save the self.agup data to the known data file name
         '''
         history.addLog('Save requested')
-        # FIXME: self.agup.write(self.settings.getPrpFile())
+        filename = str(self.settings.getPrpFile())
+        self.agup.write(filename)
         self.modified = False
         self.adjustMainWindowTitle()
-        history.addLog('NOTE: Save NOT IMPLEMENTED YET')
+        history.addLog('saved: ' + filename)
 
     def doSaveAs(self):
         '''
         save the self.agup data to the data file name selected from a dialog box
         '''
         history.addLog('Save As requested')
-        self.modified = False
+        filename = self.settings.getPrpFile()
+        filename = QtGui.QFileDialog.getSaveFileName(parent=self, 
+                                                     caption="Save the PRP project", 
+                                                     directory=filename,
+                                                     filter='XML File (*.xml)')
+        filename = str(os.path.abspath(filename))
+        if len(filename) > 0:
+            self.agup.write(filename)
+            self.settings.setPrpFile(filename)
+            self.setPrpFileText(filename)
+            self.modified = False
+        history.addLog('saved: ' + filename)
         self.adjustMainWindowTitle()
-        history.addLog('NOTE: Save As NOT IMPLEMENTED YET')
 
     def doResetDefaultSettings(self):
         '''
