@@ -155,6 +155,8 @@
     <property name="title">
      <string>Topics</string>
     </property>
+    <addaction name="actionImport_Topics"/>
+    <addaction name="separator"/>
     <addaction name="actionEdit_Topics"/>
    </widget>
    <widget class="QMenu" name="menuReviewers">
@@ -173,7 +175,20 @@
     <addaction name="separator"/>
     <addaction name="actionEdit_proposals"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_All"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuTopics"/>
    <addaction name="menuReviewers"/>
    <addaction name="menuProposals"/>
@@ -193,7 +208,7 @@
     <string>E&amp;xit</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+X</string>
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -213,6 +228,9 @@
    </property>
    <property name="toolTip">
     <string>New PRP Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionSave_settings">
@@ -282,6 +300,51 @@
   <action name="actionReset_settings">
    <property name="text">
     <string>Reset Settings</string>
+   </property>
+  </action>
+  <action name="actionImport_Topics">
+   <property name="text">
+    <string>Import Topics ...</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>
