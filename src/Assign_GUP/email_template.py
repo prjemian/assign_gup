@@ -31,6 +31,13 @@ DEFAULT_TEMPLATE_FIELDS = dict(
     This is no PUP to review this cycle.
     ''',
 )
+REVIEWER_FIELDS = dict(     # to be filled with data from an instance of Reviewer
+    FULL_NAME = 'Ima Reviewer',
+    EMAIL = 'reviewer@institution.net',
+    ASSIGNED_PRIMARY_PROPOSALS = '11111 22222 33333',
+    ASSIGNED_SECONDARY_PROPOSALS = '44444 55555 66666',
+)
+
 
 
 class EmailTemplate(object):
@@ -45,6 +52,24 @@ class EmailTemplate(object):
         filename = resources.resource_file(DEFAULT_TEMPLATE_FILE)
         self.email_template = open(filename).read()
         self.keyword_dict = DEFAULT_TEMPLATE_FIELDS
+    
+    def mass_merge(self, reviewers, **kw):
+        '''
+        create emails for all Reviewers, return as a dictionary by sort_name
+        
+        :param obj reviewers: instance of revu_mvc_data.AGUP_Reviewers_List
+        '''
+        book = {}
+        for rvwr in reviewers:
+            sort_name = rvwr.getSortName()
+            fields = {}
+            fields['FULL_NAME'] = rvwr.getFullName()
+            fields['EMAIL'] = rvwr.getEmail()
+            fields['ASSIGNED_PRIMARY_PROPOSALS'] = 'list of primaries'      # TODO:
+            fields['ASSIGNED_SECONDARY_PROPOSALS'] = 'list of secondaries'  # TODO:
+            fields.update(kw)       # any other substitutions
+            book[sort_name] = self.mail_merge(**fields)
+        return book
     
     def mail_merge(self, **kw_dict):
         '''
@@ -101,12 +126,6 @@ class EmailTemplate(object):
 
 
 if __name__ == '__main__':
-    kw = dict(
-        FULL_NAME = 'Ima Reviewer',
-        EMAIL = 'reviewer@institution.net',
-        ASSIGNED_PRIMARY_PROPOSALS = '11111 22222 33333',
-        ASSIGNED_SECONDARY_PROPOSALS = '44444 55555 66666',
-    )
     et = EmailTemplate()
-    print et.mail_merge(**kw)
+    print et.mail_merge(**REVIEWER_FIELDS)
     
