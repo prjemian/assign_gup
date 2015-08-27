@@ -130,6 +130,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         copied Reviewer details from editor panel to main data structure
         '''
         sort_name = str(self.details_panel.getSortName())
+        if len(sort_name) == 0:
+            return
         panelist = self.reviewers.getReviewer(sort_name)    # raises IndexError if not found
 
         kv = dict(

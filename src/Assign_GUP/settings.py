@@ -117,7 +117,7 @@ class ApplicationQSettings(QtCore.QSettings):
         self.setKey(key, str(review_cycle))
  
     def getPrpFile(self):
-        return self.getKey(GLOBAL_GROUP + '/prp_file') or ''
+        return str(self.getKey(GLOBAL_GROUP + '/prp_file')).strip() or ''
  
     def setPrpFile(self, prp_file):
         key = GLOBAL_GROUP + '/prp_file'
