@@ -72,11 +72,7 @@ class AGUP_Proposal_Data(object):
             if v in (1, 2):
                 subnode.attrib['assigned'] = 'reviewer' + str(v)
 
-        node = etree.SubElement(specified_node, 'Topics')
-        for k in self.topics:
-            subnode = etree.SubElement(node, 'Topic')
-            subnode.attrib['name'] = k
-            subnode.attrib['value'] = str(self.topics.get(k))
+        self.topics.writeXml(specified_node)
     
     def getKey(self, key):
         return self.db[key]

@@ -184,6 +184,22 @@ class Topics(object):
                 if read_values:
                     value = subnode.attrib['value']
                 self.add(topic, value)
+    
+    def writeXml(self, specified_node, write_values=True):
+        '''
+        write Topics' data to a specified node in the XML document
+
+        :param obj specified_node: XML node to contain this data
+        :param bool read_values: write topic values?
+        '''
+        from lxml import etree
+        node = etree.SubElement(specified_node, 'Topics')
+        if self.topics is not None:
+            for topic in self.topics:
+                subnode = etree.SubElement(node, 'Topic')
+                subnode.attrib['name'] = topic
+                if write_values:
+                    subnode.attrib['value'] = str(self.get(topic))
 
 
 def checkTopicValueRange(value):

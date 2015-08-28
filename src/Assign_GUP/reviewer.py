@@ -69,13 +69,7 @@ class AGUP_Reviewer_Data(object):
         specified_node.attrib['name'] = self.getSortName()
         for tag in self.tagList:
             etree.SubElement(specified_node, tag).text = self.getKey(tag)
-
-        node = etree.SubElement(specified_node, 'Topics')
-        for k in self.topics.getTopicList():
-            v = self.topics.get(k)
-            subnode = etree.SubElement(node, 'Topic')
-            subnode.attrib['name'] = k
-            subnode.attrib['value'] = str(self.topics.get(k))
+        self.topics.writeXml(specified_node)
     
     def getSortName(self):
         return self.getKey('name')
