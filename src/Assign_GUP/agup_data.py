@@ -69,6 +69,7 @@ class AGUP_Data(QtCore.QObject):
         '''
         write this data to an XML file
         '''
+        if self.topics is None: return
         if self.proposals is None: return
         if self.reviewers is None: return
 
@@ -79,20 +80,14 @@ class AGUP_Data(QtCore.QObject):
         root.attrib['version'] = AGUP_MASTER_VERSION
         root.attrib['time'] = str(datetime.datetime.now())
         
-        node = etree.SubElement(root, 'Topics')
-        if self.topics is not None:
-            for topic in self.topics:
-                subnode = etree.SubElement(node, 'Topic')
-                subnode.attrib['name'] = topic
-
-        node = etree.SubElement(root, 'Review_panel')
-        self.reviewers.writeXmlNode(node)
-        node = etree.SubElement(root, 'Proposal_list')
-        self.proposals.writeXmlNode(node)
+        self.topics.writeXml(root, False)
+        self.reviewers.writeXmlNode(root)
+        self.proposals.writeXmlNode(root)
 
         # provide this data in a second place, in case imported proposals destroy the original
         node = etree.SubElement(root, 'Assignments')
-        self.analyses.writeXmlNode(node)
+        if self.analyses is not None:
+            self.analyses.writeXmlNode(node)
         
         self.email.writeXmlNode(root)
 
@@ -113,10 +108,10 @@ class AGUP_Data(QtCore.QObject):
         simple test if topics are defined for first proposal since others MUST match
         '''
         if self.proposals is None:
-            history.addLog('Must import proposals before analyses')
+            history.addLog('Must define or import proposals before analyses')
             return
         if self.reviewers is None:
-            history.addLog('Must import reviewers before analyses')
+            history.addLog('Must define or import reviewers before analyses')
             return
 
         findings = analyses.AGUP_Analyses()
@@ -162,8 +157,9 @@ class AGUP_Data(QtCore.QObject):
 
         cycle = self.settings.getReviewCycle()
         if cycle in (None, '', props.cycle):
+            # TODO: handle any existing assignments first!
             self.proposals = props
-            self.settings.setReviewCycle(props.cycle)
+            self.settings.setReviewCycle(props.cycle or '')
         else:
             msg = 'Cannot import proposals for ' + props.cycle
             msg += ' into PRP session for cycle: ' + cycle

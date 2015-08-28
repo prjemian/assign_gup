@@ -26,6 +26,7 @@ class AGUP_Proposals_List(QtCore.QObject):
         QtCore.QObject.__init__(self)
         self.proposals = {}
         self.prop_id_list = []
+        self.cycle = ''
     
     def __len__(self):
         return len(self.proposals)
@@ -78,7 +79,7 @@ class AGUP_Proposals_List(QtCore.QObject):
 
         db = {}
         self.prop_id_list = []
-        self.cycle = root.get('cycle', None) or root.get('period', None)
+        self.cycle = root.get('cycle', None) or root.get('period', None) or ''
         for node in proposals_node.findall('Proposal'):
             prop_id = xml_utility.getXmlText(node, 'proposal_id')
             prop = proposal.AGUP_Proposal_Data(node, filename)
@@ -92,8 +93,9 @@ class AGUP_Proposals_List(QtCore.QObject):
 
         :param obj specified_node: XML node to contain this data
         '''
+        node = etree.SubElement(specified_node, 'Proposal_list')
         for prop in self.inOrder():
-            prop.writeXmlNode(etree.SubElement(specified_node, 'Proposal'))
+            prop.writeXmlNode(etree.SubElement(node, 'Proposal'))
 
     def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
         '''

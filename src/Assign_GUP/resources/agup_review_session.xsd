@@ -7,14 +7,21 @@
         <xs:element ref="Topics" maxOccurs="1"/>
         <xs:element ref="Review_panel" maxOccurs="1"/>
         <xs:element ref="Proposal_list" maxOccurs="1"/>
-        <xs:element ref="Assignments" maxOccurs="1"/>
+        <xs:element ref="Assignments" maxOccurs="1" minOccurs="0"/>
         <xs:element ref="notification_email" maxOccurs="1" minOccurs="0"/>
       </xs:sequence>
-      <xs:attribute name="cycle" use="required" type="xs:NMTOKEN"/>
+      <xs:attribute name="cycle" use="required" type="xs:token"/>
       <xs:attribute name="time" use="required"/>
       <xs:attribute name="version" use="required" type="xs:decimal"/>
     </xs:complexType>
   </xs:element>
+  
+  <xs:simpleType name="cycle_SimpleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="xs:NMTOKEN" />
+      <xs:enumeration value="" />
+    </xs:restriction>
+  </xs:simpleType>
   
   <!-- + + + + + + + + + + + + + + + + -->
   
@@ -55,7 +62,7 @@
   <xs:element name="Proposal_list">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="Proposal"/>
+        <xs:element maxOccurs="unbounded" minOccurs="0" ref="Proposal"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -63,7 +70,7 @@
   <xs:element name="Assignments">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="Proposal" maxOccurs="unbounded">
+        <xs:element name="Proposal" maxOccurs="unbounded" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
               <xs:element maxOccurs="1" ref="Topics" />

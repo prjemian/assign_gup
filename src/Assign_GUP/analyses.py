@@ -58,7 +58,6 @@ class AGUP_Analyses(object):
         ref_prop_id = None
         ref_prop_topics = topics.Topics()
         db = {}
-        root = doc.getroot()
         if proposals_node is not None:
             for node in proposals_node.findall('Proposal'):
                 prop_id = node.attrib['id'].strip()

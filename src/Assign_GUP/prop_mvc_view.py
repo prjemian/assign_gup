@@ -47,7 +47,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        self.details_panel.addTopics(self.topics.getTopicList())
+        self._init_topic_widgets(self.topics)
         self.details_panel.addReviewers(self.reviewers)
 
         if agup.proposals is not None:
@@ -63,6 +63,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
 
         self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
+    
+    def _init_topic_widgets(self, topics_obj):
+        self.details_panel.addTopics(topics_obj.getTopicList())
 
     def on_item_clicked(self, index):
         '''

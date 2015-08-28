@@ -348,19 +348,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def importProposals(self, filename):
         '''read a proposals XML file and set the model accordingly'''
-        self.proposals = prop_mvc_data.AGUP_Proposals_List()    # TODO: refactor to use self.agup.importProposals(filename)
+        self.agup.importProposals(filename)
+        history.addLog('imported Proposals from: ' + filename)
 
-        exception_list = (xml_utility.IncorrectXmlRootTag, 
-                          xml_utility.InvalidWithXmlSchema)
-        try:
-           self.proposals.importXml(filename)
-        except exception_list, exc:
-            history.addLog(traceback.format_exc())
-            return
-
-        txt = self.getReviewCycleText()
         if self.getReviewCycleText() == '':
-            self.setReviewCycleText(self.proposals.cycle)
+            self.setReviewCycleText(self.agup.proposals.cycle)
 
     def doImportReviewers(self):
         '''
@@ -374,12 +366,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = str(path)
         if os.path.exists(path):
             self.importReviewers(path)
-            history.addLog('imported Reviewers from file: ' + path)
     
     def importReviewers(self, filename):
         '''read Reviewers from a PRP Project XML file and set the model accordingly'''
-        # TODO: use self.agup.importReviewers(filename)
-        history.addLog('NOT IMPLEMENTED yet')
+        self.agup.importReviewers(filename)
+        history.addLog('imported Reviewers from: ' + filename)
 
     def doImportTopics(self, filename):
         '''
@@ -393,7 +384,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = str(path)
         if os.path.exists(path):
             self.importTopics(path)
-            history.addLog('imported Topics from file: ' + path)
     
     def importTopics(self, filename):
         '''read Topics from a PRP Project XML file and set the model accordingly'''
@@ -410,10 +400,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Save requested')
         filename = self.settings.getPrpFile()
-        self.agup.write(filename)
-        self.modified = False
-        self.adjustMainWindowTitle()
-        history.addLog('saved: ' + filename)
+        if len(filename) == 0:
+            self.doSaveAs()
+        else:
+            self.agup.write(filename)
+            self.modified = False
+            self.adjustMainWindowTitle()
+            history.addLog('saved: ' + filename)
 
     def doSaveAs(self):
         '''
