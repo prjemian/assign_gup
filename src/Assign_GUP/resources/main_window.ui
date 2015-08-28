@@ -248,9 +248,6 @@
    <property name="toolTip">
     <string>Import Proposals</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+E</string>
-   </property>
   </action>
   <action name="actionSave">
    <property name="text">
@@ -292,9 +289,6 @@
   <action name="actionImport_Reviewers">
    <property name="text">
     <string>Import Reviewers ...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+R</string>
    </property>
   </action>
   <action name="actionReset_settings">
