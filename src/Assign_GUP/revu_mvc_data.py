@@ -103,8 +103,9 @@ class AGUP_Reviewers_List(QtCore.QObject):
 
         :param obj specified_node: XML node to contain this data
         '''
+        node = etree.SubElement(specified_node, 'Review_panel')
         for rvwr in self.inOrder():
-            rvwr.writeXmlNode(etree.SubElement(specified_node, 'Reviewer'))
+            rvwr.writeXmlNode(etree.SubElement(node, 'Reviewer'))
 
     def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
         '''

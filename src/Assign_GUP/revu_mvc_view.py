@@ -48,8 +48,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 
-        for topic in self.topics:
-            self.details_panel.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
+        self._init_topic_widgets(self.topics)
 
         if agup.reviewers is not None:
             self.setModel(agup.reviewers)
@@ -73,6 +72,9 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.listView.installEventFilter(self.arrowKeysEventFilter)
         
         self.custom_signals = signals.CustomSignals()
+    
+    def _init_topic_widgets(self, topics_obj):
+        self.details_panel.addTopics(topics_obj.getTopicList())
 
     def on_item_clicked(self, index):
         '''
@@ -117,6 +119,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.details_panel.setUrl(panelist.getKey('URL'))
 
         topics_list = panelist.getTopicList()
+        if len(self.details_panel.topic_list) == 0:
+            self._init_topic_widgets(panelist.topics)            # need to create topic widgets first
         for topic in topics_list:
             value = panelist.getTopic(topic)
             self.details_panel.setTopic(topic, value)
