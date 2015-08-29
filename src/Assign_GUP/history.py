@@ -23,10 +23,7 @@ NOTSET = 0
 NO_LOGGING = -1
 
 addMessageToHistory = None
-
-
-def _now():
-    return datetime.datetime.now()
+MINOR_DETAILS = False
 
 
 class Logger(object):
@@ -37,9 +34,17 @@ class Logger(object):
     :param enum level: logging interest level (default=logging.INFO, no logs = -1)
     :param obj statusbar: QStatusBar instance in main window
     :param str history_widget: QPlainTextEdit instance in main window
+    :param bool minor_details: Include minor details in the logs?
     '''
 
-    def __init__(self, log_file=None, level=logging.INFO, statusbar=None, history_widget=None):
+    def __init__(self, log_file=None, 
+                 level=logging.INFO, 
+                 statusbar=None, 
+                 history_widget=None,
+                 minor_details=False):
+        global MINOR_DETAILS
+        
+        MINOR_DETAILS = minor_details
         
         if level == NO_LOGGING:
             self.log_file = None
@@ -55,20 +60,26 @@ class Logger(object):
         self.statusbar = statusbar
         self.history_widget = history_widget
         self.history = ''
+        self.filename = os.path.basename(sys.argv[0])
+        self.pid = os.getpid()
         self.first_logs()
 
-    def add(self, message):
+    def add(self, message, major_status=True):
         '''
         log a message or report from the application
 
         :param str message: words to be logged
+        :param bool major_status: major (True) or minor (False) status of this message
         '''
+        global MINOR_DETAILS
+        
         if self.statusbar is not None:
             self.statusbar.showMessage(message)
+        if not MINOR_DETAILS and not major_status:
+            return
+
         timestamp = _now()
-        name = os.path.basename(sys.argv[0])
-        pid = os.getpid()
-        text = "(%d,%s,%s) %s" % (pid, name, timestamp, message)
+        text = "(%d,%s,%s) %s" % (self.pid, self.filename, timestamp, message)
         
         if self.level != NO_LOGGING:
             logging.info(text)
@@ -93,13 +104,29 @@ class Logger(object):
         self.add("user             = " + user)
         self.add("host             = " + socket.gethostname() )
         self.add("program          = " + sys.argv[0] )
-        self.add("PID              = " + str(os.getpid()) )
+        self.add("program filename = " + self.filename )
+        self.add("PID              = " + str(self.pid) )
 
 
-def addLog(message = ''):
+def addLog(message = '', major=True):
+    '''
+    put this message in the logs, note whether if major (True)
+    '''
     global addMessageToHistory
     if addMessageToHistory is not None:
         for line in str(message).splitlines():
-            addMessageToHistory(line)
+            addMessageToHistory(line, major)
     else:
         print message
+
+
+def logMinorDetails(choice):
+    '''
+    choose to record (True) or not record (False) minor details in the logs
+    '''
+    global MINOR_DETAILS
+    MINOR_DETAILS = choice
+
+
+def _now():
+    return datetime.datetime.now()
