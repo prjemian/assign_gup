@@ -77,7 +77,6 @@ class AGUP_Analyses(object):
                 topics.synchronizeTopics(analysis.topics, ref_prop_topics)
 
                 # assigned reviewers
-                reviewers_dict = {}
                 analysis.reviewer1 = xml_utility.getXmlText(node, 'Reviewer1', '')
                 analysis.reviewer2 = xml_utility.getXmlText(node, 'Reviewer2', '')
 

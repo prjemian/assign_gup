@@ -26,22 +26,26 @@ class AGUP_Proposal_Data(object):
         if xmlParentNode != None:
             self.importXml( xmlParentNode )
 
-    def importXml(self, proposal):
+    def importXml(self, proposal_node):
         '''
         Fill the class variables with values from the XML node
         
-        :param proposal: lxml node of the Proposal
+        :param proposal_node: lxml node of the Proposal
         '''
         for key in self.tagList:
-            self.db[key] = xml_utility.getXmlText(proposal, key)
-        subject_node = proposal.find('subject')
+            self.db[key] = xml_utility.getXmlText(proposal_node, key)
+        subject_node = proposal_node.find('subject')
         if subject_node is not None:
             subjects = [node.text.strip() for node in subject_node.findall('name')]
         else:
             subjects = ''
         self.db['subjects'] = ", ".join(subjects)
+
+        # get list of eligible reviewers (specified by full name)
         eligibles = self.eligible_reviewers
-        node = proposal.find('reviewer')
+
+        # search for any existing reviewer assignments
+        node = proposal_node.find('reviewer')
         for name in node.findall('name'):
             who = name.text.strip()
             assignment = name.get('assigned', None)
@@ -50,7 +54,10 @@ class AGUP_Proposal_Data(object):
             excluded = name.get('excluded', 'false') == 'true'
             if who not in eligibles and not excluded:
                 eligibles[who] = assignment
-    
+
+        # search for any existing topic strength assessments
+        self.topics.importXmlTopics(proposal_node, True)
+
     def writeXmlNode(self, specified_node):
         '''
         write this Proposal's data to a specified node in the XML document
