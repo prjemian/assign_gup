@@ -109,7 +109,7 @@ class ApplicationQSettings(QtCore.QSettings):
             self.updateTimeStamp()
  
     def getReviewCycle(self):
-        return self.getKey(GLOBAL_GROUP + '/review_cycle') or ''
+        return str(self.getKey(GLOBAL_GROUP + '/review_cycle')) or ''
  
     def setReviewCycle(self, review_cycle):     # redundant, treat as non-authoritative
         key = GLOBAL_GROUP + '/review_cycle'
