@@ -3,6 +3,10 @@
 Support AGUP topics
 '''
 
+import agup_data
+import xml_utility
+from lxml import etree
+
 DEFAULT_TOPIC_VALUE = 0.0
 
 
@@ -23,6 +27,24 @@ class Topics(object):
 
     def inOrder(self):
         return sorted(self.topics)
+    
+    def valueOrder(self):
+        '''
+        sort by topic values
+        '''
+        # make a dict with value as key and list(topics) as values
+        db = {}
+        for topic in self:
+            val = str(self.get(topic))
+            if val not in db:
+                db[val] = []
+            db[val].append(topic)
+        
+        # list of topics ordered by values (sub-ordered alphabetically)
+        result = []
+        for value in sorted(db.keys(), reverse=True):
+            result += sorted(db[value])
+        return result
     
     def exists(self, key):
         '''
@@ -167,16 +189,21 @@ class Topics(object):
         :param str filename: name of XML file with Topics
         :param bool read_values: import topic values?
         '''
-        import agup_data
-        import xml_utility
-        from lxml import etree
         doc = xml_utility.readValidXmlDoc(xmlFile, 
                                           agup_data.AGUP_MASTER_ROOT_TAG, 
                                           agup_data.AGUP_XML_SCHEMA_FILE,
                                           )
         self.clearAll()
-        root = doc.getroot()
-        node = root.find('Topics')
+        self.importXmlTopics(doc.getroot(), read_values)
+    
+    def importXmlTopics(self, parent_node, read_values=True):
+        '''
+        make this common code segment reuseable
+        
+        :param obj parent_node: XML parent node
+        :param bool read_values: import topic values?
+        '''
+        node = parent_node.find('Topics')
         if node is not None:
             for subnode in node.findall('Topic'):
                 topic = subnode.attrib['name']
