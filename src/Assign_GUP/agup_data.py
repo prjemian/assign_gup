@@ -122,7 +122,6 @@ class AGUP_Data(QtCore.QObject):
             return
 
         self.analyses = assignments
-        self.reassignAssignmentsToProposals()
     
     def importProposals(self, xmlFile):
         '''
@@ -131,19 +130,26 @@ class AGUP_Data(QtCore.QObject):
         props = prop_mvc_data.AGUP_Proposals_List()
         props.importXml(xmlFile)
 
-        if False:       # old code
-            cycle = self.settings.getReviewCycle()
-            if cycle in (None, '', props.cycle) or props.cycle in ('',):
-                props.addTopics(self.topics.getTopicList())
-                self.proposals = props
-                self.settings.setReviewCycle(props.cycle or '')
-                self.reassignAssignmentsToProposals()      # restore any existing assignments
-                # TODO: update self.analyses
-                pass
-            else:
-                msg = 'Cannot import proposals from cycle "' + props.cycle
-                msg += '" into PRP session for cycle "' + cycle + '"'
-                raise KeyError, msg
+        # restore any assessments or assignments
+        for new_proposal in props:
+            prop_id = new_proposal.getKey('proposal_id')
+            if self.proposals.exists(prop_id):
+                existing_prop = self.proposals.getProposal(prop_id)
+                new_proposal.topics = existing_prop.topics
+            
+                for full_name, role in existing_prop.eligible_reviewers.items():
+                    if full_name in ('', None):
+                        continue
+    
+                    # check that assigned reviewer is listed as an eligible reviewer
+                    if full_name not in new_proposal.eligible_reviewers:
+                        msg = 'Reviewer "' + str(full_name)
+                        msg += '" assigned to proposal "' + prop_id
+                        msg += '" is not on the list of reviewers for that proposal'
+                        raise ValueError, msg
+    
+                    # assign the reviewer's role
+                    new_proposal.eligible_reviewers[full_name] = role
 
         _review_cycle_settings = self.settings.getReviewCycle()
         _review_cycle_proposals = props.cycle or _review_cycle_settings
@@ -187,25 +193,6 @@ class AGUP_Data(QtCore.QObject):
         import the email template support
         '''
         self.email.importXml(xmlFile)        # pass exceptions straight to the caller
-    
-    def reassignAssignmentsToProposals(self):
-        '''
-        merge assignments with self.proposals and self.reviewers
-        '''
-#         raise Exception, 'this code is still being developed and is not assigning topic values now'
-        # the problem: Topics have zero values for all proposals on the standard test file now
-        # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-        if self.analyses is None:
-            return
-        for prop_id, analysis in self.analyses.analyses.items():
-            proposal = self.proposals.getProposal(prop_id)      # raises exception if not found
-            for topic in analysis.topics:
-                value = analysis.getTopic(topic)
-                proposal.topics.set(topic, value)     # topic must exist
-        
-            # TODO: check that 
-            #   assigned reviewers in proposal object 
-            #   match with proposal analysis finding
     
     def getCycle(self):
         '''the review cycle, as defined by the proposals'''
