@@ -118,7 +118,7 @@ class AGUP_Proposal_Data(object):
         
         topic must exist or KeyError exception will be raised
         '''
-        self.topics.set(topic, value)
+        self.topics.set(topic, float(value))
 
     def removeTopic(self, key):
         '''

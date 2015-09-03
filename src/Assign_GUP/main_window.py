@@ -252,7 +252,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP project (*.xml)")
+        file_types = "PRP project (*.xml *.agup *.prp);;any file (*.*)"
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, file_types)
 
         if os.path.exists(filename):
             self.openPrpFile(filename)
@@ -370,6 +371,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog(traceback.format_exc())
             # TODO: put up a "failed" dialog to acknowledge 'that was not an APS Proposals file'
             return
+
+        numTopics = [len(prop.topics) for prop in self.agup.proposals]
+        if max(numTopics) == 0:     # what about   max(numTopics) != min(numTopics)
+            # ensure imported proposals have the correct Topics
+            self.agup.proposals.addTopics(self.agup.topics.getTopicList())
+        
         self.setNumProposalsWidget(len(self.agup.proposals))
         history.addLog('imported Proposals from: ' + filename)
 

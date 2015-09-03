@@ -66,7 +66,7 @@ class Topics(object):
         if len(key.split()) != 1:
             raise KeyError, 'topic cannot have embedded white space: ' + key
         checkTopicValueRange(value)
-        self.topics[key] = value
+        self.topics[key] = float(value)
         self._topics_string_ = ' '.join(self.getTopicList())
     
     def addTopics(self, key_list):
@@ -102,7 +102,7 @@ class Topics(object):
         '''
         if not self.exists(key):
             raise KeyError, 'This topic is not defined: ' + key
-        self.topics[key] = value
+        self.topics[key] = float(value)
 
     def clearAll(self):
         '''
