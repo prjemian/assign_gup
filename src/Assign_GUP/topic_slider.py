@@ -80,10 +80,12 @@ class AGUP_TopicSlider(QtCore.QObject):
         self.setValue(str(value / float(self.slider_factor)))
     
     def onValueChange(self, value):
+        if value == '.':
+            value = 0
         try:
             float_value = float(value)
             if 0 <= float_value <= 1.0:
-                self.setSliderValue(int(float_value*self.slider_factor))
+                self.setSliderValue(int(float_value*self.slider_factor + .5))
         except ValueError, exc:
             history.addLog('problem with Topic: ' + str(self.label))
             history.addLog(traceback.format_exc())
