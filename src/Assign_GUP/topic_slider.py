@@ -45,7 +45,7 @@ class AGUP_TopicSlider(QtCore.QObject):
     
     def __init__(self, parent, row, label, value):
         QtCore.QObject.__init__(self)
-        self.slider_factor = 100    # slider = slider_factor * value_widget
+        self.slider_factor = 100    # slider = int(slider_factor * value_widget + 0.5)
 
         self.slider = QtGui.QSlider(
                                 value=int(self.slider_factor*value),

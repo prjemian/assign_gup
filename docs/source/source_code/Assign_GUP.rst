@@ -17,7 +17,6 @@ Submodules
 
    about
    agup_data
-   analyses
    email_template
    event_filters
    general_mvc_model

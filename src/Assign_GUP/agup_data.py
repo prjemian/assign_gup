@@ -11,7 +11,6 @@ from PyQt4 import QtCore
 import StringIO
 import traceback
 
-import analyses
 import email_template
 import prop_mvc_data
 import resources
@@ -42,7 +41,6 @@ class AGUP_Data(QtCore.QObject):
         '''
         clear all data (except for self.settings)
         '''
-        self.analyses = None            # TODO: remove this
         self.proposals = prop_mvc_data.AGUP_Proposals_List()
         self.reviewers = revu_mvc_data.AGUP_Reviewers_List()
         self.topics = topics.Topics()
@@ -59,7 +57,6 @@ class AGUP_Data(QtCore.QObject):
         self.importTopics(filename)
         self.importReviewers(filename)
         self.importProposals(filename)
-        self.importAnalyses(filename)
         self.importEmailTemplate(filename)
         self.modified = False
 
@@ -86,42 +83,11 @@ class AGUP_Data(QtCore.QObject):
 
         # provide this data in a second place, in case imported proposals destroy the original
         node = etree.SubElement(root, 'Assignments')
-        if self.analyses is not None:
-            self.analyses.writeXmlNode(node)
         
         self.email.writeXmlNode(root)
 
         s = etree.tostring(doc, pretty_print=True, xml_declaration=True, encoding='UTF-8')
         open(filename, 'w').write(s)
-
-    def importAnalyses(self, xmlFile):
-        '''
-        read analyses, assignments, & assessments from XML file
-
-        apply decision tree:
-          if no topics are known
-             define new topics names and set values
-          else 
-             match all topics lists
-             only if successful matches all around, set values
-        
-        simple test if topics are defined for first proposal since others MUST match
-        '''
-        if self.proposals is None:
-            history.addLog('Must define or import proposals before analyses')
-            return
-        if self.reviewers is None:
-            history.addLog('Must define or import reviewers before analyses')
-            return
-
-        assignments = analyses.AGUP_Analyses()
-        try:
-            assignments.importXml(xmlFile)
-        except Exception:
-            history.addLog(traceback.format_exc())
-            return
-
-        self.analyses = assignments
     
     def importProposals(self, xmlFile):
         '''
