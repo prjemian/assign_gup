@@ -130,4 +130,4 @@ class AGUP_Proposal_Data(object):
         '''
         remove several topics at once
         '''
-        self.topics.removeTopics(key)
+        self.topics.removeTopics(key_list)

@@ -372,10 +372,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             # TODO: put up a "failed" dialog to acknowledge 'that was not an APS Proposals file'
             return
 
-        numTopics = [len(prop.topics) for prop in self.agup.proposals]
-        if max(numTopics) == 0:     # what about   max(numTopics) != min(numTopics)
-            # ensure imported proposals have the correct Topics
-            self.agup.proposals.addTopics(self.agup.topics.getTopicList())
+        # ensure each imported proposal has the correct Topics
+        for prop in self.agup.proposals:
+            added, removed = self.agup.topics.diff(prop.topics)
+            prop.addTopics(added)
+            prop.removeTopics(removed)
         
         self.setNumProposalsWidget(len(self.agup.proposals))
         history.addLog('imported Proposals from: ' + filename)
