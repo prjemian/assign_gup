@@ -145,14 +145,14 @@ class AGUP_Data(QtCore.QObject):
                 msg += '" into PRP session for cycle "' + cycle + '"'
                 raise KeyError, msg
 
-        _known_review_cycle = self.settings.getReviewCycle()
-        _proposals_review_cycle = props.cycle
-        if self.settings.getReviewCycle() in (None, '', props.cycle):
+        _review_cycle_settings = self.settings.getReviewCycle()
+        _review_cycle_proposals = props.cycle or _review_cycle_settings
+        if _review_cycle_settings in (None, '', _review_cycle_proposals):
             self.proposals = props
-            self.settings.setReviewCycle(props.cycle or '')
+            self.settings.setReviewCycle(_review_cycle_proposals or '')
         else:
-            msg = 'Cannot import proposals from cycle "' + props.cycle
-            msg += '" into PRP session for cycle "' + cycle + '"'
+            msg = 'Cannot import proposals from cycle "' + _review_cycle_proposals
+            msg += '" into PRP session for cycle "' + _review_cycle_settings + '"'
             raise KeyError, msg
     
     def importReviewers(self, xmlFile):
