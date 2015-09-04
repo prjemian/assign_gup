@@ -29,7 +29,7 @@
       <xs:sequence>
         <xs:element name="Topic" maxOccurs="unbounded">
           <xs:complexType>
-            <xs:attribute name="name" use="required" type="xs:NCName"/>
+            <xs:attribute name="name" use="required" type="xs:string"/>
             <xs:attribute name="value" type="xs:decimal"/>
           </xs:complexType>
         </xs:element>

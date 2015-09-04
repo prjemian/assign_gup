@@ -63,8 +63,8 @@ class Topics(object):
         key = key.strip()
         if len(key) == 0:
             raise KeyError, 'Must give a name for the topic'
-        if len(key.split()) != 1:
-            raise KeyError, 'topic cannot have embedded white space: ' + key
+        # if len(key.split()) != 1:
+        #     raise KeyError, 'topic cannot have embedded white space: ' + key
         checkTopicValueRange(value)
         self.topics[key] = float(value)
         self._topics_string_ = ' '.join(self.getTopicList())
