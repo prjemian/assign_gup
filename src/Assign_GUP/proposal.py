@@ -84,6 +84,15 @@ class AGUP_Proposal_Data(object):
     def getKey(self, key):
         return self.db[key]
     
+    def getSubjects(self):
+        '''
+        return the list of subjects as specified in the Proposal
+        '''
+        subjects = []
+        for subject in [_.strip() for _ in self.getKey('subjects').split(',')]:
+            subjects.append(subject)
+        return subjects
+    
     def getTopic(self, topic):
         '''
         return the value of the named topic
@@ -95,6 +104,12 @@ class AGUP_Proposal_Data(object):
         return a list of all topics
         '''
         return self.topics.getTopicList()
+    
+    def hasTopic(self, topic):
+        '''
+        does the named topic exist?
+        '''
+        return self.topics.exists(topic)
     
     def addTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
         '''

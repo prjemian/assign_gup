@@ -230,10 +230,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.closeSubwindows()
         self.agup.clearAllData()
         self.setPrpFileText('')
-        self.setReviewCycleText('')
-        self.setNumTopicsWidget(0)
-        self.setNumReviewersWidget(0)
-        self.setNumProposalsWidget(0)
+        self.setIndicators()
         history.addLog('New PRP File')
         self.adjustMainWindowTitle()
 
@@ -252,8 +249,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        file_types = "PRP project (*.xml *.agup *.prp);;any file (*.*)"
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, file_types)
+        filters = ('PRP project (*.agup *.prp *.xml)', 'any file (*.*)')
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, ';;'.join(filters))
 
         if os.path.exists(filename):
             self.openPrpFile(filename)
@@ -273,11 +270,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             # TODO: put up a "failed" dialog to acknowledge 'that was not a PRP Project file'
             return
 
-        self.setNumTopicsWidget(len(self.agup.topics))
-        self.setNumReviewersWidget(len(self.agup.reviewers))
-        self.setNumProposalsWidget(len(self.agup.proposals))
         self.setPrpFileText(filename)
-        self.setReviewCycleText(self.agup.getCycle())
+        self.setIndicators()
         history.addLog('Open PRP file: ' + filename)
 
     def doEditProposals(self):
@@ -378,7 +372,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             prop.addTopics(added)
             prop.removeTopics(removed)
         
-        self.setNumProposalsWidget(len(self.agup.proposals))
+        self.setIndicators()
         history.addLog('imported Proposals from: ' + filename)
 
         if self.getReviewCycleText() == '':
@@ -398,7 +392,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.importReviewers(path)
     
     def importReviewers(self, filename):
-        '''read Reviewers from a PRP Project XML file and set the model accordingly'''
+        '''read Reviewers from a PRP Project file and set the model accordingly'''
         self.agup.importReviewers(filename)
         self.setNumTopicsWidget(len(self.agup.topics))
         self.setNumReviewersWidget(len(self.agup.reviewers))
@@ -419,7 +413,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog('imported Topics from: ' + filename)
     
     def importTopics(self, filename):
-        '''read Topics from a PRP Project XML file and set the model accordingly'''
+        '''read Topics from a PRP Project file and set the model accordingly'''
         self.agup.importTopics(filename)
         self.setNumTopicsWidget(len(self.agup.topics))
         history.addLog('imported topics from: ' + filename)
@@ -430,7 +424,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doSave(self):
         '''
-        save the self.agup data to the known data file name
+        save the self.agup data to the known project file name
         '''
         history.addLog('Save requested', False)
         filename = self.settings.getPrpFile()
@@ -445,18 +439,41 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doSaveAs(self):
         '''
         save the self.agup data to the data file name selected from a dialog box
+        
+        You may choose any file name and extension that you prefer.
+        It is strongly suggested you choose the default file extension,
+        to identify AGUP PRP Project files more easily on disk.
+        Multiple projects files, perhaps for different review cycles,
+        can be saved in the same directory.  Or you can save each project file
+        in a different directory as you choose.
+
+        By default, the file extension will be **.agup**, indicating
+        that this is an AGUP PRP Project file.  The extensions *.prp* or *.xml*
+        may be used as alternatives.  Each of these describes a file with *exactly 
+        the same file format*, an XML document.
         '''
         history.addLog('Save As requested', False)
         filename = self.settings.getPrpFile()
+        filters = ('AGUP PRP Project (*.agup)', 'PRP Project (*.prp)', 'XML File (*.xml)')
         filename = QtGui.QFileDialog.getSaveFileName(parent=self, 
                                                      caption="Save the PRP project", 
                                                      directory=filename,
-                                                     filter='XML File (*.xml)')
+                                                     filter=';;'.join(filters))
         filename = str(os.path.abspath(filename))
-        if len(filename) > 0:
-            self.agup.write(filename)
-            self.setPrpFileText(filename)
-            self.modified = False
+        if len(filename) == 0:
+            return
+        if os.path.isdir(filename):
+            history.addLog('cannot save, selected a directory: ' + filename)
+            return
+        if os.path.islink(filename):     # might need deeper analysis
+            history.addLog('cannot save, selected a link: ' + filename)
+            return
+        if os.path.ismount(filename):
+            history.addLog('cannot save, selected a mount point: ' + filename)
+            return
+        self.agup.write(filename)
+        self.setPrpFileText(filename)
+        self.modified = False
         history.addLog('saved: ' + filename)
         self.adjustMainWindowTitle()
     
@@ -508,6 +525,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def setNumProposalsWidget(self, number):
         self.num_proposals.setText(self._num_to_text_(number))
+    
+    def setIndicators(self):
+        self.setNumTopicsWidget(len(self.agup.topics))
+        self.setNumReviewersWidget(len(self.agup.reviewers))
+        self.setNumProposalsWidget(len(self.agup.proposals))
+        self.setReviewCycleText(self.agup.getCycle())
 
 
 def main():
