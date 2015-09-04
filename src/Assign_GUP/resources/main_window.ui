@@ -294,11 +294,22 @@
     <addaction name="separator"/>
     <addaction name="actionSelect_All"/>
    </widget>
+   <widget class="QMenu" name="menuReports">
+    <property name="title">
+     <string>Reports</string>
+    </property>
+    <addaction name="actionSummary"/>
+    <addaction name="separator"/>
+    <addaction name="actionLetters"/>
+    <addaction name="actionAssignments"/>
+    <addaction name="actionAnalysis_grid"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTopics"/>
    <addaction name="menuReviewers"/>
    <addaction name="menuProposals"/>
+   <addaction name="menuReports"/>
    <addaction name="menuDocs"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -446,6 +457,26 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionSummary">
+   <property name="text">
+    <string>Summary ...</string>
+   </property>
+  </action>
+  <action name="actionLetters">
+   <property name="text">
+    <string>Letters ...</string>
+   </property>
+  </action>
+  <action name="actionAssignments">
+   <property name="text">
+    <string>Assignments ...</string>
+   </property>
+  </action>
+  <action name="actionAnalysis_grid">
+   <property name="text">
+    <string>Analysis grid ...</string>
    </property>
   </action>
  </widget>

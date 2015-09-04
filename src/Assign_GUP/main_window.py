@@ -99,6 +99,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionReset_settings.triggered.connect(self.doResetDefaultSettings)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAgupInfo.triggered.connect(self.doAgupInfo)
+        self.actionSummary.triggered.connect(self.doSummary)
+        self.actionLetters.triggered.connect(self.doLetters)
+        self.actionAssignments.triggered.connect(self.doAssignments)
+        self.actionAnalysis_grid.triggered.connect(self.doAnalysis_grid)
 
     def doAgupInfo(self, *args, **kw):
         '''
@@ -476,6 +480,36 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.modified = False
         history.addLog('saved: ' + filename)
         self.adjustMainWindowTitle()
+
+    def doSummary(self):
+        '''
+        show a read-only text page with how many primary and secondary proposals assigned to each reviewer
+        '''
+        history.addLog('doSummary() requested')
+
+    def doLetters(self):
+        '''
+        prepare the email form letters to each reviewer with their assignments
+        '''
+        history.addLog('doLetters() requested')
+
+    def doAssignments(self):
+        '''
+        show a read-only text page with assignments for each proposal
+        
+        ======   ==========   ============   ====================   ==============================
+        GUP#     reviewer 1   reviewer 2     excluded reviewer(s)   title
+        ======   ==========   ============   ====================   ==============================
+        11111    A Reviewer   Ima Reviewer                          Study of stuff
+        ======   ==========   ============   ====================   ==============================
+        '''
+        history.addLog('doAssignments() requested')
+
+    def doAnalysis_grid(self):
+        '''
+        show a table with dotProducts for each reviewer against each proposal *and* assignments
+        '''
+        history.addLog('doAnalysis_grid() requested')
     
     def saveWindowGeometry(self):
         '''
