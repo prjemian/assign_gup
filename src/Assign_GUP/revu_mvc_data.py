@@ -140,5 +140,5 @@ class AGUP_Reviewers_List(QtCore.QObject):
         '''
         remove several topics at once
         '''
-        for item in self:
-            item.removeTopic(key)
+        for item in key_list:
+            self.removeTopic(item)

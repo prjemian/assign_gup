@@ -72,6 +72,16 @@ class ProposalReviewerRow(QtCore.QObject):
             [ ]       [ ]         1%        I. M. A. Reviewer
         
         '''
+        # FIXME: on Linux, checkboxes generate this error
+        # here is some help
+        # Gtk-CRITICAL **: IA__gtk_widget_get_direction: assertion 'GTK_IS_WIDGET (widget)' failed
+        #  http://stackoverflow.com/questions/25660597/hide-critical-pyqt-warning-when-clicking-a-checkboc
+        #
+        # make a message handler and direct Qt to it
+        #  QtCore.qInstallMessageHandler(handler)
+        #  def handler(msg_type, msg_log_context, msg_string):
+        #      pass
+        # In this handler, log the message with history.addLog(msg_string)
         self.primary = QtGui.QCheckBox()
         self.secondary = QtGui.QCheckBox()
         self.percentage = QtGui.QLabel()

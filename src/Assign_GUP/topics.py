@@ -249,8 +249,8 @@ def diffLists(new_list, old_list):
     :param [str] new_list: new list of strings to be compared
     :param [str] old_list: old list of strings to be compared
     '''
-    added_items = [_ for _ in new_list if _ not in old_list]
-    removed_items = [_ for _ in old_list if _ not in new_list]
+    added_items = [str(_) for _ in new_list if _ not in old_list]
+    removed_items = [str(_) for _ in old_list if _ not in new_list]
     return added_items, removed_items
 
 

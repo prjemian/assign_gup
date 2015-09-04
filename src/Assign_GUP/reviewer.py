@@ -139,4 +139,5 @@ class AGUP_Reviewer_Data(object):
         '''
         remove several topics at once
         '''
-        self.topics.removeTopics(key)
+        for key in key_list:
+            self.removeTopic(key)

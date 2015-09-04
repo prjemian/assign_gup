@@ -130,5 +130,5 @@ class AGUP_Proposals_List(QtCore.QObject):
         '''
         remove several topics at once
         '''
-        for prop in self:
-            prop.removeTopic(key)
+        for key in key_list:
+            self.removeTopic(key)
