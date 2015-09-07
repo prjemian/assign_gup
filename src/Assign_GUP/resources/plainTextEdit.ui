@@ -19,6 +19,7 @@
      <property name="font">
       <font>
        <family>Courier</family>
+       <pointsize>9</pointsize>
       </font>
      </property>
     </widget>
