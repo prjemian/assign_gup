@@ -552,7 +552,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 view.plainTextEdit.setPlainText(text)
                 view.show()
             else:
-                view = email_template.EmailTextWindow(title, text, self.settings, self)
+                view = plainTextEdit.TextWindow(self, title, text, self.settings)
                 self._email_letters_[full_name] = view
                 view.show()
 
@@ -575,7 +575,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             r1, r2 = prop.getAssignedReviewers()
             excluded = prop.getExcludedReviewers(self.agup.reviewers)
             tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
-        self.assignment_window = plainTextEdit.TextWindow('Reviewer Assignments', tbl.reST(), self)
+        title = 'Reviewer Assignments'
+        self.assignment_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
         self.assignment_window.plainTextEdit.setReadOnly(True)
         self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.assignment_window.show()
