@@ -7,6 +7,9 @@ from lxml import etree
 import topics
 import xml_utility
 
+PRIMARY_REVIEWER_ROLE = 1
+SECONDARY_REVIEWER_ROLE = 2
+
 
 class AGUP_Proposal_Data(object):
     '''

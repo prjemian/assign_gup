@@ -9,6 +9,7 @@ from lxml import etree
 import os
 
 import agup_data
+import plainTextEdit
 import resources
 import xml_utility
 
@@ -123,6 +124,49 @@ class EmailTemplate(object):
             key_node = etree.SubElement(node, 'Key')
             key_node.attrib['name'] = k
             key_node.text = v.strip()
+
+
+class EmailTextEdit(plainTextEdit.TextWindow):
+    '''
+    plainTextEdit window that can remember its geometry, based on title
+    '''
+
+    def __init__(self, title, text, settings, parent=None):
+        plainTextEdit.TextWindow.__init__(self, title, text, parent)
+        self.settings = settings
+        self.restoreWindowGeometry()
+    
+    def settingsGroupName(self):
+        '''
+        need a group name in the settings file to save the window geometry, based on window title
+        '''
+        group = str(self.windowTitle()).strip()
+        #group = group.lstrip('email: ')
+        pattern_list = [' ', ':', ';', '(', ')', '[', ']', '.', ',', "'", '"']
+        for pattern in pattern_list:
+            group = group.replace(pattern, '_')
+        return group
+
+    def closeEvent(self, event):
+        self.saveWindowGeometry()
+        event.accept()
+        self.close()
+    
+    def saveWindowGeometry(self):
+        '''
+        remember where the window was
+        '''
+        if self.settings is not None:
+            group = self.settingsGroupName()
+            self.settings.saveWindowGeometry(self, group)
+
+    def restoreWindowGeometry(self):
+        '''
+        put the window back where it was
+        '''
+        if self.settings is not None:
+            group = self.settingsGroupName()
+            self.settings.restoreWindowGeometry(self, group)
 
 
 if __name__ == '__main__':

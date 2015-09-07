@@ -10,9 +10,12 @@ import traceback
 
 import about
 import agup_data
+import email_template
 import history
+import plainTextEdit
 import prop_mvc_data
 import prop_mvc_view
+import proposal
 import resources
 import revu_mvc_view
 import settings
@@ -43,6 +46,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.modified = False
         self.forced_exit = False
+        self._email_letters_ = {}
 
         self.proposal_view = None
         self.reviewer_view = None
@@ -484,6 +488,23 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doSummary(self):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
+        
+        total number of proposals: #
+        primary proposals per reviewer: #.#
+        
+        Overall topic strength: TBA
+         
+        Primary assignments:
+        reviewer1  ##: ##### ##### #####
+        reviewer2  ##: ##### ##### #####
+        reviewer3  ##: ##### ##### #####
+         
+        Secondary assignments:
+        reviewer1  ##: ##### ##### #####
+        reviewer2  ##: ##### ##### #####
+        reviewer3  ##: ##### ##### #####
+        
+        Unassigned proposals: #
         '''
         history.addLog('doSummary() requested')
 
@@ -491,7 +512,49 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         prepare the email form letters to each reviewer with their assignments
         '''
+        
+        def getAssignments(full_name, role):
+            assignments = []
+            for prop in self.agup.proposals:
+                if role ==  prop.eligible_reviewers.get(full_name, None):
+                    assignments.append(prop.getKey('proposal_id'))
+            return assignments
+
+        # TODO: need an editor for et.keyword_dict, persist in self.settings
+        
         history.addLog('doLetters() requested')
+        et = email_template.EmailTemplate()
+        base_x, base_y = 40, 40
+        offset_x, offset_y = 40, 40
+        default_window_size = QtCore.QSize(800, 600)
+
+        keyword_dict = self.settings.getEmailKeywords()
+        if len(keyword_dict) == 0:
+            keyword_dict = et.keyword_dict
+            self.settings.saveEmailKeywords(keyword_dict)
+        for index, rvwr in enumerate(self.agup.reviewers):
+            full_name = rvwr.getFullName()
+            primaries = getAssignments(full_name, proposal.PRIMARY_REVIEWER_ROLE)
+            secondaries = getAssignments(full_name, proposal.SECONDARY_REVIEWER_ROLE)
+            fields = dict(     # to be filled with data from an instance of Reviewer
+                FULL_NAME = full_name,
+                EMAIL = rvwr.getKey('email'),
+                ASSIGNED_PRIMARY_PROPOSALS = ' '.join(primaries),
+                ASSIGNED_SECONDARY_PROPOSALS = ' '.join(secondaries),
+            )
+            fields.update(keyword_dict)
+
+            title = 'email: ' + full_name
+            text = et.mail_merge(**fields)
+            if full_name in self._email_letters_:
+                view = self._email_letters_[full_name]
+                view.setWindowTitle(title)
+                view.plainTextEdit.setPlainText(text)
+                view.show()
+            else:
+                view = email_template.EmailTextEdit(title, text, self.settings, self)
+                self._email_letters_[full_name] = view
+                view.show()
 
     def doAssignments(self):
         '''
