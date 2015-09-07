@@ -508,6 +508,46 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('doSummary() requested')
 
+        title = 'Reviewer Assignment Summary'
+        text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
+
+        unassigned = []
+        for prop in self.agup.proposals:
+            for r in prop.getAssignedReviewers():
+                if r is None:
+                    unassigned.append(prop)
+                    break
+        text.append('Unassigned proposals: ' + str(len(unassigned)))
+
+        mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
+        text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
+
+        # text.append('')
+        # text.append('Overall topic strength: ' + 'TBA')
+
+        text.append('')
+        width = max([len(_.getFullName()) for _ in self.agup.reviewers])
+        fmt = '%s%d%s: ' % ('%0', width, 's %3d')
+        for role, label in enumerate(['Primary', 'Secondary']):
+            role += 1   # 1-based here
+            text.append(label + ' assignments:')
+            for rvwr in self.agup.reviewers:
+                full_name = rvwr.getFullName()
+                prop_list = []
+                for prop in self.agup.proposals:
+                    if full_name in prop.eligible_reviewers.keys():
+                        if role == prop.eligible_reviewers[full_name]:
+                            prop_list.append(prop.getKey('proposal_id'))
+                row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
+                text.append(row)
+            text.append('')
+        text = '\n'.join(text)
+
+        self.assignment_window = plainTextEdit.TextWindow(self, title, text, self.settings)
+        self.assignment_window.plainTextEdit.setReadOnly(True)
+        self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.assignment_window.show()
+
     def doLetters(self):
         '''
         prepare the email form letters to each reviewer with their assignments
@@ -575,6 +615,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             r1, r2 = prop.getAssignedReviewers()
             excluded = prop.getExcludedReviewers(self.agup.reviewers)
             tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
+
         title = 'Reviewer Assignments'
         self.assignment_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
         self.assignment_window.plainTextEdit.setReadOnly(True)
@@ -607,6 +648,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                     text = score
                 row.append(text)
             tbl.rows.append(row)
+
         title = 'Analysis Grid'
         self.analysisGrid_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
         self.analysisGrid_window.plainTextEdit.setReadOnly(True)
