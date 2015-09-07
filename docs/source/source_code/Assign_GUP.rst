@@ -35,6 +35,7 @@ Submodules
    revu_mvc_data
    revu_mvc_view
    settings
+   signals
    topic_slider
    topics
    topics_editor
