@@ -1,5 +1,5 @@
 eclipse.preferences.version=1
-encoding//doc/source/conf.py=utf-8
-encoding//src/Assign_GUP/Proposal.py=iso-8859-1
-encoding//src/Assign_GUP/Proposals.py=iso-8859-1
+encoding//docs/source/conf.py=utf-8
+encoding//src/legacy/wx_Proposal.py=iso-8859-1
+encoding//src/legacy/wx_Proposals.py=iso-8859-1
 encoding/Assign_GUP.pyw=iso-8859-1

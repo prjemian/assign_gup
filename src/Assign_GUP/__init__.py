@@ -1,12 +1,18 @@
+
+'''
+Source code for the Assign_GUP (AGUP) package
+'''
+
 __package_name__        = u'Assign_GUP'
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__
 
-__version__             = u'2015.0713.0'
+__version__             = u'2015.09.rc1'
 __release__             = __version__
 __author__              = u'Pete R. Jemian'
 __email__               = u'jemian@anl.gov'
 __institution__         = u"Advanced Photon Source, Argonne National Laboratory"
+__settings_orgName__    = u'Advanced_Photon_Source'
 __author_name__         = __author__
 __author_email__        = __email__
 
@@ -16,7 +22,8 @@ __license__             = u'UChicago Argonne, LLC OPEN SOURCE LICENSE (see LICEN
 __url__                 = u'http://Assign_GUP.readthedocs.org'
 __download_url__        = u'https://github.com/prjemian/assign_gup.git'
 __keywords__            = ['APS', 'GUP', 'PRP']
-__requires__            = ['wx', 'lxml', 'pyRestTable']
+__requires__            = ['PyQt4', 'lxml', 'pyRestTable']
+__documentation_mocks__ = ['lxml', 'pyRestTable']       # do NOT mock PyQt4, big problems if you do
 
 __classifiers__ = [
             'Development Status :: 5 - Production/Stable',
