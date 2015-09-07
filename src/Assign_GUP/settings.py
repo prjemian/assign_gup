@@ -155,6 +155,9 @@ class ApplicationQSettings(QtCore.QSettings):
         for key in key_list:
             db[str(key)] = str(self.getKey(group + '/' + key))
         return db
+    
+    def getGroupName(self, window, group):
+        return group or window.__class__.__name__ + '_geometry'
 
     def saveWindowGeometry(self, window, group=None):
         '''
@@ -162,7 +165,7 @@ class ApplicationQSettings(QtCore.QSettings):
         
         :param obj window: instance of QWidget
         '''
-        group = group or window.__class__.__name__ + '_geometry'
+        group = self.getGroupName(window, group)
         geo = window.geometry()
         self.setKey(group + '/x', geo.x())
         self.setKey(group + '/y', geo.y())
@@ -175,14 +178,15 @@ class ApplicationQSettings(QtCore.QSettings):
         
         :param obj window: instance of QWidget
         '''
-        group = group or window.__class__.__name__ + '_geometry'
-        x = self.getKey(group + '/x')
-        y = self.getKey(group + '/y')
+        group = self.getGroupName(window, group)
         width = self.getKey(group + '/width')
         height = self.getKey(group + '/height')
         if width is None or height is None:
             return
         window.resize(QtCore.QSize(int(width), int(height)))
+
+        x = self.getKey(group + '/x')
+        y = self.getKey(group + '/y')
         if x is None or y is None:
             return
         # TODO: what if (x,y) is off-screen?  Check here if point is off-screen.  How?
