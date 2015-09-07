@@ -135,26 +135,47 @@ class ApplicationQSettings(QtCore.QSettings):
     def updateTimeStamp(self):
         self.setKey('timestamp', str(datetime.datetime.now()))
 
-    def saveWindowGeometry(self, window):
+    def saveEmailKeywords(self, keyword_dict):
+        '''
+        remember the email substitution keywords
+        '''
+        group = 'Email_Keywords'
+        for k, v in keyword_dict.items():
+            self.setKey(group + '/' + k, v)
+
+    def getEmailKeywords(self):
+        '''
+        return the email substitution keywords as a dictionary
+        '''
+        group = 'Email_Keywords'
+        self.beginGroup(group)
+        key_list = self.childKeys()
+        self.endGroup()
+        db = {}
+        for key in key_list:
+            db[str(key)] = str(self.getKey(group + '/' + key))
+        return db
+
+    def saveWindowGeometry(self, window, group=None):
         '''
         remember where the window was
         
         :param obj window: instance of QWidget
         '''
-        group = window.__class__.__name__ + '_geometry'
+        group = group or window.__class__.__name__ + '_geometry'
         geo = window.geometry()
         self.setKey(group + '/x', geo.x())
         self.setKey(group + '/y', geo.y())
         self.setKey(group + '/width', geo.width())
         self.setKey(group + '/height', geo.height())
 
-    def restoreWindowGeometry(self, window):
+    def restoreWindowGeometry(self, window, group=None):
         '''
         put the window back where it was
         
         :param obj window: instance of QWidget
         '''
-        group = window.__class__.__name__ + '_geometry'
+        group = group or window.__class__.__name__ + '_geometry'
         x = self.getKey(group + '/x')
         y = self.getKey(group + '/y')
         width = self.getKey(group + '/width')
