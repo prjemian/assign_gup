@@ -126,9 +126,9 @@ class EmailTemplate(object):
             key_node.text = v.strip()
 
 
-class EmailTextEdit(plainTextEdit.TextWindow):
+class EmailTextWindow(plainTextEdit.TextWindow):
     '''
-    plainTextEdit window that can remember its geometry, based on title
+    plainTextEdit window that remembers its geometry, based on supplied window title
     '''
 
     def __init__(self, title, text, settings, parent=None):
@@ -151,6 +151,12 @@ class EmailTextEdit(plainTextEdit.TextWindow):
         self.saveWindowGeometry()
         event.accept()
         self.close()
+
+    def moveEvent(self, event):
+        import datetime
+        print datetime.datetime.now()
+        self.saveWindowGeometry()
+        event.accept()
     
     def saveWindowGeometry(self):
         '''

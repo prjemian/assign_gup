@@ -552,7 +552,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 view.plainTextEdit.setPlainText(text)
                 view.show()
             else:
-                view = email_template.EmailTextEdit(title, text, self.settings, self)
+                view = email_template.EmailTextWindow(title, text, self.settings, self)
                 self._email_letters_[full_name] = view
                 view.show()
 
@@ -566,6 +566,20 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         11111    A Reviewer   Ima Reviewer                          Study of stuff
         ======   ==========   ============   ====================   ==============================
         '''
+        import pyRestTable      # for development
+        tbl = pyRestTable.Table()
+        tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
+        for prop in self.agup.proposals:
+            prop_id = prop.getKey('proposal_id')
+            prop_title = prop.getKey('proposal_title')
+            r1, r2 = prop.getAssignedReviewers()
+            excluded = prop.getExcludedReviewers(self.agup.reviewers)
+            tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
+        self.assignment_window = plainTextEdit.TextWindow('Reviewer Assignments', tbl.reST(), self)
+        self.assignment_window.plainTextEdit.setReadOnly(True)
+        self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.assignment_window.show()
+        
         history.addLog('doAssignments() requested')
 
     def doAnalysis_grid(self):

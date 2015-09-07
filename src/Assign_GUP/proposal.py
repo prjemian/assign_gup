@@ -84,6 +84,29 @@ class AGUP_Proposal_Data(object):
 
         self.topics.writeXml(specified_node)
     
+    def getAssignedReviewers(self):
+        '''
+        return a list of assigned reviewers for this proposal
+        '''
+        r = [None, None]
+        for k, v in self.eligible_reviewers.items():
+            if v is not None:
+                r[v-1] = k
+        return r
+    
+    def getExcludedReviewers(self, reviewers):
+        '''
+        return a list of excluded reviewers for this proposal
+        
+        :param obj reviewers: list of all available reviewers
+        '''
+        r = []
+        for rvwr in reviewers:
+            full_name = rvwr.getFullName()
+            if full_name not in self.eligible_reviewers.keys():
+                r.append(full_name)
+        return r
+    
     def getKey(self, key):
         return self.db[key]
     
