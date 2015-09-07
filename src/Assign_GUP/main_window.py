@@ -587,6 +587,32 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
+        import pyRestTable      # for development
+        tbl = pyRestTable.Table()
+        tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
+        for prop in self.agup.proposals:
+            prop_id = prop.getKey('proposal_id')
+            row = [prop_id, ]
+            assigned = prop.getAssignedReviewers()
+            for rvwr in self.agup.reviewers:
+                full_name = rvwr.getFullName()
+                score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
+                if full_name in assigned:
+                    role = assigned.index(full_name)
+                    if role == 0:
+                        text = '1: ' + str(score)
+                    elif role == 1:
+                        text = '2: ' + str(score)
+                else:
+                    text = score
+                row.append(text)
+            tbl.rows.append(row)
+        title = 'Analysis Grid'
+        self.analysisGrid_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
+        self.analysisGrid_window.plainTextEdit.setReadOnly(True)
+        self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.analysisGrid_window.show()
+                
         history.addLog('doAnalysis_grid() requested')
     
     def saveWindowGeometry(self):
