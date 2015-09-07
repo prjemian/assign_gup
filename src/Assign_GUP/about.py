@@ -22,7 +22,8 @@ class InfoBox(QtGui.QDialog):
     a Qt GUI for the About box
     '''
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, settings=None):
+        self.settings = settings
         QtGui.QDialog.__init__(self, parent)
         resources.loadUi(UI_FILE, baseinstance=self)
         
@@ -42,7 +43,7 @@ class InfoBox(QtGui.QDialog):
         '''show the license'''
         history.addLog('opening License in new window')
         license_text = open(resources.resource_file('../' + LICENSE_FILE), 'r').read()
-        ui = plainTextEdit.TextWindow('LICENSE', license_text, self)
+        ui = plainTextEdit.TextWindow(self, 'LICENSE', license_text, self.settings)
         ui.setMinimumSize(700, 500)
         ui.setWindowModality(QtCore.Qt.ApplicationModal)
         ui.show()

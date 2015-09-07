@@ -26,7 +26,7 @@ import xml_utility
 
 UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
-LOG_MINOR_DETAILS = True        # TODO: remove for production release
+# LOG_MINOR_DETAILS = True        # TODO: remove for production release
 
 
 class AGUP_MainWindow(QtGui.QMainWindow):
@@ -113,7 +113,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         describe this application and where to get more info
         '''
         history.addLog('Info... box requested', False)
-        ui = about.InfoBox(self)    # bless the Mac that it handles "about" differently
+        ui = about.InfoBox(self, self.settings)    # bless the Mac that it handles "about" differently
         ui.show()
     
     def adjustMainWindowTitle(self):
@@ -506,7 +506,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         Unassigned proposals: #
         '''
-        history.addLog('doSummary() requested')
+        history.addLog('doSummary() requested', False)
 
         title = 'Reviewer Assignment Summary'
         text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
@@ -562,7 +562,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         # TODO: need an editor for et.keyword_dict, persist in self.settings
         
-        history.addLog('doLetters() requested')
+        history.addLog('doLetters() requested', False)
         et = email_template.EmailTemplate()
         base_x, base_y = 40, 40
         offset_x, offset_y = 40, 40
@@ -622,7 +622,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.assignment_window.show()
         
-        history.addLog('doAssignments() requested')
+        history.addLog('doAssignments() requested', False)
 
     def doAnalysis_grid(self):
         '''
@@ -655,7 +655,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.analysisGrid_window.show()
                 
-        history.addLog('doAnalysis_grid() requested')
+        history.addLog('doAnalysis_grid() requested', False)
     
     def saveWindowGeometry(self):
         '''
