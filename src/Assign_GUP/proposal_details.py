@@ -50,6 +50,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
 
         layout = prop_revu_grid.ReviewerAssignmentGridLayout(None)
         self.reviewers_gb.setLayout(layout)
+        layout.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
 
         self.custom_signals = signals.CustomSignals()
     
@@ -176,6 +177,12 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     def restoreSplitterDetails(self):
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
+    
+    def onAssignmentsChanged(self):
+        '''
+        called when a reviewer assignment checkbox has been changed
+        '''
+        self.custom_signals.checkBoxGridChanged.emit()
 
 
 def project_main():

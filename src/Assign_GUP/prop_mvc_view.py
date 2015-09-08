@@ -13,6 +13,7 @@ import history
 import general_mvc_model
 import proposal_details
 import qt_utils
+import signals
 import resources
 import topics
 
@@ -57,9 +58,12 @@ class AGUP_Proposals_View(QtGui.QWidget):
                 self.editProposal(prop_id, None)
                 self.selectFirstListItem()
 
+        self.custom_signals = signals.CustomSignals()
+
         self.listView.clicked.connect(self.on_item_clicked)
         self.listView.entered.connect(self.on_item_clicked)
         self.details_panel.custom_signals.topicValueChanged.connect(self.onTopicValueChanged)
+        self.details_panel.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
 
         self.arrowKeysEventFilter = event_filters.ArrowKeysEventFilter()
         self.listView.installEventFilter(self.arrowKeysEventFilter)
@@ -83,6 +87,12 @@ class AGUP_Proposals_View(QtGui.QWidget):
         rvwr_grid = self.details_panel.reviewers_gb.layout()
         rvwr_grid.calcDotProducts()
         self.details_panel.modified = True
+    
+    def onAssignmentsChanged(self):
+        '''
+        called when a reviewer assignment checkbox has been changed
+        '''
+        self.custom_signals.checkBoxGridChanged.emit()
     
     def details_modified(self):
         '''OK to select a different proposal now?'''

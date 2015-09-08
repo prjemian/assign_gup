@@ -19,6 +19,7 @@ import proposal
 import resources
 import revu_mvc_view
 import settings
+import signals
 import topics
 import topics_editor
 import xml_utility
@@ -52,10 +53,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.reviewer_view = None
 
         self._init_history_()
+        history.addLog('loaded "' + UI_FILE + '"', False)
 
-        # TODO: need handlers for widgets and config settings
-
-        history.addLog('loaded "' + UI_FILE + '"')
+        self.custom_signals = signals.CustomSignals()
 
         self._init_mainwindow_widget_values_()
         self._init_connections_()
@@ -289,6 +289,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
+            self.proposal_view.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
         self.proposal_view.show()
 
     def doEditReviewers(self):
@@ -320,10 +321,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.adjustMainWindowTitle()
             return
 
-        if not self.confirmEditTopics():
-            history.addLog('revised list of topics not accepted')
-            self.adjustMainWindowTitle()
-            return False
+        if False:       # skip this confirmation check now
+            if not self.confirmEditTopics():
+                history.addLog('revised list of topics not accepted')
+                self.adjustMainWindowTitle()
+                return False
 
         self.agup.topics.addTopics(added)
         self.agup.proposals.addTopics(added)
@@ -362,7 +364,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Proposals (*.xml)")
         path = str(path)
         if os.path.exists(path):
-            history.addLog('selected file: ' + path)
+            history.addLog('selected file: ' + path, False)
             self.importProposals(path)
             history.addLog('imported proposals file: ' + path)
 
@@ -485,6 +487,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.modified = False
         history.addLog('saved: ' + filename)
         self.adjustMainWindowTitle()
+
+    def onAssignmentsChanged(self):
+        '''
+        called when a reviewer assignment checkbox has been changed
+        '''
+        self.custom_signals.checkBoxGridChanged.emit()
 
     def doSummary(self):
         '''

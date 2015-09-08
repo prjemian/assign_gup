@@ -30,7 +30,6 @@ Method                                                Description
 :meth:`~ReviewerAssignmentGridLayout.setAssignment`   define the type for a named Reviewer 
 :meth:`~ReviewerAssignmentGridLayout.onCheck`         ensure only one reviewer is either primary or secondary
 :meth:`~ReviewerAssignmentGridLayout.setValue`        set dotProduct value of a named Reviewer as percentage
-:meth:`~ReviewerAssignmentGridLayout.clearLayout`     **deprecated**
 ====================================================  ============================================================
 
 -----
@@ -242,6 +241,7 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         self.reviewers = None
 
         QtGui.QGridLayout.__init__(self, parent)
+        self.custom_signals = signals.CustomSignals()
 
         self._init_basics()
     
@@ -299,18 +299,6 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
                 row_widget.setAssignment(assignment or 0)
                 row_widget.dotProduct()
                 dot = self.proposal.topics.dotProduct(rvwr.topics)
-
-    def clearLayout(self):
-        '''
-        remove all the reviewer rows in the layout
-        '''
-        raise RuntimeError, 'deprecated'
-        # thanks: http://www.gulon.co.uk/2013/05/01/clearing-a-qlayout/
-        # TODO: causes unnecessary widget blinking, refactor to reuse widgets instead
-        # enable/disable eligible reviewers per each proposal
-        for i in reversed(xrange(self.count())):
-            self.itemAt(i).widget().setParent(None)
-        self._init_basics()
     
     def setProposal(self, proposal):
         '''
@@ -344,6 +332,15 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
             for row in self.rvrw_widgets.values():
                 if row != row_widget:
                     {1: row.setPrimaryState, 2: row.setSecondaryState}[assignment](False)
+
+        if self.proposal is not None:        # change value in self.proposal.eligible_reviewers
+            full_name = row_widget.reviewer.getFullName()
+            role = row_widget.getAssignment()
+            if role == 0:  role = None
+            w = self.proposal.eligible_reviewers
+            if full_name in w.keys() and w[full_name] != role:
+                w[full_name] = role
+        self.custom_signals.checkBoxGridChanged.emit()
     
     def setEnabled(self, sort_name, state=True):
         '''
