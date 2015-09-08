@@ -103,10 +103,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionReset_settings.triggered.connect(self.doResetDefaultSettings)
         self.actionExit.triggered.connect(self.doClose)
         self.actionAgupInfo.triggered.connect(self.doAgupInfo)
-        self.actionSummary.triggered.connect(self.doSummary)
-        self.actionLetters.triggered.connect(self.doLetters)
-        self.actionAssignments.triggered.connect(self.doAssignments)
-        self.actionAnalysis_grid.triggered.connect(self.doAnalysis_grid)
+        self.actionSummary.triggered.connect(self.doSummaryReport)
+        self.actionLetters.triggered.connect(self.doLettersReport)
+        self.actionAssignments.triggered.connect(self.doAssignmentsReport)
+        self.actionAnalysis_grid.triggered.connect(self.doAnalysis_gridReport)
 
     def doAgupInfo(self, *args, **kw):
         '''
@@ -432,6 +432,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doRecalc(self):
         if self.proposal_view is not None:
             self.proposal_view.recalc()
+        # TODO: emit a signal that topic values have changed (affects reports)
 
     def doSave(self):
         '''
@@ -494,7 +495,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         self.custom_signals.checkBoxGridChanged.emit()
 
-    def doSummary(self):
+    def doSummaryReport(self):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
         
@@ -515,7 +516,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         Unassigned proposals: #
         '''
-        history.addLog('doSummary() requested', False)
+        
+        def updater():
+            '''called when reviewer assignments change'''
+            # (re)generate report text
+            pass
+
+        history.addLog('doSummaryReport() requested', False)
 
         title = 'Reviewer Assignment Summary'
         text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
@@ -556,8 +563,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.assignment_window.plainTextEdit.setReadOnly(True)
         self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.assignment_window.show()
+        self.custom_signals.checkBoxGridChanged.connect(updater)
 
-    def doLetters(self):
+    def doLettersReport(self):
         '''
         prepare the email form letters to each reviewer with their assignments
         '''
@@ -571,7 +579,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         # TODO: need an editor for et.keyword_dict, persist in self.settings
         
-        history.addLog('doLetters() requested', False)
+        history.addLog('doLettersReport() requested', False)
         et = email_template.EmailTemplate()
         base_x, base_y = 40, 40
         offset_x, offset_y = 40, 40
@@ -605,7 +613,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 self._email_letters_[full_name] = view
                 view.show()
 
-    def doAssignments(self):
+    def doAssignmentsReport(self):
         '''
         show a read-only text page with assignments for each proposal
         
@@ -631,9 +639,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.assignment_window.show()
         
-        history.addLog('doAssignments() requested', False)
+        history.addLog('doAssignmentsReport() requested', False)
 
-    def doAnalysis_grid(self):
+    def doAnalysis_gridReport(self):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
@@ -664,7 +672,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.analysisGrid_window.show()
                 
-        history.addLog('doAnalysis_grid() requested', False)
+        history.addLog('doAnalysis_gridReport() requested', False)
     
     def saveWindowGeometry(self):
         '''
