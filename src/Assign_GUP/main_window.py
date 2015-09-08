@@ -259,6 +259,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         filters = ('PRP project (*.agup *.prp *.xml)', 'any file (*.*)')
         filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, ';;'.join(filters))
+        filename = str(filename)
 
         if os.path.exists(filename):
             self.openPrpFile(filename)
@@ -358,7 +359,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose XML file with proposals'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Proposals (*.xml)")
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Proposals (*.xml)")
         path = str(path)
         if os.path.exists(path):
             history.addLog('selected file: ' + path)
@@ -467,7 +468,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                                                      caption="Save the PRP project", 
                                                      directory=filename,
                                                      filter=';;'.join(filters))
-        filename = str(os.path.abspath(filename))
+        filename = os.path.abspath(str(filename))
         if len(filename) == 0:
             return
         if os.path.isdir(filename):
