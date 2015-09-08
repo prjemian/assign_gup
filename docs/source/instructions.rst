@@ -6,21 +6,26 @@ Instructions for the Review Panel Chairman
 .. TODO: revise here
 
 #. Before the proposal deadline
+
 	#. Determine the name of the next review cycle 
 	   (something like ``2015-2``).
 	   Change the value of ``APS_review_cycle`` 
 	   (in :mod:`config`) to this value.
 	#. `List of Reviewers`_
 	#. Answer questions from review panel members.  CC the APS User Office.
+
 #. After the proposal deadline
-	#. `List of proposals`_
-	#. `Reconfigure source code for next cycle`_
-	#. Prepare the boilerplate letter
-	#. Run the ``Assign_GUP`` software.
+
+   #. `List of proposals`_
+   #. `Reconfigure source code for next cycle`_
+   #. Prepare the boilerplate letter
+   #. Run the ``Assign_GUP`` software.
+
       #. `Assign topic weights to each proposal`_
-		#. `Assign Reviewers to Proposals`_
-	#. `Update the Assignments on the Web site`_
-	#. `Send emails`_
+      #. `Assign Reviewers to Proposals`_
+      #. `Update the Assignments on the Web site`_
+      #. `Send emails`_
+
 
 List of Reviewers
 ~~~~~~~~~~~~~~~~~

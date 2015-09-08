@@ -6,8 +6,6 @@ Module contents
 
 .. automodule:: Assign_GUP
     :members:
-    :undoc-members:
-    :special-members:
     :show-inheritance:
 
 Submodules
