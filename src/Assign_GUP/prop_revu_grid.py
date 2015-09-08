@@ -37,6 +37,8 @@ Method                                                Description
 '''
 
 from PyQt4 import QtCore, QtGui
+
+import history
 import signals
 
 
@@ -59,11 +61,23 @@ class ProposalReviewerRow(QtCore.QObject):
         self.enabled = False
 
         QtCore.QObject.__init__(self, parent)
+        QtCore.qInstallMsgHandler(self._handler_)
 
         self.comfort = ""
         self.custom_signals = signals.CustomSignals()
         self._init_controls_()
         self.dotProduct()
+    
+    def _handler_(self, msg_type, msg_string):
+        if msg_type == QtCore.QtDebugMsg:
+            adjective = 'Debug'
+        elif msg_type == QtCore.QtWarningMsg:
+            adjective = 'Warning'
+        elif msg_type == QtCore.QtCriticalMsg:
+            adjective = 'Critical'
+        elif msg_type == QtCore.QtFatalMsg:
+            adjective = 'Fatal'
+        history.addLog('QtCore.qInstallMsgHandler-' + adjective + ': ' + msg_string)
 
     def _init_controls_(self):
         '''
