@@ -17,6 +17,7 @@ import prop_mvc_data
 import prop_mvc_view
 import proposal
 import resources
+import report_summary
 import revu_mvc_view
 import settings
 import signals
@@ -49,6 +50,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.forced_exit = False
         self._email_letters_ = {}
 
+        self.summary_window = None
         self.proposal_view = None
         self.reviewer_view = None
 
@@ -510,77 +512,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doSummaryReport(self):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
-        
-        total number of proposals: #
-        primary proposals per reviewer: #.#
-        
-        Overall topic strength: TBA
-         
-        Primary assignments:
-        reviewer1  ##: ##### ##### #####
-        reviewer2  ##: ##### ##### #####
-        reviewer3  ##: ##### ##### #####
-         
-        Secondary assignments:
-        reviewer1  ##: ##### ##### #####
-        reviewer2  ##: ##### ##### #####
-        reviewer3  ##: ##### ##### #####
-        
-        Unassigned proposals: #
         '''
-        
-        def updater():
-            '''called when reviewer assignments change'''
-            # (re)generate report text
-            if self.summary_window is not None:
-                text = _report()
-                self.assignment_window.setText(text)
-        
-        def _report():
-            text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
-    
-            unassigned = []
-            for prop in self.agup.proposals:
-                for r in prop.getAssignedReviewers():
-                    if r is None:
-                        unassigned.append(prop)
-                        break
-            text.append('Unassigned proposals: ' + str(len(unassigned)))
-    
-            mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
-            text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
-    
-            # text.append('')
-            # text.append('Overall topic strength: ' + 'TBA')
-    
-            text.append('')
-            width = max([len(_.getFullName()) for _ in self.agup.reviewers])
-            fmt = '%s%d%s: ' % ('%0', width, 's %3d')
-            for role, label in enumerate(['Primary', 'Secondary']):
-                role += 1   # 1-based here
-                text.append(label + ' assignments:')
-                for rvwr in self.agup.reviewers:
-                    full_name = rvwr.getFullName()
-                    prop_list = []
-                    for prop in self.agup.proposals:
-                        if full_name in prop.eligible_reviewers.keys():
-                            if role == prop.eligible_reviewers[full_name]:
-                                prop_list.append(prop.getKey('proposal_id'))
-                    row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
-                    text.append(row)
-                text.append('')
-            return '\n'.join(text)
-
-        history.addLog('doSummaryReport() requested', False)
-
-        title = 'Reviewer Assignment Summary'
-        text = _report()
-
-        self.summary_window = plainTextEdit.TextWindow(self, title, text, self.settings)
-        self.summary_window.plainTextEdit.setReadOnly(True)
-        self.summary_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        self.summary_window.show()
-        self.custom_signals.checkBoxGridChanged.connect(updater)
+        if self.summary_window is None:
+            self.summary_window = report_summary.Report(self, self.agup, self.settings)
+        else:
+            self.summary_window.uodate()
+        self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
 
     def doLettersReport(self):
         '''

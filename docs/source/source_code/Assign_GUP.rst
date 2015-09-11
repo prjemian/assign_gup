@@ -27,6 +27,7 @@ Submodules
    proposal
    proposal_details
    qt_utils
+   report_summary
    resources
    reviewer
    reviewer_details
