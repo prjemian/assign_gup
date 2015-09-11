@@ -494,6 +494,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         called when a reviewer assignment checkbox has been changed
         '''
         self.custom_signals.checkBoxGridChanged.emit()
+        self.modified = True
 
     def doSummaryReport(self):
         '''
@@ -520,49 +521,54 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         def updater():
             '''called when reviewer assignments change'''
             # (re)generate report text
-            pass
+            if self.summary_window is not None:
+                text = _report()
+                self.assignment_window.setText(text)
+        
+        def _report():
+            text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
+    
+            unassigned = []
+            for prop in self.agup.proposals:
+                for r in prop.getAssignedReviewers():
+                    if r is None:
+                        unassigned.append(prop)
+                        break
+            text.append('Unassigned proposals: ' + str(len(unassigned)))
+    
+            mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
+            text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
+    
+            # text.append('')
+            # text.append('Overall topic strength: ' + 'TBA')
+    
+            text.append('')
+            width = max([len(_.getFullName()) for _ in self.agup.reviewers])
+            fmt = '%s%d%s: ' % ('%0', width, 's %3d')
+            for role, label in enumerate(['Primary', 'Secondary']):
+                role += 1   # 1-based here
+                text.append(label + ' assignments:')
+                for rvwr in self.agup.reviewers:
+                    full_name = rvwr.getFullName()
+                    prop_list = []
+                    for prop in self.agup.proposals:
+                        if full_name in prop.eligible_reviewers.keys():
+                            if role == prop.eligible_reviewers[full_name]:
+                                prop_list.append(prop.getKey('proposal_id'))
+                    row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
+                    text.append(row)
+                text.append('')
+            return '\n'.join(text)
 
         history.addLog('doSummaryReport() requested', False)
 
         title = 'Reviewer Assignment Summary'
-        text = [title, '', 'Total number of proposals: ' + str(len(self.agup.proposals)), ]
+        text = _report()
 
-        unassigned = []
-        for prop in self.agup.proposals:
-            for r in prop.getAssignedReviewers():
-                if r is None:
-                    unassigned.append(prop)
-                    break
-        text.append('Unassigned proposals: ' + str(len(unassigned)))
-
-        mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
-        text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
-
-        # text.append('')
-        # text.append('Overall topic strength: ' + 'TBA')
-
-        text.append('')
-        width = max([len(_.getFullName()) for _ in self.agup.reviewers])
-        fmt = '%s%d%s: ' % ('%0', width, 's %3d')
-        for role, label in enumerate(['Primary', 'Secondary']):
-            role += 1   # 1-based here
-            text.append(label + ' assignments:')
-            for rvwr in self.agup.reviewers:
-                full_name = rvwr.getFullName()
-                prop_list = []
-                for prop in self.agup.proposals:
-                    if full_name in prop.eligible_reviewers.keys():
-                        if role == prop.eligible_reviewers[full_name]:
-                            prop_list.append(prop.getKey('proposal_id'))
-                row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
-                text.append(row)
-            text.append('')
-        text = '\n'.join(text)
-
-        self.assignment_window = plainTextEdit.TextWindow(self, title, text, self.settings)
-        self.assignment_window.plainTextEdit.setReadOnly(True)
-        self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        self.assignment_window.show()
+        self.summary_window = plainTextEdit.TextWindow(self, title, text, self.settings)
+        self.summary_window.plainTextEdit.setReadOnly(True)
+        self.summary_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.summary_window.show()
         self.custom_signals.checkBoxGridChanged.connect(updater)
 
     def doLettersReport(self):
@@ -612,6 +618,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 view = plainTextEdit.TextWindow(self, title, text, self.settings)
                 self._email_letters_[full_name] = view
                 view.show()
+                self.custom_signals.checkBoxGridChanged.connect(self.doLettersReport)
 
     def doAssignmentsReport(self):
         '''
@@ -623,21 +630,33 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         11111    A Reviewer   Ima Reviewer                          Study of stuff
         ======   ==========   ============   ====================   ==============================
         '''
-        import pyRestTable      # for development
-        tbl = pyRestTable.Table()
-        tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
-        for prop in self.agup.proposals:
-            prop_id = prop.getKey('proposal_id')
-            prop_title = prop.getKey('proposal_title')
-            r1, r2 = prop.getAssignedReviewers()
-            excluded = prop.getExcludedReviewers(self.agup.reviewers)
-            tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
+        
+        def updater():
+            '''called when reviewer assignments change'''
+            # (re)generate report text
+            if self.assignment_window is not None:
+                text = _report()
+                self.assignment_window.setText(text)
+        
+        def _report():
+            import pyRestTable      # for development
+            tbl = pyRestTable.Table()
+            tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
+            for prop in self.agup.proposals:
+                prop_id = prop.getKey('proposal_id')
+                prop_title = prop.getKey('proposal_title')
+                r1, r2 = prop.getAssignedReviewers()
+                excluded = prop.getExcludedReviewers(self.agup.reviewers)
+                tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
+            return tbl.reST()
 
         title = 'Reviewer Assignments'
-        self.assignment_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
+        text = _report()
+        self.assignment_window = plainTextEdit.TextWindow(self, title, text, self.settings)
         self.assignment_window.plainTextEdit.setReadOnly(True)
         self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.assignment_window.show()
+        self.custom_signals.checkBoxGridChanged.connect(updater)
         
         history.addLog('doAssignmentsReport() requested', False)
 
@@ -645,33 +664,45 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
-        import pyRestTable      # for development
-        tbl = pyRestTable.Table()
-        tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
-        for prop in self.agup.proposals:
-            prop_id = prop.getKey('proposal_id')
-            row = [prop_id, ]
-            assigned = prop.getAssignedReviewers()
-            for rvwr in self.agup.reviewers:
-                full_name = rvwr.getFullName()
-                score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
-                if full_name in assigned:
-                    role = assigned.index(full_name)
-                    if role == 0:
-                        text = '1: ' + str(score)
-                    elif role == 1:
-                        text = '2: ' + str(score)
-                else:
-                    text = score
-                row.append(text)
-            tbl.rows.append(row)
+        
+        def updater():
+            '''called when reviewer assignments change'''
+            # (re)generate report text
+            if self.analysisGrid_window is not None:
+                text = _report()
+                self.analysisGrid_window.setText(text)
+        
+        def _report():
+            import pyRestTable      # for development
+            tbl = pyRestTable.Table()
+            tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
+            for prop in self.agup.proposals:
+                prop_id = prop.getKey('proposal_id')
+                row = [prop_id, ]
+                assigned = prop.getAssignedReviewers()
+                for rvwr in self.agup.reviewers:
+                    full_name = rvwr.getFullName()
+                    score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
+                    if full_name in assigned:
+                        role = assigned.index(full_name)
+                        if role == 0:
+                            text = '1: ' + str(score)
+                        elif role == 1:
+                            text = '2: ' + str(score)
+                    else:
+                        text = score
+                    row.append(text)
+                tbl.rows.append(row)
+            return tbl.reST()
 
         title = 'Analysis Grid'
-        self.analysisGrid_window = plainTextEdit.TextWindow(self, title, tbl.reST(), self.settings)
+        text = _report()
+        self.analysisGrid_window = plainTextEdit.TextWindow(self, title, text, self.settings)
         self.analysisGrid_window.plainTextEdit.setReadOnly(True)
         self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.analysisGrid_window.show()
-                
+        self.custom_signals.checkBoxGridChanged.connect(updater)
+
         history.addLog('doAnalysis_gridReport() requested', False)
     
     def saveWindowGeometry(self):

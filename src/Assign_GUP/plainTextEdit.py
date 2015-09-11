@@ -23,8 +23,8 @@ class TextWindow(QtGui.QDialog):
         self.settings = settings
         QtGui.QDialog.__init__(self, parent)
         resources.loadUi(UI_FILE, baseinstance=self)
-        self.setWindowTitle(title)
-        self.plainTextEdit.setPlainText(text)
+        self.setText(text)
+        self.setTitle(title)
         if self.settings is not None:
             self.restoreWindowGeometry()
     
@@ -38,6 +38,12 @@ class TextWindow(QtGui.QDialog):
         for pattern in pattern_list:
             group = group.replace(pattern, '_')
         return group + '_geometry'
+
+    def setText(self, text):
+        self.plainTextEdit.setPlainText(text)
+
+    def setTitle(self, title):
+        self.setWindowTitle(title)
 
     def closeEvent(self, event):
         self.saveWindowGeometry()

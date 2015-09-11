@@ -331,7 +331,8 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         if assignment > 0:
             for row in self.rvrw_widgets.values():
                 if row != row_widget:
-                    {1: row.setPrimaryState, 2: row.setSecondaryState}[assignment](False)
+                    {1: row.setPrimaryState, 
+                     2: row.setSecondaryState}[assignment](False)
 
         if self.proposal is not None:        # change value in self.proposal.eligible_reviewers
             full_name = row_widget.reviewer.getFullName()
