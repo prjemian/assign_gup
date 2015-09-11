@@ -1,6 +1,16 @@
 
 r'''
 Custom Qt4 signals
+
+====================  ===============  =====================
+signal                args             comments
+====================  ===============  =====================
+checkBoxGridChanged                    reviewer assignment
+closed                                 topics_editor
+recalc                                 dot?Product
+topicValueChanged    str, str, float   reviewer or proposal
+====================  ===============  =====================
+
 '''
 
 

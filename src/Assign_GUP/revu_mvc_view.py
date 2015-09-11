@@ -90,6 +90,7 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         '''
         self.reviewers.setTopicValue(str(sort_name), str(topic), value)
         self.custom_signals.recalc.emit()
+        self.custom_signals.topicValueChanged.emit(sort_name, topic, value)
         self.details_panel.modified = True
     
     def onDetailsModified(self, *args):

@@ -237,6 +237,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.closeSubwindows()
         self.agup.clearAllData()
+        self.modified = False
         self.setPrpFileText('')
         self.setIndicators()
         history.addLog('New PRP File')
@@ -290,6 +291,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.proposal_view is None:
             self.proposal_view = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
             self.proposal_view.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
+            self.proposal_view.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
         self.proposal_view.show()
 
     def doEditReviewers(self):
@@ -299,6 +301,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.reviewer_view is None:
             self.reviewer_view = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
             self.reviewer_view.custom_signals.recalc.connect(self.doRecalc)
+            self.reviewer_view.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
         self.reviewer_view.show()
 
     def doEditTopics(self):
@@ -432,7 +435,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doRecalc(self):
         if self.proposal_view is not None:
             self.proposal_view.recalc()
-        # TODO: emit a signal that topic values have changed (affects reports)
 
     def doSave(self):
         '''
@@ -493,8 +495,17 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         called when a reviewer assignment checkbox has been changed
         '''
-        self.custom_signals.checkBoxGridChanged.emit()
         self.modified = True
+        self.adjustMainWindowTitle()
+        self.custom_signals.checkBoxGridChanged.emit()
+    
+    def onTopicValuesChanged(self, *args, **kw):
+        '''
+        called when a proposal or reviewer topic value has been changed
+        '''
+        self.modified = True
+        self.adjustMainWindowTitle()
+        self.custom_signals.topicValueChanged.emit(*args, **kw)
 
     def doSummaryReport(self):
         '''
@@ -630,6 +641,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         11111    A Reviewer   Ima Reviewer                          Study of stuff
         ======   ==========   ============   ====================   ==============================
         '''
+        import pyRestTable      # for development
         
         def updater():
             '''called when reviewer assignments change'''
@@ -639,7 +651,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 self.assignment_window.setText(text)
         
         def _report():
-            import pyRestTable      # for development
             tbl = pyRestTable.Table()
             tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
             for prop in self.agup.proposals:
@@ -664,6 +675,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
+        import pyRestTable      # for development
         
         def updater():
             '''called when reviewer assignments change'''
@@ -673,7 +685,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 self.analysisGrid_window.setText(text)
         
         def _report():
-            import pyRestTable      # for development
             tbl = pyRestTable.Table()
             tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
             for prop in self.agup.proposals:
@@ -702,6 +713,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.analysisGrid_window.show()
         self.custom_signals.checkBoxGridChanged.connect(updater)
+        self.custom_signals.topicValueChanged.connect(updater)
 
         history.addLog('doAnalysis_gridReport() requested', False)
     

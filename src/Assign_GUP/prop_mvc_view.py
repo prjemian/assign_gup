@@ -87,7 +87,8 @@ class AGUP_Proposals_View(QtGui.QWidget):
         rvwr_grid = self.details_panel.reviewers_gb.layout()
         rvwr_grid.calcDotProducts()
         self.details_panel.modified = True
-    
+        self.custom_signals.topicValueChanged.emit(prop_id, topic, value)
+
     def onAssignmentsChanged(self):
         '''
         called when a reviewer assignment checkbox has been changed

@@ -235,7 +235,7 @@
      <x>0</x>
      <y>0</y>
      <width>1085</width>
-     <height>45</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -257,30 +257,6 @@
      <string>Docs</string>
     </property>
     <addaction name="actionAgupInfo"/>
-   </widget>
-   <widget class="QMenu" name="menuTopics">
-    <property name="title">
-     <string>Topics</string>
-    </property>
-    <addaction name="actionImport_Topics"/>
-    <addaction name="separator"/>
-    <addaction name="actionEdit_Topics"/>
-   </widget>
-   <widget class="QMenu" name="menuReviewers">
-    <property name="title">
-     <string>Reviewers</string>
-    </property>
-    <addaction name="actionImport_Reviewers"/>
-    <addaction name="separator"/>
-    <addaction name="actionEdit_Reviewers"/>
-   </widget>
-   <widget class="QMenu" name="menuProposals">
-    <property name="title">
-     <string>Proposals</string>
-    </property>
-    <addaction name="actionImport_Proposals"/>
-    <addaction name="separator"/>
-    <addaction name="actionEdit_proposals"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -305,11 +281,26 @@
     <addaction name="separator"/>
     <addaction name="actionLetters"/>
    </widget>
+   <widget class="QMenu" name="menuImporters">
+    <property name="title">
+     <string>Importers</string>
+    </property>
+    <addaction name="actionImport_Topics"/>
+    <addaction name="actionImport_Reviewers"/>
+    <addaction name="actionImport_Proposals"/>
+   </widget>
+   <widget class="QMenu" name="menuEditors">
+    <property name="title">
+     <string>Editors</string>
+    </property>
+    <addaction name="actionEdit_Topics"/>
+    <addaction name="actionEdit_Reviewers"/>
+    <addaction name="actionEdit_proposals"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuTopics"/>
-   <addaction name="menuReviewers"/>
-   <addaction name="menuProposals"/>
+   <addaction name="menuImporters"/>
+   <addaction name="menuEditors"/>
    <addaction name="menuReports"/>
    <addaction name="menuDocs"/>
   </widget>
