@@ -17,6 +17,7 @@ import prop_mvc_data
 import prop_mvc_view
 import proposal
 import resources
+import report_assignments
 import report_summary
 import revu_mvc_view
 import settings
@@ -50,6 +51,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.forced_exit = False
         self._email_letters_ = {}
 
+        self.assignment_window = None
         self.summary_window = None
         self.proposal_view = None
         self.reviewer_view = None
@@ -513,6 +515,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
         '''
+        history.addLog('doSummaryReport() requested', False)
         if self.summary_window is None:
             self.summary_window = report_summary.Report(self, self.agup, self.settings)
         else:
@@ -571,42 +574,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     def doAssignmentsReport(self):
         '''
         show a read-only text page with assignments for each proposal
-        
-        ======   ==========   ============   ====================   ==============================
-        GUP#     reviewer 1   reviewer 2     excluded reviewer(s)   title
-        ======   ==========   ============   ====================   ==============================
-        11111    A Reviewer   Ima Reviewer                          Study of stuff
-        ======   ==========   ============   ====================   ==============================
         '''
-        import pyRestTable      # for development
-        
-        def updater():
-            '''called when reviewer assignments change'''
-            # (re)generate report text
-            if self.assignment_window is not None:
-                text = _report()
-                self.assignment_window.setText(text)
-        
-        def _report():
-            tbl = pyRestTable.Table()
-            tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
-            for prop in self.agup.proposals:
-                prop_id = prop.getKey('proposal_id')
-                prop_title = prop.getKey('proposal_title')
-                r1, r2 = prop.getAssignedReviewers()
-                excluded = prop.getExcludedReviewers(self.agup.reviewers)
-                tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
-            return tbl.reST()
-
-        title = 'Reviewer Assignments'
-        text = _report()
-        self.assignment_window = plainTextEdit.TextWindow(self, title, text, self.settings)
-        self.assignment_window.plainTextEdit.setReadOnly(True)
-        self.assignment_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        self.assignment_window.show()
-        self.custom_signals.checkBoxGridChanged.connect(updater)
-        
         history.addLog('doAssignmentsReport() requested', False)
+        if self.assignment_window is None:
+            self.assignment_window = report_assignments.Report(self, self.agup, self.settings)
+        else:
+            self.assignment_window.uodate()
+        self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
 
     def doAnalysis_gridReport(self):
         '''
