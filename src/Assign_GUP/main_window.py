@@ -17,6 +17,7 @@ import prop_mvc_data
 import prop_mvc_view
 import proposal
 import resources
+import report_analysis_grid
 import report_assignments
 import report_summary
 import revu_mvc_view
@@ -51,6 +52,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.forced_exit = False
         self._email_letters_ = {}
 
+        self.analysisGrid_window = None
         self.assignment_window = None
         self.summary_window = None
         self.proposal_view = None
@@ -586,47 +588,56 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
-        import pyRestTable      # for development
-        
-        def updater():
-            '''called when reviewer assignments change'''
-            # (re)generate report text
-            if self.analysisGrid_window is not None:
-                text = _report()
-                self.analysisGrid_window.setText(text)
-        
-        def _report():
-            tbl = pyRestTable.Table()
-            tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
-            for prop in self.agup.proposals:
-                prop_id = prop.getKey('proposal_id')
-                row = [prop_id, ]
-                assigned = prop.getAssignedReviewers()
-                for rvwr in self.agup.reviewers:
-                    full_name = rvwr.getFullName()
-                    score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
-                    if full_name in assigned:
-                        role = assigned.index(full_name)
-                        if role == 0:
-                            text = '1: ' + str(score)
-                        elif role == 1:
-                            text = '2: ' + str(score)
-                    else:
-                        text = score
-                    row.append(text)
-                tbl.rows.append(row)
-            return tbl.reST()
-
-        title = 'Analysis Grid'
-        text = _report()
-        self.analysisGrid_window = plainTextEdit.TextWindow(self, title, text, self.settings)
-        self.analysisGrid_window.plainTextEdit.setReadOnly(True)
-        self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        self.analysisGrid_window.show()
-        self.custom_signals.checkBoxGridChanged.connect(updater)
-        self.custom_signals.topicValueChanged.connect(updater)
-
         history.addLog('doAnalysis_gridReport() requested', False)
+        if self.analysisGrid_window is None:
+            self.analysisGrid_window = report_analysis_grid.Report(self, self.agup, self.settings)
+            self.custom_signals.checkBoxGridChanged.connect(self.analysisGrid_window.update)
+            self.custom_signals.topicValueChanged.connect(self.analysisGrid_window.update)
+        else:
+            self.analysisGrid_window.uodate()
+
+        if False:
+            import pyRestTable      # for development
+            
+            def updater():
+                '''called when reviewer assignments change'''
+                # (re)generate report text
+                if self.analysisGrid_window is not None:
+                    text = _report()
+                    self.analysisGrid_window.setText(text)
+            
+            def _report():
+                tbl = pyRestTable.Table()
+                tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
+                for prop in self.agup.proposals:
+                    prop_id = prop.getKey('proposal_id')
+                    row = [prop_id, ]
+                    assigned = prop.getAssignedReviewers()
+                    for rvwr in self.agup.reviewers:
+                        full_name = rvwr.getFullName()
+                        score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
+                        if full_name in assigned:
+                            role = assigned.index(full_name)
+                            if role == 0:
+                                text = '1: ' + str(score)
+                            elif role == 1:
+                                text = '2: ' + str(score)
+                        else:
+                            text = score
+                        row.append(text)
+                    tbl.rows.append(row)
+                return tbl.reST()
+    
+            title = 'Analysis Grid'
+            text = _report()
+            self.analysisGrid_window = plainTextEdit.TextWindow(self, title, text, self.settings)
+            self.analysisGrid_window.plainTextEdit.setReadOnly(True)
+            self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+            self.analysisGrid_window.show()
+            self.custom_signals.checkBoxGridChanged.connect(updater)
+            self.custom_signals.topicValueChanged.connect(updater)
+    
+            history.addLog('doAnalysis_gridReport() requested', False)
     
     def saveWindowGeometry(self):
         '''
