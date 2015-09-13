@@ -235,7 +235,7 @@
      <x>0</x>
      <y>0</y>
      <width>1085</width>
-     <height>21</height>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -296,6 +296,8 @@
     <addaction name="actionEdit_Topics"/>
     <addaction name="actionEdit_Reviewers"/>
     <addaction name="actionEdit_proposals"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Email_Template"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -469,6 +471,11 @@
   <action name="actionAnalysis_grid">
    <property name="text">
     <string>Analysis grid ...</string>
+   </property>
+  </action>
+  <action name="actionEdit_Email_Template">
+   <property name="text">
+    <string>Edit Email Template ...</string>
    </property>
   </action>
  </widget>

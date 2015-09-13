@@ -9,6 +9,7 @@ checkBoxGridChanged                    reviewer assignment
 closed                                 topics_editor
 recalc                                 dot?Product
 topicValueChanged    str, str, float   reviewer or proposal
+changed                                template editor
 ====================  ===============  =====================
 
 '''
@@ -25,3 +26,4 @@ class CustomSignals(QtCore.QObject):
     closed = QtCore.pyqtSignal()                # topics_editor
     recalc = QtCore.pyqtSignal()
     topicValueChanged = QtCore.pyqtSignal(str, str, float)
+    changed = QtCore.pyqtSignal()

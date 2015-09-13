@@ -10,6 +10,7 @@ import traceback
 
 import about
 import agup_data
+import editor_email_template
 import email_template
 import history
 import plainTextEdit
@@ -54,9 +55,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.analysisGrid_window = None
         self.assignment_window = None
-        self.summary_window = None
+        self.email_template_editor = None
         self.proposal_view = None
         self.reviewer_view = None
+        self.summary_window = None
 
         self._init_history_()
         history.addLog('loaded "' + UI_FILE + '"', False)
@@ -104,6 +106,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionEdit_proposals.triggered.connect(self.doEditProposals)
         self.actionEdit_Reviewers.triggered.connect(self.doEditReviewers)
         self.actionEdit_Topics.triggered.connect(self.doEditTopics)
+        self.actionEdit_Topics.triggered.connect(self.doEditTopics)
+        self.actionEdit_Email_Template.triggered.connect(self.doEditEmailTemplate)
         self.actionSave.triggered.connect(self.doSave)
         self.actionSaveAs.triggered.connect(self.doSaveAs)
         self.actionReset_settings.triggered.connect(self.doResetDefaultSettings)
@@ -201,8 +205,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         if ret == QtGui.QMessageBox.Save:
             history.addLog('Save before Exit was selected')
-            self.doSave()       # TODO: or doSaveAs() ?
-            self.doSaveSettings()
+            self.doSave()
         elif ret == QtGui.QMessageBox.Cancel:
             history.addLog('Application Exit was canceled')
             return True     # application should NOT exit
@@ -455,6 +458,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.modified = False
             self.adjustMainWindowTitle()
             history.addLog('saved: ' + filename)
+        self.settings.saveEmailKeywords(self.agup.email.keyword_dict)
 
     def doSaveAs(self):
         '''
@@ -491,6 +495,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if os.path.ismount(filename):
             history.addLog('cannot save, selected a mount point: ' + filename)
             return
+
         self.agup.write(filename)
         self.setPrpFileText(filename)
         self.modified = False
@@ -534,8 +539,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 if role ==  prop.eligible_reviewers.get(full_name, None):
                     assignments.append(prop.getKey('proposal_id'))
             return assignments
-
-        # TODO: need an editor for et.keyword_dict, persist in self.settings
         
         history.addLog('doLettersReport() requested', False)
         et = email_template.EmailTemplate()
@@ -593,8 +596,23 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.custom_signals.checkBoxGridChanged.connect(self.analysisGrid_window.update)
             self.custom_signals.topicValueChanged.connect(self.analysisGrid_window.update)
         else:
-            self.analysisGrid_window.uodate()
+            self.analysisGrid_window.update()
     
+    def doEditEmailTemplate(self):
+        '''
+        edit the template to send emails, include editor for keyword substitutions
+        '''
+        history.addLog('doEditEmailTemplate() requested', False)
+        if self.email_template_editor is None:
+            self.email_template_editor = editor_email_template.Editor(None, self.agup, self.settings)
+            self.email_template_editor.signals.changed.connect(self.onTemplateChanged)
+        else:
+            self.email_template_editor.show()
+
+    def onTemplateChanged(self):
+        self.modified = True
+        self.adjustMainWindowTitle()
+
     def saveWindowGeometry(self):
         '''
         remember where the window was

@@ -33,7 +33,7 @@ DEFAULT_TEMPLATE_FIELDS = dict(
     ''',
 )
 REVIEWER_FIELDS = dict(     # to be filled with data from an instance of Reviewer
-    FULL_NAME = 'Ima Reviewer',
+    FULL_NAME = 'A. Reviewer',
     EMAIL = 'reviewer@institution.net',
     ASSIGNED_PRIMARY_PROPOSALS = '11111 22222 33333',
     ASSIGNED_SECONDARY_PROPOSALS = '44444 55555 66666',
