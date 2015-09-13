@@ -520,15 +520,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('doSummaryReport() requested', False)
         if self.summary_window is None:
             self.summary_window = report_summary.Report(self, self.agup, self.settings)
+            self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
         else:
             self.summary_window.uodate()
-        self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
 
     def doLettersReport(self):
         '''
         prepare the email form letters to each reviewer with their assignments
         '''
-        
         def getAssignments(full_name, role):
             assignments = []
             for prop in self.agup.proposals:
@@ -580,9 +579,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('doAssignmentsReport() requested', False)
         if self.assignment_window is None:
             self.assignment_window = report_assignments.Report(self, self.agup, self.settings)
+            self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
         else:
             self.assignment_window.uodate()
-        self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
 
     def doAnalysis_gridReport(self):
         '''
@@ -595,49 +594,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.custom_signals.topicValueChanged.connect(self.analysisGrid_window.update)
         else:
             self.analysisGrid_window.uodate()
-
-        if False:
-            import pyRestTable      # for development
-            
-            def updater():
-                '''called when reviewer assignments change'''
-                # (re)generate report text
-                if self.analysisGrid_window is not None:
-                    text = _report()
-                    self.analysisGrid_window.setText(text)
-            
-            def _report():
-                tbl = pyRestTable.Table()
-                tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
-                for prop in self.agup.proposals:
-                    prop_id = prop.getKey('proposal_id')
-                    row = [prop_id, ]
-                    assigned = prop.getAssignedReviewers()
-                    for rvwr in self.agup.reviewers:
-                        full_name = rvwr.getFullName()
-                        score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
-                        if full_name in assigned:
-                            role = assigned.index(full_name)
-                            if role == 0:
-                                text = '1: ' + str(score)
-                            elif role == 1:
-                                text = '2: ' + str(score)
-                        else:
-                            text = score
-                        row.append(text)
-                    tbl.rows.append(row)
-                return tbl.reST()
-    
-            title = 'Analysis Grid'
-            text = _report()
-            self.analysisGrid_window = plainTextEdit.TextWindow(self, title, text, self.settings)
-            self.analysisGrid_window.plainTextEdit.setReadOnly(True)
-            self.analysisGrid_window.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-            self.analysisGrid_window.show()
-            self.custom_signals.checkBoxGridChanged.connect(updater)
-            self.custom_signals.topicValueChanged.connect(updater)
-    
-            history.addLog('doAnalysis_gridReport() requested', False)
     
     def saveWindowGeometry(self):
         '''
