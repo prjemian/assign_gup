@@ -166,14 +166,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         close all other windows created by this code
         '''
-        if self.reviewer_view is not None:
-            self.reviewer_view.close()
-            self.reviewer_view.destroy()
-            self.reviewer_view = None
-        if self.proposal_view is not None:
-            self.proposal_view.close()
-            self.proposal_view.destroy()
-            self.proposal_view = None
+        def handler(window):
+            if window is not None:
+                window.close()
+                window.destroy()
+            return None
+        
+        self.reviewer_view = handler(self.reviewer_view)
+        self.proposal_view = handler(self.proposal_view)
+        self.email_template_editor = handler(self.email_template_editor)
 
     def doClose(self, *args, **kw):
         '''

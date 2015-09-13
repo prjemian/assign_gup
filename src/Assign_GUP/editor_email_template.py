@@ -17,7 +17,7 @@ import signals
 
 UI_FILE = 'editor_email_template.ui'
 DISABLED_STYLE = 'background: #eee'
-# TODO: add a way to add or remove keywords in self.agup.email.keyword_dict
+# TODO: add controls to add or remove keywords in self.agup.email.keyword_dict
 
 
 class Editor(QtGui.QWidget):
