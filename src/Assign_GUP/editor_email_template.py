@@ -8,7 +8,7 @@ edit the template to send emails, include editor for keyword substitutions
 # See LICENSE file for details.
 
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 import email_template
 import history
 import resources
@@ -39,6 +39,11 @@ class Editor(QtGui.QWidget):
         self.listWidget.addItems(sorted(email_template.REVIEWER_FIELDS.keys()))
         self.template.setPlainText(self.agup.email.email_template)
 
+        self.selectFirstKeyword()
+
+        self.pb_add.clicked.connect(self.doAdd)
+        self.pb_delete.clicked.connect(self.doDelete)
+
         self.listWidget.currentItemChanged.connect(self.doCurrentItemChanged)
         self.template.textChanged.connect(self.doTemplateTextChanged)
         self.plainTextEdit.textChanged.connect(self.doKeywordTextChanged)
@@ -48,6 +53,37 @@ class Editor(QtGui.QWidget):
         
         self.doMerge()
         self.show()
+    
+    def doAdd(self, *args, **kw):
+        '''add keyword substitution'''
+        key, ok = QtGui.QInputDialog.getText(self, 
+                                             'new keyword', 
+                                             'type a new keyword substitution')
+        key = str(key)
+        if ok and  key and key.upper() == key:
+            # TODO: validate against re [_A-Z0-9]
+            if key not in self.keyword_dict.keys():
+                if key not in email_template.REVIEWER_FIELDS.keys():
+                    self.keyword_dict[key] = ''
+                    self.listWidget.addItem(key)
+
+    def doDelete(self, *args, **kw):
+        '''
+        delete the selected key
+        
+        check that self.current_key is not None
+        then delete that one and reset to next in list
+        '''
+        key = self.current_key
+        if key is not None:
+            if key in self.keyword_dict.keys():
+                del self.keyword_dict[key]
+                curr = self.listWidget.currentItem()
+                if curr is not None:
+                    row = self.listWidget.row(curr)
+                    self.listWidget.takeItem(row)
+                self.current_key = None
+                self.selectFirstKeyword()
 
     def doCurrentItemChanged(self, widget_item):
         self.current_key = key = str(widget_item.text())
@@ -131,6 +167,20 @@ class Editor(QtGui.QWidget):
         self.saveSplitterDetails()
         event.accept()
         self.close()
+
+    def selectFirstKeyword(self):
+        idx = self.listWidget.indexAt(QtCore.QPoint(0,0))
+        self.listWidget.setCurrentIndex(idx)
+
+        if len(self.keyword_dict):
+            self.current_key = sorted(self.keyword_dict.keys())[0]
+            value = self.keyword_dict[self.current_key]
+        else:
+            self.current_key = sorted(email_template.REVIEWER_FIELDS.keys())[0]
+            value = email_template.REVIEWER_FIELDS[self.current_key]
+        self.plainTextEdit.setPlainText(value)
+
+        return idx
     
 
 if __name__ == '__main__':

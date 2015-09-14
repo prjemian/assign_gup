@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
+    <width>769</width>
     <height>582</height>
    </rect>
   </property>
@@ -25,6 +25,50 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="pb_add">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>add a keyword substitution</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>plus.bmp</normaloff>plus.bmp</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pb_delete">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>delete the selected keyword substitution</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>delete.bmp</normaloff>delete.bmp</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QSplitter" name="v_splitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -32,6 +76,9 @@
          <widget class="QListWidget" name="listWidget">
           <property name="toolTip">
            <string>key word</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">b</string>
           </property>
          </widget>
          <widget class="QPlainTextEdit" name="plainTextEdit">
