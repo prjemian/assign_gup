@@ -5,7 +5,11 @@ show the About box
 '''
 
 import os, sys
-from PyQt4 import QtCore, QtGui
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    from mock_PyQt4 import QtCore, QtGui
+else:
+    from PyQt4 import QtCore, QtGui
 
 import __init__
 import history
