@@ -4,7 +4,12 @@
 show text in a GUI window
 '''
 
-from PyQt4 import QtGui
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    from mock_PyQt4 import QtCore, QtGui
+else:
+    from PyQt4 import QtCore, QtGui
 import resources
 
 UI_FILE = 'plainTextEdit.ui'
