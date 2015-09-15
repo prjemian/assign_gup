@@ -8,8 +8,9 @@
 # See LICENSE file for details.
 
 
-import os
 import inspect
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     from mock_PyQt4 import QtCore, QtGui
 else:
