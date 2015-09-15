@@ -3,22 +3,25 @@
 '''
 show a read-only text page with how many primary and secondary proposals assigned to each reviewer
 
-total number of proposals: #
-primary proposals per reviewer: #.#
+::
 
-Overall topic strength: TBA
- 
-Primary assignments:
-reviewer1  ##: ##### ##### #####
-reviewer2  ##: ##### ##### #####
-reviewer3  ##: ##### ##### #####
- 
-Secondary assignments:
-reviewer1  ##: ##### ##### #####
-reviewer2  ##: ##### ##### #####
-reviewer3  ##: ##### ##### #####
+    total number of proposals: #
+    primary proposals per reviewer: #.#
+    
+    Overall topic strength: TBA
+     
+    Primary assignments:
+    reviewer1  ##: ##### ##### #####
+    reviewer2  ##: ##### ##### #####
+    reviewer3  ##: ##### ##### #####
+     
+    Secondary assignments:
+    reviewer1  ##: ##### ##### #####
+    reviewer2  ##: ##### ##### #####
+    reviewer3  ##: ##### ##### #####
+    
+    Unassigned proposals: #
 
-Unassigned proposals: #
 '''
 
 # Copyright (c) 2009 - 2015, UChicago Argonne, LLC.

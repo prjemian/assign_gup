@@ -31,9 +31,9 @@ Contents:
    :maxdepth: 1
    :glob:
    
+   readme
    instructions
    source_code/Assign_GUP
-   readme
    changes
    license
 

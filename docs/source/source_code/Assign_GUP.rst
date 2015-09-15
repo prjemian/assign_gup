@@ -12,9 +12,9 @@ Submodules
 ----------
 
 .. toctree::
-
    about
    agup_data
+   editor_email_template
    email_template
    event_filters
    general_mvc_model
@@ -27,6 +27,8 @@ Submodules
    proposal
    proposal_details
    qt_utils
+   report_analysis_grid
+   report_assignments
    report_summary
    resources
    reviewer

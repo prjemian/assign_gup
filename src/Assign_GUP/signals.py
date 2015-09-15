@@ -5,11 +5,11 @@ Custom Qt4 signals
 ====================  ===============  =====================
 signal                args             comments
 ====================  ===============  =====================
+changed                                template editor
 checkBoxGridChanged                    reviewer assignment
 closed                                 topics_editor
 recalc                                 dot?Product
-topicValueChanged    str, str, float   reviewer or proposal
-changed                                template editor
+topicValueChanged     str, str, float  reviewer or proposal
 ====================  ===============  =====================
 
 '''
@@ -22,8 +22,8 @@ from PyQt4 import QtCore
 class CustomSignals(QtCore.QObject):
     '''custom signals'''
 
+    changed = QtCore.pyqtSignal()
     checkBoxGridChanged = QtCore.pyqtSignal()
     closed = QtCore.pyqtSignal()                # topics_editor
     recalc = QtCore.pyqtSignal()
     topicValueChanged = QtCore.pyqtSignal(str, str, float)
-    changed = QtCore.pyqtSignal()
