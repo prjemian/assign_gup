@@ -10,7 +10,10 @@
 
 import os
 import inspect
-from PyQt4 import QtGui, uic, QtCore
+if on_rtd:
+    from mock_PyQt4 import QtCore, QtGui
+else:
+    from PyQt4 import QtCore, QtGui, uic
 
 
 FORMS_SUBDIRECTORY = 'resources'
