@@ -219,5 +219,5 @@ if __name__ == '__main__':
     mw = Editor(None, agup)
     _r = app.exec_()
     pprint.pprint(agup.email.keyword_dict)
-    pprint.pprint(agup.email.email_template)
+    print agup.email.email_template
     sys.exit(_r)
