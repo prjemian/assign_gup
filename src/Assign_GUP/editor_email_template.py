@@ -2,6 +2,19 @@
 
 '''
 edit the template to send emails, include editor for keyword substitutions
+
+Provide tools to:
+
+* manage list of substitution keywords
+* manage values of substitution keywords
+* display as read-only those substitution keywords defined for each reviewer
+* provide editor for email template letter
+* show example email with subsitutions applied
+
+The email template is stored in the project file.
+
+The substitution keyword dictionary is (at present) 
+stored in the settings file.
 '''
 
 # Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
@@ -17,7 +30,6 @@ import signals
 
 UI_FILE = 'editor_email_template.ui'
 DISABLED_STYLE = 'background: #eee'
-# TODO: add controls to add or remove keywords in self.agup.email.keyword_dict
 
 
 class Editor(QtGui.QWidget):
@@ -75,15 +87,26 @@ class Editor(QtGui.QWidget):
         then delete that one and reset to next in list
         '''
         key = self.current_key
-        if key is not None:
-            if key in self.keyword_dict.keys():
-                del self.keyword_dict[key]
-                curr = self.listWidget.currentItem()
-                if curr is not None:
-                    row = self.listWidget.row(curr)
-                    self.listWidget.takeItem(row)
-                self.current_key = None
-                self.selectFirstKeyword()
+        if key is None: return
+        if key not in self.keyword_dict.keys(): return
+
+        box = QtGui.QMessageBox()
+        box.setText('Delete: ' + key)
+        box.setInformativeText('Delete this substitution key?')
+        box.setStandardButtons(QtGui.QMessageBox.Ok 
+                               | QtGui.QMessageBox.Cancel)
+        box.setDefaultButton(QtGui.QMessageBox.Ok)
+        ret = box.exec_()
+
+        if ret != QtGui.QMessageBox.Ok: return
+
+        del self.keyword_dict[key]
+        curr = self.listWidget.currentItem()
+        if curr is not None:
+            row = self.listWidget.row(curr)
+            self.listWidget.takeItem(row)
+        self.current_key = None
+        self.selectFirstKeyword()
 
     def doCurrentItemChanged(self, widget_item):
         self.current_key = key = str(widget_item.text())
