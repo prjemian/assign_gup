@@ -55,8 +55,6 @@ class Topics(object):
     def add(self, key, value = DEFAULT_TOPIC_VALUE):
         '''
         define a new topic (known here as ``key``)
-        
-        ``key`` should be a single word or mnemonic, with no white space
         '''
         if self.exists(key):
             raise KeyError, 'This topic is already defined: ' + key

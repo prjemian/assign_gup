@@ -10,17 +10,11 @@ import traceback
 
 import about
 import agup_data
-import editor_email_template
-import email_template
 import history
-import plainTextEdit
 import prop_mvc_data
 import prop_mvc_view
 import proposal
 import resources
-import report_analysis_grid
-import report_assignments
-import report_summary
 import revu_mvc_view
 import settings
 import signals
@@ -28,6 +22,9 @@ import topics
 import topics_editor
 import xml_utility
 
+AGUP_filters = ';;'.join( ('AGUP PRP Project (*.agup)', 
+                           'PRP Project (*.prp)', 
+                           'XML File (*.xml)') )
 
 UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
@@ -105,7 +102,6 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionImport_Proposals.triggered.connect(self.doImportProposals)
         self.actionEdit_proposals.triggered.connect(self.doEditProposals)
         self.actionEdit_Reviewers.triggered.connect(self.doEditReviewers)
-        self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionEdit_Topics.triggered.connect(self.doEditTopics)
         self.actionEdit_Email_Template.triggered.connect(self.doEditEmailTemplate)
         self.actionSave.triggered.connect(self.doSave)
@@ -268,8 +264,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filters = ('PRP project (*.agup *.prp *.xml)', 'any file (*.*)')
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, ';;'.join(filters))
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
         filename = str(filename)
 
         if os.path.exists(filename):
@@ -410,7 +405,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file (XML) to copy its Reviewers'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP Project (*.xml)")
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
         path = str(path)
         if os.path.exists(path):
             self.importReviewers(path)
@@ -420,6 +415,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.agup.importReviewers(filename)
         self.setNumTopicsWidget(len(self.agup.topics))
         self.setNumReviewersWidget(len(self.agup.reviewers))
+        self.onAssignmentsChanged()
         history.addLog('imported Reviewers from: ' + filename)
 
     def doImportTopics(self):
@@ -430,7 +426,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file (XML) to copy its Topics'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "PRP Project (*.xml)")
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
         filename = str(filename)
         if os.path.exists(filename):
             self.importTopics(filename)
@@ -440,6 +436,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''read Topics from a PRP Project file and set the model accordingly'''
         self.agup.importTopics(filename)
         self.setNumTopicsWidget(len(self.agup.topics))
+        self.onTopicValuesChanged()
         history.addLog('imported topics from: ' + filename)
 
     def doRecalc(self):
@@ -479,11 +476,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Save As requested', False)
         filename = self.settings.getPrpFile()
-        filters = ('AGUP PRP Project (*.agup)', 'PRP Project (*.prp)', 'XML File (*.xml)')
         filename = QtGui.QFileDialog.getSaveFileName(parent=self, 
                                                      caption="Save the PRP project", 
                                                      directory=filename,
-                                                     filter=';;'.join(filters))
+                                                     filter=AGUP_filters)
         filename = os.path.abspath(str(filename))
         if len(filename) == 0:
             return
@@ -523,6 +519,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
         '''
+        import report_summary
         history.addLog('doSummaryReport() requested', False)
         if self.summary_window is None:
             self.summary_window = report_summary.Report(self, self.agup, self.settings)
@@ -534,6 +531,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         prepare the email form letters to each reviewer with their assignments
         '''
+        import email_template
+        import plainTextEdit
+        
         def getAssignments(full_name, role):
             assignments = []
             for prop in self.agup.proposals:
@@ -580,6 +580,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a read-only text page with assignments for each proposal
         '''
+        import report_assignments
         history.addLog('doAssignmentsReport() requested', False)
         if self.assignment_window is None:
             self.assignment_window = report_assignments.Report(self, self.agup, self.settings)
@@ -591,6 +592,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         show a table with dotProducts for each reviewer against each proposal *and* assignments
         '''
+        import report_analysis_grid
         history.addLog('doAnalysis_gridReport() requested', False)
         if self.analysisGrid_window is None:
             self.analysisGrid_window = report_analysis_grid.Report(self, self.agup, self.settings)
@@ -603,6 +605,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         edit the template to send emails, include editor for keyword substitutions
         '''
+        import editor_email_template
         history.addLog('doEditEmailTemplate() requested', False)
         if self.email_template_editor is None:
             self.email_template_editor = editor_email_template.Editor(None, self.agup, self.settings)

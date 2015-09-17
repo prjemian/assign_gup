@@ -175,10 +175,16 @@ class AGUP_Data(QtCore.QObject):
         rvwrs = revu_mvc_data.AGUP_Reviewers_List()
         rvwrs.importXml(xmlFile)        # pass exceptions straight to the caller 
         
-        if self.topics is None or len(self.topics) == 0:
-            for reviewer in rvwrs:
-                self.topics.addTopics(reviewer.getTopicList())
-                break   # got what we need now
+        for reviewer in rvwrs:
+            # if self.topics is not None: # should never be None
+            for topic in reviewer.topics:
+                if not self.topics.exists(topic):
+                    self.topics.add(topic)
+                    self.proposals.addTopic(topic)
+            for topic in self.topics:
+                if not reviewer.topics.exists(topic):
+                    rvwrs.addTopic(topic)
+            break   # got what we need now
 
         self.reviewers = rvwrs
     

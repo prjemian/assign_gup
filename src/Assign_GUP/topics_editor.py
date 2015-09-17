@@ -60,9 +60,6 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         if len(txt.strip()) == 0:
             # raise KeyError, 'Must give a value for the topic'
             return
-        if len(txt.strip().split()) != 1:
-            # raise KeyError, 'topic cannot have embedded white space: ' + txt
-            return
         txt = txt.strip()
         #
         # FIXME: problem when adding new topic into existing list, seems to replace a topic
