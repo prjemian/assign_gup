@@ -195,8 +195,10 @@ class AGUP_Data(QtCore.QObject):
         Completely replace the set of Topics currently in place.
         '''
         topics_obj = topics.Topics()
-        topics_obj.importXml(xmlFile, False)        # pass exceptions straight to the caller
- 
+        topics_obj.importXml(xmlFile, False)     
+        
+       # TODO: merge with similar lists in reviewersw and proposals
+       
         self.topics = topics_obj
     
     def importEmailTemplate(self, xmlFile):
