@@ -38,7 +38,6 @@ setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
                            'Assign_GUP.mock_PyQt4',
                            ],
        package_data     = dict(Assign_GUP=['resources/*', ]),
-       # package_data     = {'Assign_GUP': ['project/*', '*.xsd']},
        classifiers      = Assign_GUP.__classifiers__,
        entry_points={
             # create & install console_scripts in <python>/bin

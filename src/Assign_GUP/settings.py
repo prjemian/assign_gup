@@ -5,9 +5,12 @@
 r'''
 Support for AGUP program settings
 
-The ".rc" (resource configuration) file is used to preserve settings of the application.
-Remove the .rc file to clear any settings.
-Note, the .rc file may have the suffix ".ini" on some operating systems.
+A settings file is used to preserve certain values of the application
+(such as window positions and full path to the project file).
+The name of the settings file is given in the main window.
+Note, the settings file may have the suffix ".ini" on some operating systems.
+Remove the settings file to clear any settings.
+There is also a menu item to clear this file and reset it to defaults.
 
 This module uses QSettings (http://doc.qt.io/qt-4.8/qsettings.html).
         
@@ -20,7 +23,7 @@ This module uses QSettings (http://doc.qt.io/qt-4.8/qsettings.html).
     * now re-opened on laptop display and window is off-screen
     
     For now, keep the windows on the main screen 
-    or learn how to edit the .rc file.
+    or learn how to edit the settings file.
 
 ---------
 '''
