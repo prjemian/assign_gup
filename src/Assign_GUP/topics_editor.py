@@ -31,11 +31,8 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         self.setWindowTitle('AGUP List of Topics')
         self.listWidget.addItems(self.topics.getTopicList())
 
-        self.listWidget.currentItemChanged.connect(self.on_item_changed)
         self.add_pb.clicked.connect(self.onAdd)
-        self.newTopic.returnPressed.connect(self.onAdd)
         self.delete_pb.clicked.connect(self.onDelete)
-        self.close_pb.clicked.connect(self.onCloseButton)
         
         # select the first item in the list
         idx = self.listWidget.indexAt(QtCore.QPoint(0,0))
@@ -53,21 +50,14 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         '''
         add the text in the entry box to the list of topics
         '''
-        txt = str(self.newTopic.text())
-        if self.topics.exists(txt):
-            # raise KeyError, 'This topic is already defined: ' + txt
-            return
-        if len(txt.strip()) == 0:
-            # raise KeyError, 'Must give a value for the topic'
-            return
-        txt = txt.strip()
-        #
-        # FIXME: problem when adding new topic into existing list, seems to replace a topic
-        #
-        self.listWidget.addItem(txt)
-        self.topics.add(txt)
-        self.listWidget.sortItems()
-        self.newTopic.setText('')
+        topic, ok = QtGui.QInputDialog.getText(self, 
+                                             'new topic', 
+                                             'type a new topic')
+        topic = str(topic).strip()
+        if ok and  topic and not self.topics.exists(topic):
+            self.listWidget.addItem(topic)
+            self.topics.add(topic)
+            self.listWidget.sortItems()
 
     def onDelete(self, *args):
         '''
@@ -78,13 +68,6 @@ class AGUP_TopicsEditor(QtGui.QDialog):
             row = self.listWidget.row(curr)
             self.listWidget.takeItem(row)
             self.topics.remove(str(curr.text()))
-
-    def on_item_changed(self, curr, prev):
-        '''
-        when selecting an item in the list, put it's text in the entry box
-        '''
-        if curr is not None:
-            self.newTopic.setText(curr.text())
     
     def onCloseButton(self, event):
         self.close()

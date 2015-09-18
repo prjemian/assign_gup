@@ -9,132 +9,62 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
-    <height>630</height>
+    <width>237</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="styleSheet">
-          <string notr="true">border: 4px solid gray; border-style: inset; </string>
+        <widget class="QPushButton" name="add_pb">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="title">
+         <property name="toolTip">
+          <string>add a topic name</string>
+         </property>
+         <property name="text">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="add_pb">
-              <property name="text">
-               <string>add new topic</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLineEdit" name="newTopic">
-            <property name="styleSheet">
-             <string notr="true">background-color: bisque</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Defined Topics</string>
+         <property name="icon">
+          <iconset>
+           <normaloff>plus.bmp</normaloff>plus.bmp</iconset>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="listWidget"/>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="delete_pb">
-           <property name="text">
-            <string>delete selected topic</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="close_pb">
+        <widget class="QPushButton" name="delete_pb">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>delete selected topic name</string>
+         </property>
          <property name="text">
-          <string>Close Window</string>
+          <string/>
          </property>
-         <property name="shortcut">
-          <string>Alt+Shift+S</string>
+         <property name="icon">
+          <iconset>
+           <normaloff>delete.bmp</normaloff>delete.bmp</iconset>
          </property>
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget"/>
      </item>
     </layout>
    </item>
