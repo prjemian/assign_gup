@@ -7,3 +7,6 @@ class QMockObject(object):
             return None
 
 class ApplicationModal(QMockObject): pass
+
+class Key_Down(QMockObject): pass
+class Key_Up(QMockObject): pass
