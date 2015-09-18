@@ -1,11 +1,10 @@
-#!/usr/bin/env python
+
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 '''
 show a table with dotProducts for each reviewer against each proposal *and* assignments
 '''
-
-# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
-# See LICENSE file for details.
 
 
 import os, sys

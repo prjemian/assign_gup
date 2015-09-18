@@ -1,5 +1,5 @@
-proposal_details module
-=======================
+module: proposal_details
+========================
 
 .. automodule:: proposal_details
     :members:

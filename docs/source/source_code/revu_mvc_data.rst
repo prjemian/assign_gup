@@ -1,5 +1,5 @@
-revu_mvc_data module
-====================
+module: revu_mvc_data
+=====================
 
 .. automodule:: revu_mvc_data
     :members:

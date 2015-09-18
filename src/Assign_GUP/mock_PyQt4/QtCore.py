@@ -1,3 +1,6 @@
+'''
+This module is *only* for building the documentation at readthedocs.org
+'''
 
 class QMockObject(object):
         def __init__(self, *args, **kwargs):

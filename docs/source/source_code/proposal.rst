@@ -1,5 +1,5 @@
-proposal module
-===============
+module: proposal
+================
 
 .. automodule:: proposal
     :members:

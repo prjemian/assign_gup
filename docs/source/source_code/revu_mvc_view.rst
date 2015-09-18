@@ -1,5 +1,5 @@
-revu_mvc_view module
-====================
+module: revu_mvc_view
+=====================
 
 .. automodule:: revu_mvc_view
     :members:

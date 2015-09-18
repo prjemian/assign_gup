@@ -1,5 +1,5 @@
-email_template module
-=====================
+module: email_template
+======================
 
 .. automodule:: email_template
     :members:

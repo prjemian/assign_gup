@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 '''
 show a read-only text page with assignments for each proposal
@@ -9,9 +11,6 @@ GUP#     reviewer 1   reviewer 2     excluded reviewer(s)   title
 11111    A Reviewer   Ima Reviewer                          Study of stuff
 ======   ==========   ============   ====================   ==============================
 '''
-
-# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
-# See LICENSE file for details.
 
 
 import os, sys

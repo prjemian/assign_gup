@@ -1,5 +1,5 @@
-plainTextEdit module
-====================
+module: plainTextEdit
+=====================
 
 .. automodule:: plainTextEdit
     :members:

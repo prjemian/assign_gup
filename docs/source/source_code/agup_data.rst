@@ -1,5 +1,5 @@
-agup_data module
-================
+module: agup_data
+=================
 
 .. automodule:: agup_data
     :members:

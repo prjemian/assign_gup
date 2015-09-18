@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 widgets of one Reviewer of one Proposal instance
 

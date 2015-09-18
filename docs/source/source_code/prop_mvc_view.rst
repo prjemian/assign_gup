@@ -1,5 +1,5 @@
-prop_mvc_view module
-====================
+module: prop_mvc_view
+=====================
 
 .. automodule:: prop_mvc_view
     :members:

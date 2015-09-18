@@ -1,5 +1,5 @@
-report_assignments module
-=========================
+module: report_assignments
+==========================
 
 .. automodule:: report_assignments
     :members:

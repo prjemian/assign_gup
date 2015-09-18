@@ -1,5 +1,5 @@
-qt_utils module
-===============
+module: qt_utils
+================
 
 .. automodule:: qt_utils
     :members:

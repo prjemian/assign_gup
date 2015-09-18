@@ -1,5 +1,5 @@
-reviewer_details module
-=======================
+module: reviewer_details
+========================
 
 .. automodule:: reviewer_details
     :members:

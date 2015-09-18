@@ -1,5 +1,5 @@
-report_summary module
-=====================
+module: report_summary
+======================
 
 .. automodule:: report_summary
     :members:

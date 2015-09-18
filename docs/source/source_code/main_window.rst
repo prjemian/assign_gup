@@ -1,5 +1,5 @@
-main_window module
-==================
+module: main_window
+===================
 
 .. automodule:: main_window
     :members:

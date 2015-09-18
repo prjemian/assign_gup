@@ -1,5 +1,5 @@
-signals module
-==============
+module: signals
+===============
 
 .. automodule:: signals
     :members:

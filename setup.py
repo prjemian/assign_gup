@@ -33,7 +33,11 @@ setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
        platforms        = 'any',
        package_dir      = {'Assign_GUP': 'src/Assign_GUP'},
        #packages         = find_packages(),
-       packages         = [str(Assign_GUP.__package_name__), ],
+       packages         = [str(Assign_GUP.__package_name__), 
+                           # do not really need to package this mock
+                           'Assign_GUP.mock_PyQt4',
+                           ],
+       package_data     = dict(Assign_GUP=['resources/*', ]),
        # package_data     = {'Assign_GUP': ['project/*', '*.xsd']},
        classifiers      = Assign_GUP.__classifiers__,
        entry_points={
@@ -41,6 +45,6 @@ setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
             # 'console_scripts': [
             #   'Assign_GUP=Assign_GUP.main:main', 
             # ],
-            'gui_scripts': ['Assign_GUP=Assign_GUP.assign_gup:main'],
+            'gui_scripts': ['Assign_GUP=Assign_GUP.main_window:main'],
       },
   )

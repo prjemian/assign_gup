@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 add label, slider, value to a QGridLayout
 
@@ -45,6 +48,7 @@ else:
 
 import history
 import traceback
+
 
 class AGUP_TopicSlider(QtCore.QObject):
     '''add topic, slider, value_entry to a QGridLayout'''

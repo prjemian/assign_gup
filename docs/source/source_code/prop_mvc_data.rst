@@ -1,5 +1,5 @@
-prop_mvc_data module
-====================
+module: prop_mvc_data
+=====================
 
 .. automodule:: prop_mvc_data
     :members:

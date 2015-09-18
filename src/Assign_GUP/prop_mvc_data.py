@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 Proposals: underlying data class for the MVC model 
 '''

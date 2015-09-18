@@ -1,5 +1,5 @@
-history module
-==============
+module: history
+===============
 
 .. automodule:: history
     :members:

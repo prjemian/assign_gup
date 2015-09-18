@@ -1,11 +1,10 @@
-#!/usr/bin/env python
+
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 '''
 (internal) support for items in resources folder, such as forms defined in .ui files
 '''
-
-# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
-# See LICENSE file for details.
 
 
 import inspect

@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 Reviewers: underlying data class for the MVC model 
 '''
@@ -24,6 +27,7 @@ XML_SCHEMA_FILE = resources.resource_file('reviewers.xsd')
 ROOT_TAG = 'Review_panel'
 AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_ROOT_TAG = 'AGUP_Review_Session'
+
 
 class AGUP_Reviewers_List(QtCore.QObject):
     '''

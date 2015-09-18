@@ -1,5 +1,5 @@
-topics module
-=============
+module: topics
+==============
 
 .. automodule:: topics
     :members:

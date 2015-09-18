@@ -1,5 +1,5 @@
-about module
-============
+module: about
+=============
 
 .. automodule:: about
     :members:

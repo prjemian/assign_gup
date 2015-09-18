@@ -1,5 +1,5 @@
-resources module
-================
+module: resources
+=================
 
 .. automodule:: resources
     :members:

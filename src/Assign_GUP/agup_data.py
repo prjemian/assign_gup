@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 Data model for a review session: proposals, reviewers, topics, and analyses
 '''
@@ -15,14 +18,11 @@ else:
 import StringIO
 import traceback
 
-import email_template
 import prop_mvc_data
 import resources
 import reviewer
 import revu_mvc_data
-import settings
 import topics
-import xml_utility
 
 UI_FILE = 'main_window.ui'
 AGUP_MASTER_ROOT_TAG = 'AGUP_Review_Session'
@@ -36,6 +36,7 @@ class AGUP_Data(QtCore.QObject):
     '''
 
     def __init__(self, config = None):
+        import settings
         QtCore.QObject.__init__(self)
 
         self.settings = config or settings.ApplicationQSettings()
@@ -46,6 +47,7 @@ class AGUP_Data(QtCore.QObject):
         '''
         clear all data (except for self.settings)
         '''
+        import email_template
         self.proposals = prop_mvc_data.AGUP_Proposals_List()
         self.reviewers = revu_mvc_data.AGUP_Reviewers_List()
         self.topics = topics.Topics()

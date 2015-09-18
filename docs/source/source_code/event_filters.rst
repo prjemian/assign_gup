@@ -1,5 +1,5 @@
-event_filters module
-====================
+module: event_filters
+=====================
 
 .. automodule:: event_filters
     :members:

@@ -1,5 +1,5 @@
-xml_utility module
-==================
+module: xml_utility
+===================
 
 .. automodule:: xml_utility
     :members:

@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 '''
 show text in a GUI window
@@ -10,9 +12,11 @@ if on_rtd:
     from mock_PyQt4 import QtCore, QtGui
 else:
     from PyQt4 import QtCore, QtGui
+
 import resources
 
 UI_FILE = 'plainTextEdit.ui'
+
 
 class TextWindow(QtGui.QDialog):
     '''

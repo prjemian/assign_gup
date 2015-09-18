@@ -1,5 +1,5 @@
-settings module
-===============
+module: settings
+================
 
 .. automodule:: settings
     :members:

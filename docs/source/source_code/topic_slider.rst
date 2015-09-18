@@ -1,5 +1,5 @@
-topic_slider module
-===================
+module: topic_slider
+====================
 
 .. automodule:: topic_slider
     :members:

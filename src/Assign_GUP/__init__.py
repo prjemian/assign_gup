@@ -1,6 +1,14 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 '''
 Source code for the Assign_GUP (AGUP) package
+'''
+
+'''
+Will it be necessary to add this next line at the top of every file?
+# -*- coding: iso-8859-1 -*- 
 '''
 
 __package_name__        = u'Assign_GUP'

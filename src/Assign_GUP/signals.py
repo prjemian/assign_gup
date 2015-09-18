@@ -1,4 +1,7 @@
 
+# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 r'''
 Custom Qt4 signals
 
@@ -22,6 +25,7 @@ if on_rtd:
     from mock_PyQt4 import QtCore
 else:
     from PyQt4 import QtCore
+
 
 class CustomSignals(QtCore.QObject):
     '''custom signals'''

@@ -1,5 +1,5 @@
-reviewer module
-===============
+module: reviewer
+================
 
 .. automodule:: reviewer
     :members:
