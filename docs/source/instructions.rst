@@ -66,6 +66,10 @@ List of Reviewers
 
         Editor: Reviewers
 
+.. note:: In various example screen images shown in this documentation,
+   the details of specific individuals or proposals has been removed
+   or obscured to preserve anonymity.
+
 
 List of Proposals
 ~~~~~~~~~~~~~~~~~
@@ -127,7 +131,7 @@ is that reviewer to evaluate that proposal.
 
     .. figure:: resources/topics_editor.jpg
         :alt: fig.topics
-        :width: 60%
+        :width: 40%
 
         Editor: topics
 
