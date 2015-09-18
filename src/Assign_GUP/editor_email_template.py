@@ -22,6 +22,8 @@ stored in the settings file.
 
 
 from PyQt4 import QtGui, QtCore
+import re
+
 import email_template
 import history
 import resources
@@ -30,6 +32,7 @@ import signals
 
 UI_FILE = 'editor_email_template.ui'
 DISABLED_STYLE = 'background: #eee'
+MINIMUM_KEY_LENGTH = 3
 
 
 class Editor(QtGui.QWidget):
@@ -53,8 +56,8 @@ class Editor(QtGui.QWidget):
 
         self.selectFirstKeyword()
 
-        self.pb_add.clicked.connect(self.doAdd)
-        self.pb_delete.clicked.connect(self.doDelete)
+        self.pb_add.clicked.connect(self.onAdd)
+        self.pb_delete.clicked.connect(self.onDelete)
 
         self.listWidget.currentItemChanged.connect(self.doCurrentItemChanged)
         self.template.textChanged.connect(self.doTemplateTextChanged)
@@ -66,20 +69,30 @@ class Editor(QtGui.QWidget):
         self.doMerge()
         self.show()
     
-    def doAdd(self, *args, **kw):
-        '''add keyword substitution'''
+    def onAdd(self, *args, **kw):
+        '''
+        add keyword substitution
+        
+        Keywords are allowed to start with a letter or "_", 
+        then can have numbers also.  All letters must be uppercase.
+        
+        Substitutions may be any text, including any white space.
+        
+        Strings must have a minimum length of MINIMUM_KEY_LENGTH (3) characters.
+        '''
         key, ok = QtGui.QInputDialog.getText(self, 
                                              'new keyword', 
                                              'type a new keyword substitution')
-        key = str(key)
-        if ok and  key and key.upper() == key:
-            # TODO: validate against re [_A-Z0-9]
-            if key not in self.keyword_dict.keys():
+        key = str(key).strip()
+        if ok and len(key) > MINIMUM_KEY_LENGTH:
+            match_pattern = '^[_A-Z]+[_A-Z0-9]*$'
+            pattern = re.compile(match_pattern)
+            if pattern.match(key) is not None and key not in self.keyword_dict.keys():
                 if key not in email_template.REVIEWER_FIELDS.keys():
                     self.keyword_dict[key] = ''
                     self.listWidget.addItem(key)
 
-    def doDelete(self, *args, **kw):
+    def onDelete(self, *args, **kw):
         '''
         delete the selected key
         
