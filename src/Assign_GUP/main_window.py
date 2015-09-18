@@ -544,7 +544,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.summary_window = report_summary.Report(self, self.agup, self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
         else:
-            self.summary_window.uodate()
+            self.summary_window.update()
 
     def doLettersReport(self):
         '''
