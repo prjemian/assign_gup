@@ -67,7 +67,7 @@ List of Reviewers
         Editor: Reviewers
 
 .. note:: In various example screen images shown in this documentation,
-   the details of specific individuals or proposals has been removed
+   the details of specific individuals or proposals have been removed
    or obscured to preserve anonymity.
 
 
