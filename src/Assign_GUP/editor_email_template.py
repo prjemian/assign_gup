@@ -41,6 +41,8 @@ MINIMUM_KEY_LENGTH = 3
 
 
 class Editor(QtGui.QWidget):
+    '''
+    '''
     
     def __init__(self, parent, agup, settings=None):
         self.parent = parent
@@ -127,6 +129,8 @@ class Editor(QtGui.QWidget):
         self.selectFirstKeyword()
 
     def doCurrentItemChanged(self, widget_item):
+        '''
+        '''
         self.current_key = key = str(widget_item.text())
         if key in self.keyword_dict.keys():
             value = self.keyword_dict[key]
@@ -144,6 +148,8 @@ class Editor(QtGui.QWidget):
             self.plainTextEdit.setToolTip('you may edit this value')
     
     def doKeywordTextChanged(self, *args, **kw):
+        '''
+        '''
         if self.current_key is not None and self.current_key in self.keyword_dict.keys():
             s = str(self.plainTextEdit.toPlainText())
             if s != self.keyword_dict[self.current_key]:
@@ -152,6 +158,8 @@ class Editor(QtGui.QWidget):
                 self.doMerge()
     
     def doTemplateTextChanged(self, *args, **kw):
+        '''
+        '''
         s = str(self.template.toPlainText())
         if s != self.agup.email.email_template:
             self.agup.email.email_template = s
@@ -159,6 +167,8 @@ class Editor(QtGui.QWidget):
             self.doMerge()
     
     def doMerge(self):
+        '''
+        '''
         text = self.agup.email.mail_merge(**email_template.REVIEWER_FIELDS)
         self.mail_merge.setPlainText(text)
 
@@ -204,12 +214,16 @@ class Editor(QtGui.QWidget):
             handler('TemplateEditor_splitter3', self.splitter3)
 
     def closeEvent(self, event):
+        '''
+        '''
         self.saveWindowGeometry()
         self.saveSplitterDetails()
         event.accept()
         self.close()
 
     def selectFirstKeyword(self):
+        '''
+        '''
         idx = self.listWidget.indexAt(QtCore.QPoint(0,0))
         self.listWidget.setCurrentIndex(idx)
 
@@ -224,18 +238,18 @@ class Editor(QtGui.QWidget):
         return idx
     
 
-if __name__ == '__main__':
-    import os
-    import sys
-    import pprint
-    import agup_data
-
-    agup = agup_data.AGUP_Data()
-    agup.openPrpFile('project/agup_project.xml')
-
-    app = QtGui.QApplication(sys.argv)
-    mw = Editor(None, agup)
-    _r = app.exec_()
-    pprint.pprint(agup.email.keyword_dict)
-    print agup.email.email_template
-    sys.exit(_r)
+# if __name__ == '__main__':
+#     import os
+#     import sys
+#     import pprint
+#     import agup_data
+# 
+#     agup = agup_data.AGUP_Data()
+#     agup.openPrpFile('project/agup_project.xml')
+# 
+#     app = QtGui.QApplication(sys.argv)
+#     mw = Editor(None, agup)
+#     _r = app.exec_()
+#     pprint.pprint(agup.email.keyword_dict)
+#     print agup.email.email_template
+#     sys.exit(_r)

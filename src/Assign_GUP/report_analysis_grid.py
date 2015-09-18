@@ -20,6 +20,8 @@ import pyRestTable
 
 
 class Report(plainTextEdit.TextWindow):
+    '''
+    '''
     
     def __init__(self, parent, agup, settings):
         self.settings = settings
@@ -58,5 +60,7 @@ class Report(plainTextEdit.TextWindow):
         return tbl.reST()
     
     def update(self):
+        '''
+        '''
         text = self.makeText()
         self.setText(text)

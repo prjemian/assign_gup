@@ -8,7 +8,7 @@ signal                args             comments
 changed                                template editor
 checkBoxGridChanged                    reviewer assignment
 closed                                 topics_editor
-recalc                                 dot?Product
+recalc                                 dotProduct
 topicValueChanged     str, str, float  reviewer or proposal
 ====================  ===============  =====================
 
