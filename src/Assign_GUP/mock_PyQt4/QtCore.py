@@ -28,3 +28,9 @@ class QtDebugMsg(QMockObject): pass
 class QtWarningMsg(QMockObject): pass
 class QtCriticalMsg(QMockObject): pass
 class QtFatalMsg(QMockObject): pass
+
+
+
+class Qt(QMockObject): 
+    def Key_Down(*args, **kw): pass
+    def Key_Up(*args, **kw): pass
