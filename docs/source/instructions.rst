@@ -12,7 +12,7 @@ Instructions for the Review Panel Chairman
 
 #. After the proposal deadline
 
-   #. `List of proposals`_
+   #. `List of Proposals`_
    #. Run the ``Assign_GUP`` software.
 
       #. Create a new project file
@@ -67,7 +67,7 @@ List of Reviewers
         Editor: Reviewers
 
 
-List of proposals
+List of Proposals
 ~~~~~~~~~~~~~~~~~
 
 .. sidebar:: Be prompt! 
@@ -106,6 +106,42 @@ Be on the lookout for:
 * PUP or project proposals (they require additional reviewer work)
 * identical or related proposals (may not be the same PI or beam line)
 * ineligible reviewer(s) (ineligible since reviewer name is on the proposal)
+
+
+List of Topics
+~~~~~~~~~~~~~~
+
+Central to this process is the creation of a list of topics.
+These topics represent the various scientific or experimental
+subjects represented by this suite of proposals.  Each of the
+reviewers on the panel will have a different strength in each of
+the topics.  This strength is represented as a decimal topic value, 
+ranging between zero (no strength) to 1.0 (expert or confident).
+The *dot product* of the topic values between any 
+reviewer and proposal can be used as a measure of how appropriate
+is that reviewer to evaluate that proposal. 
+
+.. compound::
+
+    .. _fig.topics:
+
+    .. figure:: resources/topics_editor.jpg
+        :alt: fig.topics
+        :width: 60%
+
+        Editor: topics
+
+Initially, the list of topics is extracted from the proposals from the
+list of subjects selected for each proposal by the proposal's author.
+
+The list of topics may be edited to remove such nondescript names
+as "Other" and to add in instrument-specific techniques such as XPCS
+for which specific expertise may not be so common amongst the panel
+reviewers.
+
+Once the list of topics has been modified, check both the list of 
+reviewers and the list of proposals that the topic values are
+assigned properly.  (New topics added will be given topic values of 0.0.)
 
 
 Assign topic weights to each proposal
@@ -169,6 +205,7 @@ possible for this data, you must enter it in from the web form.
         :width: 60%
 
         Report: Reviewer assignments
+
 
 Send emails
 ~~~~~~~~~~~
