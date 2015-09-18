@@ -14,9 +14,15 @@ GUP#     reviewer 1   reviewer 2     excluded reviewer(s)   title
 # See LICENSE file for details.
 
 
-from PyQt4 import QtGui
-import plainTextEdit
+import os, sys
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    from mock_PyQt4 import QtGui
+else:
+    from PyQt4 import QtGui
 import pyRestTable
+
+import plainTextEdit
 
 
 class Report(plainTextEdit.TextWindow):

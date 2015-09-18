@@ -25,7 +25,11 @@ This module uses QSettings (http://doc.qt.io/qt-4.8/qsettings.html).
 
 import datetime
 import os, sys
-from PyQt4 import QtCore
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    from mock_PyQt4 import QtCore
+else:
+    from PyQt4 import QtCore
 
 import __init__
 orgName = __init__.__settings_orgName__

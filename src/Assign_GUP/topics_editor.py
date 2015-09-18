@@ -4,7 +4,12 @@ GUI to edit the list of topics
 '''
 
 
-from PyQt4 import QtGui, QtCore
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    from mock_PyQt4 import QtCore, QtGui
+else:
+    from PyQt4 import QtCore, QtGui
 import history
 import qt_utils
 import resources
