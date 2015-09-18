@@ -7,33 +7,24 @@ Instructions for the Review Panel Chairman
 
 #. Before the proposal deadline
 
-	#. Verify the members of the proposal review panel: `List of Reviewers`_
+	#. Determine the name of the next review cycle 
+	   (something like ``2015-2``).
+	   Change the value of ``APS_review_cycle`` 
+	   (in :mod:`config`) to this value.
+	#. `List of Reviewers`_
 	#. Answer questions from review panel members.  CC the APS User Office.
 
 #. After the proposal deadline
 
    #. `List of proposals`_
+   #. `Reconfigure source code for next cycle`_
+   #. Prepare the boilerplate letter
    #. Run the ``Assign_GUP`` software.
 
-      #. Create a new project file
-      #. Import the proposals (from the XML file)
-      #. Create the list of reviewers or Import from previous .agup file
-      #. Edit reviewers to assign topic weights
       #. `Assign topic weights to each proposal`_
       #. `Assign Reviewers to Proposals`_
       #. `Update the Assignments on the Web site`_
-      #. Prepare the boilerplate letter
       #. `Send emails`_
-
-.. compound::
-
-    .. _fig.main_window:
-
-    .. figure:: resources/main_window.jpg
-        :alt: fig.main_window
-        :width: 60%
-
-        Assign_GUP main window
 
 
 List of Reviewers
@@ -54,17 +45,7 @@ List of Reviewers
 #. Confirm the list of reviewers for the upcoming cycle.
 #. Verify that each member can attend.
 #. Assign values for reviewer strength on each topic.  
-   Use a scale from 0 (no strength) to 1.0 (high strength), with 0.1 precision. 
-
-.. compound::
-
-    .. _fig.reviewers:
-
-    .. figure:: resources/reviewers_editor.jpg
-        :alt: fig.reviewers
-        :width: 60%
-
-        Editor: Reviewers
+   Use a scale from 0 (no strength) to 1.0 (high strength), with 0.1 precision.
 
 
 List of proposals
@@ -94,9 +75,8 @@ List of proposals
 #. This raw file may have characters that break the later XML processing.
    That's why I save it as raw and then make a working copy next.
 #. Copy this file to ``proposals-2015-2.xml``
-   and make one change first.  Add a ``period`` attribute (if not present) 
-   to the root element ``Review_list`` with a value of the current 
-   review cycle, such as::
+   and make one change first.  Add a ``period`` attribute to the root 
+   element ``Review_list`` with a value of the current review cycle, such as::
    
      <Review_list period="2015-2">
 
@@ -107,6 +87,17 @@ Be on the lookout for:
 * identical or related proposals (may not be the same PI or beam line)
 * ineligible reviewer(s) (ineligible since reviewer name is on the proposal)
 
+Reconfigure source code for next cycle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. sidebar:: Refactor
+
+   Try to make the source code immune to the simple reconfigurations
+   necessary for each proposal review cycle.
+
+As described above, Change the value of ``APS_review_cycle`` 
+(in :mod:`config`) to the name of the next review cycle.  
+Should be something such as ``2015-2``.
 
 Assign topic weights to each proposal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,60 +106,19 @@ Similar to the reviewers, each proposal must be assigned a topic weight.
 The weight (a floating point decimal number) is the relevance of each topic to the proposal.
 The scale is 0 to 1 where 0 means *not related* and 1 mean *related*.
 
-When the proposals XML file is imported, a list of topics
-is created from all the subjects as selected by the proposers.
-Each topic created is assigned a weight of 1.0.  **These topic
-assessments should be verified** since some proposers put down lots of
-extraneous topics that are weakly related to the specifics of the proposal.
-
-
 Assign Reviewers to Proposals
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Choose a primary and a secondary reviewer for each proposal.
 Most likely, these will be reviewers with the strongest topic weighting
-for this proposal.  
-
-.. compound::
-
-    .. _fig.proposals:
-
-    .. figure:: resources/proposals_editor.jpg
-        :alt: fig.proposals
-        :width: 60%
-
-        Editor: Proposals
-
-The rules are such that only one reviewer can be a *primary* and a 
-different one can be *secondary*.
-
-If a reviewer is ineligible to review a proposal (usually because they 
-are named on the proposal team), their name will be grey and the
-checkboxes to select them as either primary or secondary reviewer 
-will be disabled.
-
-Refer to the summary and analysis grid reports 
-when attempting to balance the number of proposals assigned to 
-each reviewer.
-
+for this proposal.
 
 Update the Assignments on the Web site
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The assignments report gives a listing of the assigned reviewers 
-for all proposals.  Looking at this page, enter the same information 
-into the APS Review web site.  There is no upload capability 
-possible for this data, you must enter it in from the web form.
-
-.. compound::
-
-    .. _fig.assignments:
-
-    .. figure:: resources/assignments_report.jpg
-        :alt: fig.assignments
-        :width: 60%
-
-        Report: Reviewer assignments
+The **XXXXXXXXXXXX** report gives a listing of the assigned reviewers for all proposals.
+Looking at this page, enter the same information into the APS Review web site.
+There is no upload capability possible for this data, you must enter it in from the web form.
 
 Send emails
 ~~~~~~~~~~~
@@ -176,20 +126,3 @@ Send emails
 Send emails to each reviewer listing the proposals on which they
 are primary or secondary reviewer.  CC the APS User Office 
 on each email.
-
-To prepare the template for the emails, 
-open the *Edit Email Template ...* from the *Editors* menu:
-
-.. compound::
-
-    .. _fig.substitution_keyword_editor:
-
-    .. figure:: resources/substitution_keyword_editor.jpg
-        :alt: fig.substitution_keyword_editor
-        :width: 60%
-
-        Editor: Email template and substitution keywords
-
-To prepare the email text for each reviewer, select *Email Letters ...* from the 
-*Reports* menu.  A new window will appear for each reviewer with details
-specific to that reviewer.  Use this to create an email to each reviewer.
