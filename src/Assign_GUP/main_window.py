@@ -382,7 +382,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.agup.importProposals(filename)
         except:
             history.addLog(traceback.format_exc())
-            # TODO: put up a "failed" dialog to acknowledge 'that was not an APS Proposals file'
+
+            msg = filename + ' was not an APS Proposals file'
+            box = QtGui.QMessageBox()
+            box.setText(msg)
+            box.setInformativeText('Import Proposals file failed')
+            box.setStandardButtons(QtGui.QMessageBox.Ok)
+            box.setDefaultButton(QtGui.QMessageBox.Ok)
+            ret = box.exec_()
+
+
             return
 
         # ensure each imported proposal has the correct Topics
