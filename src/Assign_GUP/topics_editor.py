@@ -65,6 +65,16 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         '''
         curr = self.listWidget.currentItem()
         if curr is not None:
+            box = QtGui.QMessageBox()
+            box.setText('Delete topic: ' + str(curr.text()))
+            box.setInformativeText('Delete this topic?')
+            box.setStandardButtons(QtGui.QMessageBox.Ok 
+                                   | QtGui.QMessageBox.Cancel)
+            box.setDefaultButton(QtGui.QMessageBox.Ok)
+            ret = box.exec_()
+    
+            if ret != QtGui.QMessageBox.Ok: return
+
             row = self.listWidget.row(curr)
             self.listWidget.takeItem(row)
             self.topics.remove(str(curr.text()))
