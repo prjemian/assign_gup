@@ -174,9 +174,10 @@ class AGUP_Data(QtCore.QObject):
         '''
         rvwrs = revu_mvc_data.AGUP_Reviewers_List()
         rvwrs.importXml(xmlFile)        # pass exceptions straight to the caller 
-        
-        for reviewer in rvwrs:
-            # if self.topics is not None: # should never be None
+
+        if len(rvwrs) > 0:              # synchronize lists of topics
+            sort_name = rvwrs.getByIndex(0)
+            reviewer = rvwrs.getReviewer(sort_name)
             for topic in reviewer.topics:
                 if not self.topics.exists(topic):
                     self.topics.add(topic)
@@ -184,7 +185,6 @@ class AGUP_Data(QtCore.QObject):
             for topic in self.topics:
                 if not reviewer.topics.exists(topic):
                     rvwrs.addTopic(topic)
-            break   # got what we need now
 
         self.reviewers = rvwrs
     
@@ -197,9 +197,12 @@ class AGUP_Data(QtCore.QObject):
         topics_obj = topics.Topics()
         topics_obj.importXml(xmlFile, False)     
         
-       # TODO: merge with similar lists in reviewersw and proposals
-       
-        self.topics = topics_obj
+       # merge with other lists
+        for topic in topics_obj.topics:
+            if not self.topics.exists(topic):
+                self.topics.add(topic)
+                self.proposals.addTopic(topic)
+                self.reviewers.addTopic(topic)
     
     def importEmailTemplate(self, xmlFile):
         '''

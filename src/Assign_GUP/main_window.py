@@ -436,7 +436,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''read Topics from a PRP Project file and set the model accordingly'''
         self.agup.importTopics(filename)
         self.setNumTopicsWidget(len(self.agup.topics))
-        self.onTopicValuesChanged()
+        self.onTopicValuesChanged('', '', 0.0)
         history.addLog('imported topics from: ' + filename)
 
     def doRecalc(self):
