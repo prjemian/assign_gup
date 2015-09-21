@@ -6,8 +6,6 @@
 Create email notices to each Reviewer describing specific assignments
 '''
 
-# TODO: needs an associated MVC editor
-
 from lxml import etree
 import os
 
@@ -17,8 +15,7 @@ import resources
 import xml_utility
 
 
-DEFAULT_PROJECT_FILE = os.path.abspath('project/agup_project.xml')
-DEFAULT_TEMPLATE_FILE = os.path.abspath('resources/email_template.txt')
+DEFAULT_TEMPLATE_FILE = resources.resource_file('email_template.txt')
 DEFAULT_TEMPLATE_FIELDS = dict(
     # these are example values
     PANEL_CHAIR = 'Pete Jemian',
