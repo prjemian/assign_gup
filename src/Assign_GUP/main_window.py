@@ -32,6 +32,7 @@ import xml_utility
 AGUP_filters = ';;'.join( ('AGUP PRP Project (*.agup)', 
                            'PRP Project (*.prp)', 
                            'XML File (*.xml)') )
+AGUP_OPEN_FILTER = 'AGUP PRP Project (*.agup *.prp *.xml)'
 
 UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
@@ -268,7 +269,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
         filename = str(filename)
 
         if os.path.exists(filename):
@@ -414,10 +415,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         copy the list of Reviewers into this project from another PRP Project file
         '''
         history.addLog('Import Reviewers requested', False)
-        title = 'Choose a PRP Project file (XML) to copy its Reviewers'
+        title = 'Choose a PRP Project file to copy its Reviewers'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
+        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
         path = str(path)
         if os.path.exists(path):
             self.importReviewers(path)
@@ -444,10 +445,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         copy the list of Topics from another PRP file into this project
         '''
         history.addLog('Import Topics requested', False)
-        title = 'Choose a PRP Project file (XML) to copy its Topics'
+        title = 'Choose a PRP Project file to copy its Topics'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_filters)
+        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
         filename = str(filename)
         if os.path.exists(filename):
             self.importTopics(filename)
