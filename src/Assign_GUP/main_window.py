@@ -198,14 +198,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         
         Return True if application should *NOT* exit.
         '''
-        box = QtGui.QMessageBox()
-        box.setText('The session data has changed.')
-        box.setInformativeText('Save the changes?')
-        box.setStandardButtons(QtGui.QMessageBox.Save 
-                               | QtGui.QMessageBox.Discard
-                               | QtGui.QMessageBox.Cancel)
-        box.setDefaultButton(QtGui.QMessageBox.Save)
-        ret = box.exec_()
+        ret = self.requestConfirmation('The session data has changed.', 
+                                    'Save the changes?', 
+                                    QtGui.QMessageBox.Save 
+                                   | QtGui.QMessageBox.Discard
+                                   | QtGui.QMessageBox.Cancel, 
+                                    QtGui.QMessageBox.Save)
 
         if ret == QtGui.QMessageBox.Save:
             history.addLog('Save before Exit was selected')
@@ -239,12 +237,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('New PRP File requested', False)
 
         if self.cannotExit():
-            box = QtGui.QMessageBox()
-            box.setText('There are unsaved changes.')
-            box.setInformativeText('Forget about them?')
-            box.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
-            box.setDefaultButton(QtGui.QMessageBox.Cancel)
-            ret = box.exec_()
+            ret = self.requestConfirmation('There are unsaved changes.', 
+                                        'Forget about them?', 
+                                        QtGui.QMessageBox.Ok
+                                        | QtGui.QMessageBox.Cancel, 
+                                        QtGui.QMessageBox.Cancel)
             if ret == QtGui.QMessageBox.Cancel:
                 return
 
@@ -289,13 +286,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.agup.openPrpFile(filename)
         except Exception:
             history.addLog(traceback.format_exc())
-            msg = filename + ' was not an AGUP Project file'
-            box = QtGui.QMessageBox()
-            box.setText(msg)
-            box.setInformativeText('Import AGUP Project file failed')
-            box.setStandardButtons(QtGui.QMessageBox.Ok)
-            box.setDefaultButton(QtGui.QMessageBox.Ok)
-            ret = box.exec_()
+            self.requestConfirmation(
+                filename + ' was not an AGUP Project file',
+                'Import AGUP Project file failed'
+            )
+            return
 
         self.setPrpFileText(filename)
         self.setIndicators()
@@ -332,6 +327,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         known_topics = self.agup.topics.getTopicList()
         edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics, self.settings)
         edit_topics_ui.exec_()   # Modal Dialog
+        # closing the dialog produces this benign warning on Mac OSX:
+        # modalSession has been exited prematurely - check for a reentrant call to endModalSession:
+        # no real fix yet, see: https://bugreports.qt.io/browse/QTBUG-37699
         
         # learn what changed
         topics_list = edit_topics_ui.getTopicList()
@@ -365,12 +363,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         confirm before proceeding
         '''
-        box = QtGui.QMessageBox()
-        box.setText('The list of topics has changed.')
-        box.setInformativeText('Save the changes?')
-        box.setStandardButtons(QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard)
-        box.setDefaultButton(QtGui.QMessageBox.Save)
-        ret = box.exec_()
+        ret = self.requestConfirmation('The list of topics has changed.', 
+                                    'Save the changes?', 
+                                    QtGui.QMessageBox.Save
+                                    | QtGui.QMessageBox.Discard, 
+                                    QtGui.QMessageBox.Save)
         return ret == QtGui.QMessageBox.Save
 
     def doImportProposals(self):
@@ -394,14 +391,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.agup.importProposals(filename)
         except:
             history.addLog(traceback.format_exc())
-
-            msg = filename + ' was not an APS Proposals file'
-            box = QtGui.QMessageBox()
-            box.setText(msg)
-            box.setInformativeText('Import Proposals file failed')
-            box.setStandardButtons(QtGui.QMessageBox.Ok)
-            box.setDefaultButton(QtGui.QMessageBox.Ok)
-            ret = box.exec_()
+            self.requestConfirmation(
+                filename + ' was not an APS Proposals file',
+                'Import Proposals failed'
+            )
             return
 
         # ensure each imported proposal has the correct Topics
@@ -431,7 +424,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     
     def importReviewers(self, filename):
         '''read Reviewers from a PRP Project file and set the model accordingly'''
-        self.agup.importReviewers(filename)
+        try:
+            self.agup.importReviewers(filename)
+        except Exception:
+            history.addLog(traceback.format_exc())
+            self.requestConfirmation(
+                filename + ' was not an AGUP Project file',
+                'Import Reviewers failed'
+            )
+            return
+
         self.setNumTopicsWidget(len(self.agup.topics))
         self.setNumReviewersWidget(len(self.agup.reviewers))
         self.onAssignmentsChanged()
@@ -452,8 +454,17 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             history.addLog('imported Topics from: ' + filename)
     
     def importTopics(self, filename):
-        '''read Topics from a PRP Project file and set the model accordingly'''
-        self.agup.importTopics(filename)
+        '''read Topics from an AGUP PRP Project file and set the model accordingly'''
+        try:
+            self.agup.importTopics(filename)
+        except Exception:
+            history.addLog(traceback.format_exc())
+            self.requestConfirmation(
+                filename + ' was not an AGUP Project file',
+                'Import Topics failed'
+            )
+            return
+
         self.setNumTopicsWidget(len(self.agup.topics))
         self.onTopicValuesChanged('', '', 0.0)
         history.addLog('imported topics from: ' + filename)
@@ -473,6 +484,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             self.agup.write(filename)
             self.modified = False
+            for w in (self.proposal_view, self.reviewer_view):
+                if w is not None:
+                    w.details_panel.modified = False
             self.adjustMainWindowTitle()
             history.addLog('saved: ' + filename)
         self.settings.saveEmailKeywords(self.agup.email.keyword_dict)
@@ -515,6 +529,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.agup.write(filename)
         self.setPrpFileText(filename)
         self.modified = False
+        for w in (self.proposal_view, self.reviewer_view):
+            if w is not None:
+                w.details_panel.modified = False
         history.addLog('saved: ' + filename)
         self.adjustMainWindowTitle()
 
@@ -588,6 +605,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 view = self._email_letters_[full_name]
                 view.setWindowTitle(title)
                 view.plainTextEdit.setPlainText(text)
+                if view.settings is not None:
+                    view.restoreWindowGeometry()
                 view.show()
             else:
                 view = plainTextEdit.TextWindow(self, title, text, self.settings)
@@ -690,6 +709,25 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.setNumReviewersWidget(len(self.agup.reviewers))
         self.setNumProposalsWidget(len(self.agup.proposals))
         self.setReviewCycleText(self.agup.getCycle())
+    
+    def requestConfirmation(self, 
+                         message, 
+                         informative_text, 
+                         buttons=None, 
+                         default_button=None):
+        '''
+        request confirmation from the user about something
+        '''
+        if buttons is None:
+            buttons = QtGui.QMessageBox.Ok
+        if default_button is None:
+            default_button = QtGui.QMessageBox.Ok
+        box = QtGui.QMessageBox()
+        box.setText(message)
+        box.setInformativeText(informative_text)
+        box.setStandardButtons(buttons)
+        box.setDefaultButton(default_button)
+        return box.exec_()
 
 
 def main():

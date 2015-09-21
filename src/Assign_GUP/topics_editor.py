@@ -94,6 +94,7 @@ class AGUP_TopicsEditor(QtGui.QDialog):
         self.custom_signals.closed.emit()   # this window is closing - needed?
         self.saveWindowGeometry()
         event.accept()
+        self.close()
     
     def saveWindowGeometry(self):
         '''

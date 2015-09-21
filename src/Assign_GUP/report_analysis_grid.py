@@ -63,3 +63,4 @@ class Report(plainTextEdit.TextWindow):
         '''
         text = self.makeText()
         self.setText(text)
+        self.show()
