@@ -81,6 +81,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.custom_signals = signals.CustomSignals()
     
     def _init_topic_widgets(self, topics_obj):
+        '''
+        '''
         self.details_panel.addTopics(topics_obj.getTopicList())
 
     def on_item_clicked(self, index):
@@ -101,6 +103,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.details_panel.modified = True
     
     def onDetailsModified(self, *args):
+        '''
+        '''
         self.details_panel.modified = True
     
     def details_modified(self):
@@ -173,6 +177,8 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         self.editReviewer(sort_name, prev)
     
     def selectFirstListItem(self):
+        '''
+        '''
         idx = self.listView.indexAt(QtCore.QPoint(0,0))
         self.listView.setCurrentIndex(idx)
         return idx
@@ -185,15 +191,20 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         return str(obj)
         
     def setModel(self, model):
+        '''
+        '''
         self.reviewers = model
         self.reviewers_model = general_mvc_model.AGUP_MVC_Model(self.reviewers, parent=self)
         self.listView.setModel(self.reviewers_model)
     
     def isReviewerListModified(self):
-        # TODO: support reviewer editing
+        '''
+        '''
         return self.details_panel.modified
 
     def closeEvent(self, event):
+        '''
+        '''
         self.saveReviewerDetails()
         self.details_panel.saveSplitterDetails()
         self.saveWindowGeometry()

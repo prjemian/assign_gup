@@ -94,7 +94,7 @@ class ProposalReviewerRow(QtCore.QObject):
             [ ]       [ ]         1%        I. M. A. Reviewer
         
         '''
-        # FIXME: on Linux, checkboxes generate this error
+        # FIXME: on LinuxMint, checkboxes generate this error
         # Gtk-CRITICAL **: IA__gtk_widget_get_direction: assertion 'GTK_IS_WIDGET (widget)' failed
         #
         # see: https://github.com/prjemian/assign_gup/issues/15
