@@ -66,16 +66,17 @@ def loadUi(ui_file, baseinstance=None, **kw):
     return uic.loadUi(resource_file(ui_file), baseinstance=baseinstance, **kw)
 
 
-def get_forms_path():
+def get_forms_path(path=None):
     '''identify our resources directory'''
     # assume this is less risky than __file__
+    path = path or FORMS_SUBDIRECTORY
     ref = inspect.getsourcefile(get_forms_path)
-    path = os.path.abspath(os.path.dirname(ref))
-    return os.path.join(path, FORMS_SUBDIRECTORY)
+    base_path = os.path.abspath(os.path.dirname(ref))
+    return os.path.join(base_path, path)
 
 
-def resource_file(filename):
+def resource_file(filename, dir=None):
     '''absolute path to file in resources directory'''
     # assume this is less risky than __file__
-    path = get_forms_path()
+    path = get_forms_path(dir)
     return os.path.abspath(os.path.join(path, filename))
