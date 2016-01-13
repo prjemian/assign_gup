@@ -625,7 +625,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.assignment_window = report_assignments.Report(self, self.agup, self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
         else:
-            self.assignment_window.uodate()
+            self.assignment_window.update()
+            self.assignment_window.show()
 
     def doAnalysis_gridReport(self):
         '''

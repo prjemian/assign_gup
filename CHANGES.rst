@@ -3,6 +3,7 @@
 History of Source Code Changes
 ==============================
 
+:2016.0113.3: assignments report window re-displays on demand now 
 :2016.0113.2: resolved errors when building the documentation due to versioneer
 :2016.0113.1: #24 apparently fixed by previous work
 :2016.0113.0: added *versioneer* support, LICENSE GUI now displays (#24 fixed also)
