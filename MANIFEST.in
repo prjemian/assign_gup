@@ -1,3 +1,4 @@
 include README.rst
 include CHANGES.rst
-include src/Assign_GUP/LICENSE
+include src/Assign_GUP/LICENSEinclude versioneer.py
+include src/Assign_GUP/_version.py
