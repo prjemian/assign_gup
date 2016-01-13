@@ -15,8 +15,7 @@ __package_name__        = u'Assign_GUP'
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__
 
-__version__             = u'2016.0113.0'
-__release__             = __version__
+#__version__             = u'2016.0113.0'
 __author__              = u'Pete R. Jemian'
 __email__               = u'jemian@anl.gov'
 __institution__         = u"Advanced Photon Source, Argonne National Laboratory"
@@ -51,6 +50,9 @@ __credits__ += u'\nemail: ' + __email__
 __credits__ += u'\ninstitution: ' + __institution__
 __credits__ += u'\nURL: ' + __url__
 
-from ._version import get_versions
+
+from _version import get_versions
 __version__ = get_versions()['version']
 del get_versions
+
+__release__             = __version__
