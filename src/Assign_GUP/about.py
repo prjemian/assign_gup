@@ -48,8 +48,14 @@ class InfoBox(QtGui.QDialog):
     def doLicense(self):
         '''show the license'''
         history.addLog('opening License in new window')
-        license_text = open(resources.resource_file(LICENSE_FILE, '.'), 'r').read()
+        #history.addLog('DEBUG: ' + LICENSE_FILE)
+        lfile = resources.resource_file(LICENSE_FILE, '.')
+        #history.addLog('DEBUG: ' + lfile)
+        license_text = open(lfile, 'r').read()
+        #history.addLog('DEBUG: ' + license_text)
         ui = plainTextEdit.TextWindow(self, 'LICENSE', license_text, self.settings)
         ui.setMinimumSize(700, 500)
         ui.setWindowModality(QtCore.Qt.ApplicationModal)
+        #history.addLog('DEBUG: ' + str(ui))
         ui.show()
+        #history.addLog('DEBUG: ui.show() done')
