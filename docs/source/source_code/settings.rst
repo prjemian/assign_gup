@@ -1,6 +1,6 @@
 module: settings
 ================
 
-.. automodule:: settings
+.. automodule:: Assign_GUP.settings
     :members:
     :show-inheritance:

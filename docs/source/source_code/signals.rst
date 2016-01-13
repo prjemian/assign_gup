@@ -1,6 +1,6 @@
 module: signals
 ===============
 
-.. automodule:: signals
+.. automodule:: Assign_GUP.signals
     :members:
     :show-inheritance:

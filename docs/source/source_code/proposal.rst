@@ -1,6 +1,6 @@
 module: proposal
 ================
 
-.. automodule:: proposal
+.. automodule:: Assign_GUP.proposal
     :members:
     :show-inheritance:

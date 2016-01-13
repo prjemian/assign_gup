@@ -1,6 +1,6 @@
 module: history
 ===============
 
-.. automodule:: history
+.. automodule:: Assign_GUP.history
     :members:
     :show-inheritance:
