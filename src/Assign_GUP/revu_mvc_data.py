@@ -23,8 +23,7 @@ import topics
 import xml_utility
 
 
-XML_SCHEMA_FILE = resources.resource_file('reviewers.xsd')
-ROOT_TAG = 'Review_panel'
+REVIEW_PANEL_TAG = 'Review_panel'
 AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_ROOT_TAG = 'AGUP_Review_Session'
 
@@ -86,12 +85,10 @@ class AGUP_Reviewers_List(QtCore.QObject):
         doc = xml_utility.readValidXmlDoc(filename, 
                                           agup_data.AGUP_MASTER_ROOT_TAG, 
                                           agup_data.AGUP_XML_SCHEMA_FILE,
-                                          alt_root_tag=ROOT_TAG, 
-                                          alt_schema=XML_SCHEMA_FILE,
                                           )
         root = doc.getroot()
         if root.tag == agup_data.AGUP_MASTER_ROOT_TAG:
-            reviewers_node = root.find(ROOT_TAG)
+            reviewers_node = root.find(REVIEW_PANEL_TAG)
         else:
             reviewers_node = root    # pre-agup reviewers file
             raise RuntimeError, 'import of panel.xml file no longer supported'
@@ -112,7 +109,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
 
         :param obj specified_node: XML node to contain this data
         '''
-        node = etree.SubElement(specified_node, 'Review_panel')
+        node = etree.SubElement(specified_node, REVIEW_PANEL_TAG)
         for rvwr in self.inOrder():
             rvwr.writeXmlNode(etree.SubElement(node, 'Reviewer'))
 
