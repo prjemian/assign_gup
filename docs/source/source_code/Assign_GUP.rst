@@ -14,6 +14,7 @@ Submodules
 .. toctree::
    about
    agup_data
+   auto_assignment
    editor_email_template
    email_template
    event_filters
