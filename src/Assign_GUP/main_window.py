@@ -174,15 +174,23 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         close all other windows created by this code
         '''
-        def handler(window):
+        def close_window(window):
             if window is not None:
                 window.close()
                 window.destroy()
             return None
         
-        self.reviewer_view = handler(self.reviewer_view)
-        self.proposal_view = handler(self.proposal_view)
-        self.email_template_editor = handler(self.email_template_editor)
+        # TODO: make this a loop from a list
+        self.reviewer_view = close_window(self.reviewer_view)
+        self.proposal_view = close_window(self.proposal_view)
+        self.email_template_editor = close_window(self.email_template_editor)
+        self.summary_window = close_window(self.summary_window)
+        self.assignment_window = close_window(self.assignment_window)
+        self.analysisGrid_window = close_window(self.analysisGrid_window)
+        self.email_template_editor = close_window(self.email_template_editor)
+        for k, w in self._email_letters_.items():
+            close_window(w)
+            del self._email_letters_[k]
 
     def doClose(self, *args, **kw):
         '''
@@ -587,7 +595,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_summary
         history.addLog('doSummaryReport() requested', False)
         if self.summary_window is None:
-            self.summary_window = report_summary.Report(self, self.agup, self.settings)
+            self.summary_window = report_summary.Report(None, self.agup, self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
         else:
             self.summary_window.update()
@@ -639,7 +647,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                     view.restoreWindowGeometry()
                 view.show()
             else:
-                view = plainTextEdit.TextWindow(self, title, text, self.settings)
+                view = plainTextEdit.TextWindow(None, title, text, self.settings)
                 self._email_letters_[full_name] = view
                 view.show()
                 self.custom_signals.checkBoxGridChanged.connect(self.doLettersReport)
@@ -651,7 +659,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_assignments
         history.addLog('doAssignmentsReport() requested', False)
         if self.assignment_window is None:
-            self.assignment_window = report_assignments.Report(self, 
+            self.assignment_window = report_assignments.Report(None, 
                                                                self.agup, 
                                                                self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
@@ -666,7 +674,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_analysis_grid
         history.addLog('doAnalysis_gridReport() requested', False)
         if self.analysisGrid_window is None:
-            self.analysisGrid_window = report_analysis_grid.Report(self, self.agup, self.settings)
+            self.analysisGrid_window = report_analysis_grid.Report(None, self.agup, self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.analysisGrid_window.update)
             self.custom_signals.topicValueChanged.connect(self.analysisGrid_window.update)
         else:

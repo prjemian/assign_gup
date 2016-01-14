@@ -18,7 +18,7 @@ import resources
 UI_FILE = 'plainTextEdit.ui'
 
 
-class TextWindow(QtGui.QDialog):
+class TextWindow(QtGui.QWidget):
     '''
     show text in a GUI window that remembers its geometry, based on supplied window title
     
@@ -30,7 +30,7 @@ class TextWindow(QtGui.QDialog):
 
     def __init__(self, parent=None, title='window title', text='', settings=None):
         self.settings = settings
-        QtGui.QDialog.__init__(self, parent)
+        QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, baseinstance=self)
         self.setText(text)
         self.setTitle(title)

@@ -32,7 +32,11 @@ class Report(plainTextEdit.TextWindow):
         self.title = 'Reviewer Assignments'
         text = self.makeText()
 
-        plainTextEdit.TextWindow.__init__(self, parent, self.title, text, self.settings)
+        plainTextEdit.TextWindow.__init__(self, 
+                                          parent, 
+                                          self.title, 
+                                          text, 
+                                          self.settings)
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.show()

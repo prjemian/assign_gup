@@ -3,6 +3,7 @@
 History of Source Code Changes
 ==============================
 
+:2016.0114.0: added simple auto-assignment of proposals, report window focus problem fixed 
 :2016.0113.4: remove search for legacy .xsd file 
 :2016.0113.3: assignments report window re-displays on demand now 
 :2016.0113.2: resolved errors when building the documentation due to versioneer

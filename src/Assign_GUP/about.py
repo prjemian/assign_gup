@@ -33,10 +33,21 @@ class InfoBox(QtGui.QDialog):
         QtGui.QDialog.__init__(self, parent)
         resources.loadUi(UI_FILE, baseinstance=self)
         
+        self.license_box = None
+        
         self.version.setText('software version: ' + str(__init__.__version__))
 
         self.docs_pb.clicked.connect(self.doUrl)
         self.license_pb.clicked.connect(self.doLicense)
+        self.setModal(False)
+
+    def closeEvent(self, event):
+        '''
+        called when user clicks the big [X] to quit
+        '''
+        if self.license_box is not None:
+            self.license_box.close()
+        event.accept() # let the window close
 
     def doUrl(self):
         '''opening documentation URL in default browser'''
@@ -47,15 +58,20 @@ class InfoBox(QtGui.QDialog):
 
     def doLicense(self):
         '''show the license'''
-        history.addLog('opening License in new window')
-        #history.addLog('DEBUG: ' + LICENSE_FILE)
-        lfile = resources.resource_file(LICENSE_FILE, '.')
-        #history.addLog('DEBUG: ' + lfile)
-        license_text = open(lfile, 'r').read()
-        #history.addLog('DEBUG: ' + license_text)
-        ui = plainTextEdit.TextWindow(self, 'LICENSE', license_text, self.settings)
-        ui.setMinimumSize(700, 500)
-        ui.setWindowModality(QtCore.Qt.ApplicationModal)
-        #history.addLog('DEBUG: ' + str(ui))
-        ui.show()
+        if self.license_box is None:
+            history.addLog('opening License in new window')
+            #history.addLog('DEBUG: ' + LICENSE_FILE)
+            lfile = resources.resource_file(LICENSE_FILE, '.')
+            #history.addLog('DEBUG: ' + lfile)
+            license_text = open(lfile, 'r').read()
+            #history.addLog('DEBUG: ' + license_text)
+            ui = plainTextEdit.TextWindow(None, 
+                                          'LICENSE', 
+                                          license_text, 
+                                          self.settings)
+            ui.setMinimumSize(700, 500)
+            self.license_box = ui
+            #ui.setWindowModality(QtCore.Qt.ApplicationModal)
+            #history.addLog('DEBUG: ' + str(ui))
+        self.license_box.show()
         #history.addLog('DEBUG: ui.show() done')
