@@ -773,9 +773,25 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         return box.exec_()
 
 
+def process_command_line():
+    '''
+    support command-line options such as ```--help``` and ```--version```
+    '''
+    import argparse
+    import Assign_GUP
+    version = Assign_GUP.__version__
+    doc = Assign_GUP.__doc__
+    doc = 'v' + version + ', ' + doc.strip()
+    parser = argparse.ArgumentParser(description=doc)
+    parser.add_argument('-v', '--version', action='version', version=version)
+    results = parser.parse_args()
+    pass  # if we get here, then OK to proceed to start GUI
+
+
 def main():
-    '''simple starter program to develop this code'''
+    '''start the program'''
     import sys
+    process_command_line()
     app = QtGui.QApplication(sys.argv)
     mw = AGUP_MainWindow()
     mw.show()
