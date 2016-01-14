@@ -39,6 +39,7 @@ class Report(plainTextEdit.TextWindow):
         '''
         tbl = pyRestTable.Table()
         tbl.labels = ['GUP ID', ] + [rvwr.getFullName() for rvwr in self.agup.reviewers]
+        # TODO: call code in auto_assignment module
         for prop in self.agup.proposals:
             prop_id = prop.getKey('proposal_id')
             row = [prop_id, ]

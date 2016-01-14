@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# Copyright (c) 2009 - 2016, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 '''
@@ -17,6 +17,7 @@ import traceback
 
 import about
 import agup_data
+import auto_assignment
 import history
 import prop_mvc_data
 import prop_mvc_view
@@ -121,6 +122,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionLetters.triggered.connect(self.doLettersReport)
         self.actionAssignments.triggered.connect(self.doAssignmentsReport)
         self.actionAnalysis_grid.triggered.connect(self.doAnalysis_gridReport)
+        self.actionAutomated_assignment.triggered.connect(self.doAutomatedAssignment)
 
     def doAgupInfo(self, *args, **kw):
         '''
@@ -552,6 +554,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.adjustMainWindowTitle()
         self.custom_signals.topicValueChanged.emit(*args, **kw)
 
+    def doAutomatedAssignment(self):
+        '''
+        make automated assignments of reviewers to proposals
+        '''
+        auto_assign = auto_assignment.Auto_Assign(self.agup)
+        auto_assign.simpleAssignment()
+        # TODO: need to fire GUI update triggers
+
     def doSummaryReport(self):
         '''
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
@@ -563,6 +573,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
         else:
             self.summary_window.update()
+            self.summary_window.show()
 
     def doLettersReport(self):
         '''
