@@ -19,7 +19,6 @@ import about
 import agup_data
 import auto_assignment
 import history
-import prop_mvc_data
 import prop_mvc_view
 import proposal
 import resources
@@ -28,7 +27,6 @@ import settings
 import signals
 import topics
 import topics_editor
-import xml_utility
 
 AGUP_filters = ';;'.join( ('AGUP PRP Project (*.agup)', 
                            'PRP Project (*.prp)', 
@@ -37,7 +35,7 @@ AGUP_OPEN_FILTER = 'AGUP PRP Project (*.agup *.prp *.xml)'
 
 UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
-# LOG_MINOR_DETAILS = True        # TODO: remove for production release
+# LOG_MINOR_DETAILS = True        # developer use
 
 
 class AGUP_MainWindow(QtGui.QMainWindow):
@@ -129,12 +127,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         describe this application and where to get more info
         '''
         history.addLog('Info... box requested', False)
-        ui = about.InfoBox(self, self.settings)    # bless the Mac that it handles "about" differently
+        # bless the Mac that it handles "about" differently
+        ui = about.InfoBox(self, self.settings)    
         ui.show()
     
     def adjustMainWindowTitle(self):
         '''
-        indicate in main window title when there are unsaved modifications (when self.cannotExit() is True)
+        mark if main window is dirty
+        
+        indicate in main window title when there are unsaved modifications 
+        (i.e., when self.cannotExit() is True)
         '''
         title = self.main_window_title
         if self.cannotExit():
@@ -271,7 +273,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
+        filename = QtGui.QFileDialog.getOpenFileName(None, 
+                                                     title, 
+                                                     prp_path, 
+                                                     AGUP_OPEN_FILTER)
         filename = str(filename)
 
         if os.path.exists(filename):
@@ -328,7 +333,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.closeSubwindows()
         
         known_topics = self.agup.topics.getTopicList()
-        edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, known_topics, self.settings)
+        edit_topics_ui = topics_editor.AGUP_TopicsEditor(self, 
+                                                         known_topics, 
+                                                         self.settings)
         edit_topics_ui.exec_()   # Modal Dialog
         # closing the dialog produces this benign warning on Mac OSX:
         # modalSession has been exited prematurely - check for a reentrant call to endModalSession:
@@ -381,7 +388,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose XML file with proposals'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, "Proposals (*.xml)")
+        path = QtGui.QFileDialog.getOpenFileName(None, 
+                                                 title, 
+                                                 prp_path, 
+                                                 "Proposals (*.xml)")
         path = str(path)
         if os.path.exists(path):
             history.addLog('selected file: ' + path, False)
@@ -420,7 +430,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file to copy its Reviewers'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
+        path = QtGui.QFileDialog.getOpenFileName(None, 
+                                                 title, 
+                                                 prp_path, 
+                                                 AGUP_OPEN_FILTER)
         path = str(path)
         if os.path.exists(path):
             self.importReviewers(path)
@@ -450,7 +463,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file to copy its Topics'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
+        filename = QtGui.QFileDialog.getOpenFileName(None, 
+                                                     title, 
+                                                     prp_path, 
+                                                     AGUP_OPEN_FILTER)
         filename = str(filename)
         if os.path.exists(filename):
             self.importTopics(filename)
@@ -564,6 +580,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doSummaryReport(self):
         '''
+        this report is helpful to balance proposal assignments
+        
         show a read-only text page with how many primary and secondary proposals assigned to each reviewer
         '''
         import report_summary
@@ -633,7 +651,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_assignments
         history.addLog('doAssignmentsReport() requested', False)
         if self.assignment_window is None:
-            self.assignment_window = report_assignments.Report(self, self.agup, self.settings)
+            self.assignment_window = report_assignments.Report(self, 
+                                                               self.agup, 
+                                                               self.settings)
             self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
         else:
             self.assignment_window.update()
@@ -659,7 +679,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import editor_email_template
         history.addLog('doEditEmailTemplate() requested', False)
         if self.email_template_editor is None:
-            self.email_template_editor = editor_email_template.Editor(None, self.agup, self.settings)
+            self.email_template_editor = editor_email_template.Editor(None, 
+                                                                      self.agup, 
+                                                                      self.settings)
             self.email_template_editor.signals.changed.connect(self.onTemplateChanged)
         else:
             self.email_template_editor.show()
