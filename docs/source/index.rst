@@ -33,6 +33,7 @@ Contents:
    
    readme
    instructions
+   installation
    source_code/Assign_GUP
    changes
    license

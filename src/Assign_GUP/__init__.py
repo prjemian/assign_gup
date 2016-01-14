@@ -1,5 +1,5 @@
 
-# Copyright (c) 2009 - 2015, UChicago Argonne, LLC.
+# Copyright (c) 2009 - 2016, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 '''
@@ -23,7 +23,7 @@ __settings_orgName__    = u'Advanced_Photon_Source'
 __author_name__         = __author__
 __author_email__        = __email__
 
-__copyright__           = u'2011-2015, UChicago Argonne, LLC'
+__copyright__           = u'2011-2016, UChicago Argonne, LLC'
 # __license_url__         = u''
 __license__             = u'UChicago Argonne, LLC OPEN SOURCE LICENSE (see LICENSE file)'
 __url__                 = u'http://Assign_GUP.readthedocs.org'
@@ -31,7 +31,7 @@ __download_url__        = u'https://github.com/prjemian/assign_gup.git'
 __keywords__            = ['APS', 'GUP', 'PRP']
 #__requires__            = ['PyQt4', 'lxml', 'pyRestTable']
 __requires__            = ['lxml', 'pyRestTable']
-__documentation_mocks__ = ['lxml', 'pyRestTable']       # do NOT mock PyQt4, big problems if you do
+__documentation_mocks__ = ['lxml', 'pyRestTable']       # do NOT mock PyQt4 here, big problems if you do
 
 __classifiers__ = [
             'Development Status :: 5 - Production/Stable',
