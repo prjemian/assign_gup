@@ -12,3 +12,4 @@ README: Assign_GUP
 :docs:      http://assign_gup.readthedocs.org
 :git:       https://github.com/prjemian/assign_gup.git
 :PyPI:      https://pypi.python.org/pypi/assign_gup
+:TODO list: https://github.com/prjemian/assign_gup/issues
