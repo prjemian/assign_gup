@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2011 - 2015, UChicago Argonne, LLC.
-# See LICENSE file for details.
+# Copyright (c) 2011 - 2016, UChicago Argonne, LLC.
+# See LICENSE file (in src/Assign_GUP) for details.
 
 
 from setuptools import setup, find_packages
