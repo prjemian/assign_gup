@@ -7,6 +7,9 @@ automatic assignment of reviewers to proposals
 '''
 
 
+import history
+
+
 class Auto_Assign(object):
     '''
     automatically assign reviewers to proposals
@@ -55,6 +58,7 @@ class Auto_Assign(object):
                     name_list += names
             return name_list
         
+        counter = 0
         for prop in self.agup.proposals:
             assigned = prop.getAssignedReviewers()
             if None not in assigned:
@@ -78,6 +82,12 @@ class Auto_Assign(object):
                     break
                 if role is not None:
                     assigned[role] = full_name
+                    counter += 1
             
             for role, full_name in enumerate(assigned):
                 prop.eligible_reviewers[full_name] = role + 1
+
+        msg = 'Auto_Assign.simpleAssignment: '
+        msg += 'number assigned = '
+        msg += str(counter)
+        history.addLog(msg, False)
