@@ -55,4 +55,9 @@ from _version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    # special handling for readthedocs.org, remove distracting info
+    __version__ = __version__.split('+')[0]
 __release__             = __version__
