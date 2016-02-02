@@ -584,6 +584,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         auto_assign = auto_assignment.Auto_Assign(self.agup)
         auto_assign.simpleAssignment()
+        history.addLog('doAutomatedAssignment() complete', False)
         # TODO: need to fire GUI update triggers
 
     def doSummaryReport(self):
