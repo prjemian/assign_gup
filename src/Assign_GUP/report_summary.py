@@ -74,8 +74,9 @@ class Report(plainTextEdit.TextWindow):
                     break
         text.append('Unassigned proposals: ' + str(len(unassigned)))
 
-        mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
-        text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
+        if len(self.agup.reviewers) > 0:
+            mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
+            text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
 
         # text.append('')
         # text.append('Overall topic strength: ' + 'TBA')
