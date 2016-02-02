@@ -81,22 +81,23 @@ class Report(plainTextEdit.TextWindow):
         # text.append('')
         # text.append('Overall topic strength: ' + 'TBA')
 
-        text.append('')
-        width = max([len(_.getFullName()) for _ in self.agup.reviewers])
-        fmt = '%s%d%s: ' % ('%0', width, 's %3d')
-        for role, label in enumerate(['Primary', 'Secondary']):
-            role += 1   # 1-based here
-            text.append(label + ' assignments:')
-            for rvwr in self.agup.reviewers:
-                full_name = rvwr.getFullName()
-                prop_list = []
-                for prop in self.agup.proposals:
-                    if full_name in prop.eligible_reviewers.keys():
-                        if role == prop.eligible_reviewers[full_name]:
-                            prop_list.append(prop.getKey('proposal_id'))
-                row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
-                text.append(row)
+        if len(self.agup.reviewers) > 0:
             text.append('')
+            width = max([len(_.getFullName()) for _ in self.agup.reviewers])
+            fmt = '%s%d%s: ' % ('%0', width, 's %3d')
+            for role, label in enumerate(['Primary', 'Secondary']):
+                role += 1   # 1-based here
+                text.append(label + ' assignments:')
+                for rvwr in self.agup.reviewers:
+                    full_name = rvwr.getFullName()
+                    prop_list = []
+                    for prop in self.agup.proposals:
+                        if full_name in prop.eligible_reviewers.keys():
+                            if role == prop.eligible_reviewers[full_name]:
+                                prop_list.append(prop.getKey('proposal_id'))
+                    row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
+                    text.append(row)
+                text.append('')
         return '\n'.join(text)
     
     def update(self):
