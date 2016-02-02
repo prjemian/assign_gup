@@ -121,6 +121,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.actionAssignments.triggered.connect(self.doAssignmentsReport)
         self.actionAnalysis_grid.triggered.connect(self.doAnalysis_gridReport)
         self.actionAutomated_assignment.triggered.connect(self.doAutomatedAssignment)
+        self.actionUnassign_all_proposals.triggered.connect(self.doUnassignProposals)
 
     def doAgupInfo(self, *args, **kw):
         '''
@@ -585,7 +586,38 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         auto_assign = auto_assignment.Auto_Assign(self.agup)
         auto_assign.simpleAssignment()
         history.addLog('doAutomatedAssignment() complete', False)
-        # TODO: need to fire GUI update triggers
+        self.onAssignmentsChanged()
+
+    def doUnassignProposals(self):
+        '''
+        Remove ALL assignments of reviewers to proposals
+        '''
+        history.addLog('doUnassignProposals() requested', False)
+        ret = self.requestConfirmation('Remove ALL assignments of reviewers to proposals', 
+                                    'Remove ALL?', 
+                                    QtGui.QMessageBox.Ok
+                                    | QtGui.QMessageBox.Cancel, 
+                                    QtGui.QMessageBox.Cancel)
+        if ret == QtGui.QMessageBox.Cancel:
+            history.addLog('doUnassignProposals() was canceled', False)
+            return
+
+        counter = 0
+        for prop in self.agup.proposals:
+            for full_name, value in prop.eligible_reviewers.items():
+                if value is not None:
+                    prop.eligible_reviewers[full_name] = None
+                    counter += 1
+        if counter == 0:
+            msg = 'no assignments to be removed'
+        else:
+            msg = str(counter)
+            msg += ' assignment'
+            if counter > 1:
+                msg += 's'
+            msg += ' removed'
+        history.addLog(msg)
+        self.onAssignmentsChanged()
 
     def doSummaryReport(self):
         '''

@@ -300,6 +300,8 @@
     <addaction name="actionEdit_Email_Template"/>
     <addaction name="separator"/>
     <addaction name="actionAutomated_assignment"/>
+    <addaction name="separator"/>
+    <addaction name="actionUnassign_all_proposals"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -480,6 +482,14 @@
   <action name="actionAutomated_assignment">
    <property name="text">
     <string>automated assignment ...</string>
+   </property>
+  </action>
+  <action name="actionUnassign_all_proposals">
+   <property name="text">
+    <string>unassign all proposals ...</string>
+   </property>
+   <property name="toolTip">
+    <string>unassign all reviewers from all proposals</string>
    </property>
   </action>
  </widget>

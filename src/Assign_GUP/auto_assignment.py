@@ -88,6 +88,8 @@ class Auto_Assign(object):
                 prop.eligible_reviewers[full_name] = role + 1
 
         msg = 'Auto_Assign.simpleAssignment: '
-        msg += 'number assigned = '
         msg += str(counter)
-        history.addLog(msg, False)
+        msg += ' assignment'
+        if counter > 1:
+            msg += 's'
+        history.addLog(msg)
