@@ -3,7 +3,7 @@
 # See LICENSE file for details.
 
 '''
-MVC View for proposals - test version
+MVC View for proposals
 
 :see: http://www.saltycrane.com/blog/2008/01/pyqt-43-simple-qabstractlistmodel/
 :see: http://www.saltycrane.com/blog/2007/12/pyqt-43-qtableview-qabstracttablemodel/
