@@ -166,6 +166,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if self.doNotQuitNow():
                 event.ignore()
             else:
+                self.doClose()
                 event.accept()
         else:
             self.doClose()
