@@ -4,11 +4,13 @@ History of Source Code Changes
 ==============================
 
 
-:2016.0201.2: fixes (`issue #32 <https://github.com/prjemian/assign_gup/issues/32>`_)
+:2016.0201.2: fixes (`issue #32 <https://github.com/prjemian/assign_gup/issues/32>`_),
+              fixes (`issue #35 <https://github.com/prjemian/assign_gup/issues/35>`_)
 :2016.0201.1: provide an "un-assign all proposals" capability  (`issue #37 <https://github.com/prjemian/assign_gup/issues/37>`_)
 :2016.0201.0: announce that auto_assign has completed (`issue #36 <https://github.com/prjemian/assign_gup/issues/38>`_)
 :2016.0114.1: described program installation 
-:2016.0114.0: added simple auto-assignment of proposals, report window focus problem fixed 
+:2016.0114.0: added simple auto-assignment of proposals (`issue #20 <https://github.com/prjemian/assign_gup/issues/20>`_), 
+              report window focus problem fixed 
 :2016.0113.4: remove search for legacy .xsd file 
 :2016.0113.3: assignments report window re-displays on demand now 
 :2016.0113.2: resolved errors when building the documentation due to versioneer

@@ -33,9 +33,9 @@ import datetime
 import os, sys
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
-    from mock_PyQt4 import QtCore
+    from mock_PyQt4 import QtCore, QtGui
 else:
-    from PyQt4 import QtCore
+    from PyQt4 import QtCore, QtGui
 
 import __init__
 orgName = __init__.__settings_orgName__
@@ -199,12 +199,31 @@ class ApplicationQSettings(QtCore.QSettings):
         y = self.getKey(group + '/y')
         if x is None or y is None:
             return
-        # TODO: what if (x,y) is off-screen?  Check here if point is off-screen.  How?
-        point = QtCore.QPoint(int(x), int(y))
-        # TODO: only do this if point is on-screen
-        # see: http://doc.qt.io/qt-4.8/qdesktopwidget.html#screen-geometry
-        # see: http://doc.qt.io/qt-4.8/application-windows.html#window-geometry
-        # window.move(point)
+
+        # is this window on any available screen?
+        qdw = QtGui.QDesktopWidget()
+        x_onscreen = False
+        y_onscreen = False
+        for screen_num in range(qdw.screenCount()):
+            # find the "available" screen dimensions 
+            # (excludes docks, menu bars, ...)
+            available_rect = qdw.availableGeometry(screen_num)
+            if available_rect.x() <= int(x) < available_rect.x()+available_rect.width():
+                x_onscreen = True
+            if available_rect.y() <= int(y) < available_rect.y()+available_rect.height():
+                y_onscreen = True
+
+        # Move the window to the primary window if it would otherwise be drawn off screen
+        available_rect = qdw.availableGeometry(qdw.primaryScreen())
+        if not x_onscreen:
+            offset = available_rect.x() + available_rect.width()/10
+            x = available_rect.x() + offset
+            width = min(int(width), available_rect.width())
+        if not y_onscreen:
+            offset = available_rect.y() + available_rect.height()/10
+            y = available_rect.y() + offset
+            height = min(int(height), available_rect.height())
+
         window.setGeometry(QtCore.QRect(int(x), int(y), int(width), int(height)))
 
     def saveSplitterDetails(self, window):
