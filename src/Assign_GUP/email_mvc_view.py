@@ -68,7 +68,7 @@ class AGUP_Emails_View(QtGui.QWidget):
     :param obj settings: instance of settings.ApplicationQSettings
     '''
     
-    def __init__(self, parent=None, agup=None, settings=None):
+    def __init__(self, parent=None, agup=None, settings=None, hide_email_button=True):
         self.parent = parent
         self.agup = agup
         self.settings = settings
@@ -104,6 +104,9 @@ class AGUP_Emails_View(QtGui.QWidget):
 
         self.custom_signals = signals.CustomSignals()
         self.openButton.released.connect(self.doOpenEmail)
+        # FIXME: Until the email part is fixed, do not show the button in the UI
+        if hide_email_button:
+            self.openButton.hide()
 
     def _init_topic_widgets(self, topics_obj):
         '''
@@ -232,7 +235,6 @@ class AGUP_Emails_View(QtGui.QWidget):
         '''
         open the email letter in the email tool (does not work too good now)
         '''
-        # FIXME: email body is not formatted, full email does not appear in tool, ...
         self.email.send()
 
 
@@ -246,7 +248,8 @@ def main():
     agup.openPrpFile('project/agup_project.xml')
 
     app = QtGui.QApplication(sys.argv)
-    mw = AGUP_Emails_View(None, agup)
+    # TODO: developer use only: hide_email_button=False
+    mw = AGUP_Emails_View(None, agup, hide_email_button=False)
     mw.show()
     _r = app.exec_()
     sys.exit(_r)
