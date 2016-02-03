@@ -19,6 +19,7 @@ DEFAULT_TEMPLATE_FILE = resources.resource_file('email_template.txt')
 DEFAULT_TEMPLATE_FIELDS = dict(
     # these are example values
     PANEL_CHAIR = 'Pete Jemian',
+    CC = 'Beverly Knott <bevknott@aps.anl.gov>',
     REVIEW_CYCLE = '2015-2',
     PRP_DATE = '2015-03-24',
     OTHER_COMMENTS = '''

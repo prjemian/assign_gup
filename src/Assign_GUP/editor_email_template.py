@@ -190,7 +190,7 @@ class Editor(QtGui.QWidget):
 
     def saveSplitterDetails(self):
         '''
-        ember where the splitters were
+        remember where the splitters were
         '''
         def handler(group, splitter):
             sizes = map(int, splitter.sizes())
