@@ -139,12 +139,13 @@ class AGUP_Reviewers_List(QtCore.QObject):
         for rvwr in self.inOrder():
             rvwr.writeXmlNode(etree.SubElement(node, 'Reviewer'))
 
-    def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
+    def addTopic(self, key, value=None):
         '''
         add a new topic key and initial value to all reviewers
         '''
+        value = value or topics.DEFAULT_TOPIC_VALUE
         for item in self.inOrder():
-            item.addTopic(key, initial_value)
+            item.addTopic(key, value)
     
     def addTopics(self, key_list):
         '''

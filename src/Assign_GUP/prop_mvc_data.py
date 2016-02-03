@@ -108,12 +108,13 @@ class AGUP_Proposals_List(QtCore.QObject):
         for prop in self.inOrder():
             prop.writeXmlNode(etree.SubElement(node, 'Proposal'))
 
-    def addTopic(self, key, initial_value=topics.DEFAULT_TOPIC_VALUE):
+    def addTopic(self, key, value=None):
         '''
         add a new topic key and initial value to all proposals
         '''
+        value = value or topics.DEFAULT_TOPIC_VALUE
         for prop in self.inOrder():
-            prop.addTopic(key, initial_value)
+            prop.addTopic(key, value)
     
     def addTopics(self, key_list):
         '''

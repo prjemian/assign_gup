@@ -156,12 +156,13 @@ class AGUP_Proposal_Data(object):
         '''
         return self.topics.exists(topic)
     
-    def addTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+    def addTopic(self, topic, value=None):
         '''
         declare a new topic and give it an initial value
         
         topic must not exist or KeyError exception will be raised
         '''
+        value = value or topics.DEFAULT_TOPIC_VALUE
         self.topics.add(topic, value)
     
     def addTopics(self, topics_list):
@@ -172,12 +173,13 @@ class AGUP_Proposal_Data(object):
         '''
         self.topics.addTopics(topics_list)
     
-    def setTopic(self, topic, value=topics.DEFAULT_TOPIC_VALUE):
+    def setTopic(self, topic, value=None):
         '''
         set value of an existing topic
         
         topic must exist or KeyError exception will be raised
         '''
+        value = value or topics.DEFAULT_TOPIC_VALUE
         self.topics.set(topic, float(value))
 
     def removeTopic(self, key):
