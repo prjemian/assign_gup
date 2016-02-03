@@ -55,10 +55,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.modified = False
         self.forced_exit = False
-        self._email_letters_ = {}
 
         self.analysisGrid_window = None
         self.assignment_window = None
+        self.email_report_window = None
         self.email_template_editor = None
         self.proposal_view = None
         self.reviewer_view = None
@@ -189,10 +189,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.summary_window = close_window(self.summary_window)
         self.assignment_window = close_window(self.assignment_window)
         self.analysisGrid_window = close_window(self.analysisGrid_window)
+        self.email_report_window = close_window(self.email_report_window)
         self.email_template_editor = close_window(self.email_template_editor)
-        for k, w in self._email_letters_.items():
-            close_window(w)
-            del self._email_letters_[k]
 
     def doClose(self, *args, **kw):
         '''
@@ -639,52 +637,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         prepare the email form letters to each reviewer with their assignments
         '''
-        import email_template
-        import plainTextEdit
-        
-        def getAssignments(full_name, role):
-            assignments = []
-            for prop in self.agup.proposals:
-                if role ==  prop.eligible_reviewers.get(full_name, None):
-                    assignments.append(prop.getKey('proposal_id'))
-            return assignments
-        
+        import email_mvc_view
         history.addLog('doLettersReport() requested', False)
-        et = email_template.EmailTemplate()
-        base_x, base_y = 40, 40
-        offset_x, offset_y = 40, 40
-        default_window_size = QtCore.QSize(800, 600)
-
-        keyword_dict = self.settings.getEmailKeywords()
-        if len(keyword_dict) == 0:
-            keyword_dict = et.keyword_dict
-            self.settings.saveEmailKeywords(keyword_dict)
-        for index, rvwr in enumerate(self.agup.reviewers):
-            full_name = rvwr.getFullName()
-            primaries = getAssignments(full_name, proposal.PRIMARY_REVIEWER_ROLE)
-            secondaries = getAssignments(full_name, proposal.SECONDARY_REVIEWER_ROLE)
-            fields = dict(     # to be filled with data from an instance of Reviewer
-                FULL_NAME = full_name,
-                EMAIL = rvwr.getKey('email'),
-                ASSIGNED_PRIMARY_PROPOSALS = ' '.join(primaries),
-                ASSIGNED_SECONDARY_PROPOSALS = ' '.join(secondaries),
-            )
-            fields.update(keyword_dict)
-
-            title = 'email: ' + full_name
-            text = et.mail_merge(**fields)
-            if full_name in self._email_letters_:
-                view = self._email_letters_[full_name]
-                view.setWindowTitle(title)
-                view.plainTextEdit.setPlainText(text)
-                if view.settings is not None:
-                    view.restoreWindowGeometry()
-                view.show()
-            else:
-                view = plainTextEdit.TextWindow(None, title, text, self.settings)
-                self._email_letters_[full_name] = view
-                view.show()
-                self.custom_signals.checkBoxGridChanged.connect(self.doLettersReport)
+        if self.email_report_window is None:
+            self.email_report_window = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+            self.email_report_window.show()
+            self.custom_signals.checkBoxGridChanged.connect(self.email_report_window.update)
+        else:
+            self.email_report_window.update()
+            self.email_report_window.show()
 
     def doAssignmentsReport(self):
         '''
