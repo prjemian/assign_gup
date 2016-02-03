@@ -48,6 +48,7 @@ else:
     from PyQt4 import QtCore, QtGui
 
 import history
+import proposal
 import signals
 
 
@@ -315,11 +316,6 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
                     row_widget = self.rvwr_widgets[sort_name]
                     row_widget.setEnabled(False)
                     row_widget.setAssignment(0)
-                    if self.agup is not None and self.agup.proposals is not None:
-                        n1 = rvwr.getAssignments(self.agup.proposals, 1)
-                        n2 = rvwr.getAssignments(self.agup.proposals, 2)
-                        row_widget.setNumberAssigned(len(n1), 1)
-                        row_widget.setNumberAssigned(len(n2), 2)
             else:
                 sort_name = rvwr.getSortName()
                 full_name = rvwr.getFullName()
@@ -333,7 +329,14 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
                 row_widget.setAssignment(assignment or 0)
                 row_widget.dotProduct()
                 dot = self.proposal.topics.dotProduct(rvwr.topics)
-    
+            
+            # update the number of assigned proposals
+            if self.agup is not None and self.agup.proposals is not None:
+                n1 = rvwr.getAssignments(self.agup.proposals, proposal.PRIMARY_REVIEWER_ROLE)
+                n2 = rvwr.getAssignments(self.agup.proposals, proposal.SECONDARY_REVIEWER_ROLE)
+                row_widget.setNumberAssigned(len(n1), proposal.PRIMARY_REVIEWER_ROLE)
+                row_widget.setNumberAssigned(len(n2), proposal.SECONDARY_REVIEWER_ROLE)
+
     def setProposal(self, proposal):
         '''
         declare which proposal is associated with this grid
