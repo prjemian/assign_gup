@@ -330,8 +330,15 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
                 row_widget.dotProduct()
                 dot = self.proposal.topics.dotProduct(rvwr.topics)
             
-            # update the number of assigned proposals
-            if self.agup is not None and self.agup.proposals is not None:
+            self.updateNumbersOfAssignedProposals()
+
+    def updateNumbersOfAssignedProposals(self):
+        '''
+        update the numbers of assigned proposals shown for each reviewer and each role
+        '''
+        if self.agup is not None and self.agup.proposals is not None:
+            for row_widget in self.rvwr_widgets.values():
+                rvwr = row_widget.reviewer
                 n1 = rvwr.getAssignments(self.agup.proposals, proposal.PRIMARY_REVIEWER_ROLE)
                 n2 = rvwr.getAssignments(self.agup.proposals, proposal.SECONDARY_REVIEWER_ROLE)
                 row_widget.setNumberAssigned(len(n1), proposal.PRIMARY_REVIEWER_ROLE)
@@ -375,7 +382,13 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
             full_name = row_widget.reviewer.getFullName()
             role = row_widget.getAssignment()
             if role == 0:  role = None
-            self.proposal.setAssignedReviewer(row_widget.reviewer, role)
+            # check that reviewer is not excluded
+            if full_name not in self.proposal.getExcludedReviewers(self.agup.reviewers):
+                self.proposal.setAssignedReviewer(row_widget.reviewer, role)
+
+        self.updateNumbersOfAssignedProposals()
+
+        # pass the signal up the chain
         self.custom_signals.checkBoxGridChanged.emit()
     
     def setEnabled(self, sort_name, state=True):
