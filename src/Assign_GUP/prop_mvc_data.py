@@ -95,6 +95,7 @@ class AGUP_Proposals_List(QtCore.QObject):
             prop = proposal.AGUP_Proposal_Data(node, filename)
             db[prop_id] = prop
             self.prop_id_list.append(prop_id)
+        self.prop_id_list = sorted(self.prop_id_list)
         self.proposals = db
     
     def writeXmlNode(self, specified_node):

@@ -7,7 +7,8 @@ History of Source Code Changes
 :2016.0203.0: fixes (`issue #19 <https://github.com/prjemian/assign_gup/issues/19>`_),
               fixes (`issue #32 <https://github.com/prjemian/assign_gup/issues/32>`_),
               fixes (`issue #35 <https://github.com/prjemian/assign_gup/issues/35>`_),
-              fixes (`issue #41 <https://github.com/prjemian/assign_gup/issues/41>`_)
+              fixes (`issue #41 <https://github.com/prjemian/assign_gup/issues/41>`_),
+              fixes (`issue #42 <https://github.com/prjemian/assign_gup/issues/42>`_)
 :2016.0201.1: provide an "un-assign all proposals" capability  (`issue #37 <https://github.com/prjemian/assign_gup/issues/37>`_)
 :2016.0201.0: announce that auto_assign has completed (`issue #36 <https://github.com/prjemian/assign_gup/issues/38>`_)
 :2016.0114.1: described program installation 
