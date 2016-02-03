@@ -93,7 +93,7 @@ class AGUP_Emails_View(QtGui.QWidget):
             self.setModel(self.agup.reviewers)
             if len(self.agup.reviewers) > 0:
                 self.sort_name = self.agup.reviewers.keyOrder()[0]
-                self.showReviewerEmail(self.sort_name, None)
+                self.showReviewerEmail()
                 self.selectFirstListItem()
 
         self.listView.clicked.connect(self.on_item_clicked)
@@ -131,7 +131,7 @@ class AGUP_Emails_View(QtGui.QWidget):
         self.sort_name = self.index_to_ID(curr)
         if self.sort_name is None:
             return
-        self.showReviewerEmail(self.sort_name, prev)
+        self.showReviewerEmail()
     
     def selectFirstListItem(self):
         '''
@@ -174,9 +174,9 @@ class AGUP_Emails_View(QtGui.QWidget):
         if self.settings is not None:
             self.settings.restoreWindowGeometry(self)
 
-    def showReviewerEmail(self, sort_name, prev_index):
+    def showReviewerEmail(self):
         '''
-        select Reviewer for email display as referenced by sort_name
+        select Reviewer for email display as referenced by self.sort_name
         '''
         def getAssignments(full_name, role):
             assignments = []
@@ -236,6 +236,9 @@ class AGUP_Emails_View(QtGui.QWidget):
         open the email letter in the email tool (does not work too good now)
         '''
         self.email.send()
+    
+    def update(self):
+        self.showReviewerEmail()
 
 
 def main():

@@ -30,8 +30,10 @@ class AGUP_Proposals_List(QtCore.QObject):
     the list of all proposals
     '''
     
-    def __init__(self):
+    def __init__(self, agup):
         QtCore.QObject.__init__(self)
+
+        self.agup = agup
         self.proposals = {}
         self.prop_id_list = []
         self.cycle = ''

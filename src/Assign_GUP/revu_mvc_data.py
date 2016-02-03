@@ -33,9 +33,10 @@ class AGUP_Reviewers_List(QtCore.QObject):
     the list of all reviewers
     '''
     
-    def __init__(self):
+    def __init__(self, agup):
         QtCore.QObject.__init__(self)
 
+        self.agup = agup
         self.reviewers = {}     # .clear()
         self.reviewer_sort_list = []
     
@@ -61,6 +62,31 @@ class AGUP_Reviewers_List(QtCore.QObject):
         if not self.exists(sort_name):
             raise IndexError, 'Reviewer not found: ' + sort_name
         return self.reviewers[sort_name]
+    
+    def getReviewerAssignments(self, sort_name, role=None):
+        '''
+        find all proposals assigned to the named reviewer
+        
+        :param str sort_name: key for reviewer name
+        :param int role: one of [None, 0, 1, 2], 
+            where None or 0 mean get both roles
+        '''
+        valid_roles = (None, 
+                       0, 
+                       proposal.PRIMARY_REVIEWER_ROLE, 
+                       proposal.SECONDARY_REVIEWER_ROLE)
+        if role not in valid_roles:
+            raise ValueError, 'unknown role specified: ' + str(role)
+        rvwr = self.getReviewer(sort_name)
+        if role in (None, 0, proposal.PRIMARY_REVIEWER_ROLE):
+            primaries = rvwr.getAssignments(self.agup.proposals)
+            if role == proposal.PRIMARY_REVIEWER_ROLE:
+                return primaries
+        if role in (None, 0, proposal.SECONDARY_REVIEWER_ROLE):
+            secondaries = rvwr.getAssignments(self.agup.proposals)
+            if role == proposal.SECONDARY_REVIEWER_ROLE:
+                return secondaries
+        return tuple(primaries, secondaries)
     
     def getByFullName(self, full_name):
         '''return reviewer selected by full_name string'''

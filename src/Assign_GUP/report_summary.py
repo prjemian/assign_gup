@@ -74,27 +74,21 @@ class Report(plainTextEdit.TextWindow):
                     break
         text.append('Unassigned proposals: ' + str(len(unassigned)))
 
-        if len(self.agup.reviewers) > 0:
-            mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
-            text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
-
         # text.append('')
         # text.append('Overall topic strength: ' + 'TBA')
 
         if len(self.agup.reviewers) > 0:
+            mean = float(len(self.agup.proposals)) / float(len(self.agup.reviewers))
+            text.append('average primary proposals per reviewer: ' + str(int(mean*10+0.5)/10.0))    # 0.0 precision
+
             text.append('')
             width = max([len(_.getFullName()) for _ in self.agup.reviewers])
             fmt = '%s%d%s: ' % ('%0', width, 's %3d')
             for role, label in enumerate(['Primary', 'Secondary']):
-                role += 1   # 1-based here
                 text.append(label + ' assignments:')
                 for rvwr in self.agup.reviewers:
                     full_name = rvwr.getFullName()
-                    prop_list = []
-                    for prop in self.agup.proposals:
-                        if full_name in prop.eligible_reviewers.keys():
-                            if role == prop.eligible_reviewers[full_name]:
-                                prop_list.append(prop.getKey('proposal_id'))
+                    prop_list = rvwr.getAssignments(self.agup.proposals, role+1)
                     row = fmt % (full_name, len(prop_list)) + ' '.join(prop_list)
                     text.append(row)
                 text.append('')

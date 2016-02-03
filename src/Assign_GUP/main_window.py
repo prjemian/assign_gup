@@ -627,8 +627,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_summary
         history.addLog('doSummaryReport() requested', False)
         if self.summary_window is None:
-            self.summary_window = report_summary.Report(None, self.agup, self.settings)
-            self.custom_signals.checkBoxGridChanged.connect(self.summary_window.update)
+            win = report_summary.Report(None, self.agup, self.settings)
+            self.custom_signals.checkBoxGridChanged.connect(win.update)
+            self.summary_window = win
         else:
             self.summary_window.update()
             self.summary_window.show()
@@ -640,9 +641,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import email_mvc_view
         history.addLog('doLettersReport() requested', False)
         if self.email_report_window is None:
-            self.email_report_window = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
-            self.email_report_window.show()
-            self.custom_signals.checkBoxGridChanged.connect(self.email_report_window.update)
+            win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+            win.show()
+            self.custom_signals.checkBoxGridChanged.connect(win.update)
+            self.email_report_window = win
         else:
             self.email_report_window.update()
             self.email_report_window.show()

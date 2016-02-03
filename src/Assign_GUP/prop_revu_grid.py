@@ -119,8 +119,8 @@ class ProposalReviewerRow(QtCore.QObject):
         self.secondary.setToolTip("check to select as secondary reviewer (#2)")
         self.percentage.setToolTip("computed comfort factor of this reviewer with this proposal")
 
-        self.primary.clicked.connect(lambda: self.onCheckBoxClick(self.primary))
-        self.secondary.clicked.connect(lambda: self.onCheckBoxClick(self.secondary))
+        self.primary.released.connect(lambda: self.onCheckBoxClick(self.primary))
+        self.secondary.released.connect(lambda: self.onCheckBoxClick(self.secondary))
     
     def onCheckBoxClick(self, widget):
         '''
@@ -343,13 +343,11 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
                     {1: row.setPrimaryState, 
                      2: row.setSecondaryState}[assignment](False)
 
-        if self.proposal is not None:        # change value in self.proposal.eligible_reviewers
+        if self.proposal is not None:
             full_name = row_widget.reviewer.getFullName()
             role = row_widget.getAssignment()
             if role == 0:  role = None
-            w = self.proposal.eligible_reviewers
-            if full_name in w.keys() and w[full_name] != role:
-                w[full_name] = role
+            self.proposal.setAssignedReviewer(row_widget.reviewer, role)
         self.custom_signals.checkBoxGridChanged.emit()
     
     def setEnabled(self, sort_name, state=True):

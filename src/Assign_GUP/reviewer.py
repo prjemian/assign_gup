@@ -9,6 +9,7 @@ Data for one Reviewer of General User Proposals
 from lxml import etree
 import topics
 import xml_utility
+import proposal
 
 
 class AGUP_Reviewer_Data(object):
@@ -144,3 +145,15 @@ class AGUP_Reviewer_Data(object):
         '''
         for key in key_list:
             self.removeTopic(key)
+    
+    def getAssignments(self, proposals, role):
+        '''find all proposals assigned to this reviewer with the given role'''
+        if role not in (proposal.PRIMARY_REVIEWER_ROLE, proposal.SECONDARY_REVIEWER_ROLE):
+            raise ValueError, 'unknown role value: ' + str(role)
+        my_name = self.db['full_name']
+        assignments = []
+        for prop_num, prop in proposals.proposals.items():
+            reviewers = prop.getAssignedReviewers()
+            if my_name == reviewers[role-1]:
+                assignments.append(prop_num)
+        return sorted(assignments)

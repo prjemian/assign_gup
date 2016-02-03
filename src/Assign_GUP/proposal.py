@@ -87,6 +87,22 @@ class AGUP_Proposal_Data(object):
 
         self.topics.writeXml(specified_node)
     
+    def setAssignedReviewer(self, reviewer, role=None):
+        '''
+        assign a reviewer to this proposal as primary (role=1) or secondary (role=2) or None (unassigned)
+        '''
+        if role not in (None, PRIMARY_REVIEWER_ROLE, SECONDARY_REVIEWER_ROLE):
+            raise ValueError, 'unknown role: ' + str(role)
+        full_name = reviewer.getFullName()
+        if full_name not in self.eligible_reviewers:
+            raise KeyError, 'unknown reviewer: ' + full_name
+        self.eligible_reviewers[full_name] = role
+        # un-assign any other reviewer from this role
+        if role is not None:
+            for k, v in self.eligible_reviewers.items():
+                if k != full_name and v == role:
+                    self.eligible_reviewers[k] = None
+    
     def getAssignedReviewers(self):
         '''
         return a list of assigned reviewers for this proposal
