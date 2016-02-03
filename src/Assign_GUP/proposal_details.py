@@ -35,6 +35,9 @@ import topics
 UI_FILE = 'proposal_details.ui'
 
 
+#         self.reviewers_gb.layout().setReviewersValues(self.agup.reviewers)
+
+
 class AGUP_ProposalDetails(QtGui.QWidget):
     '''
     QtGui widget to edit one Proposal instance
@@ -68,6 +71,12 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         Add the list of Reviewers to the details panel
         '''
         self.reviewers_gb.layout().addReviewers(reviewers)
+    
+    def onAssignmentsChanged(self):
+        '''
+        called when a reviewer assignment checkbox has been changed
+        '''
+        self.custom_signals.checkBoxGridChanged.emit()
     
     def onTopicValueChanged(self, topic):
         '''
@@ -186,12 +195,6 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     def restoreSplitterDetails(self):
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
-    
-    def onAssignmentsChanged(self):
-        '''
-        called when a reviewer assignment checkbox has been changed
-        '''
-        self.custom_signals.checkBoxGridChanged.emit()
 
 
 def project_main():
