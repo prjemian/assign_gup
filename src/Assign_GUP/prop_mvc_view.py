@@ -52,7 +52,9 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.listview_gb.setTitle('Proposals')
         self.details_gb.setTitle('Proposal Details')
 
-        self.details_panel = proposal_details.AGUP_ProposalDetails(self, self.settings)
+        self.details_panel = proposal_details.AGUP_ProposalDetails(parent=self, 
+                                                                   settings=self.settings, 
+                                                                   agup=agup)
         layout = self.details_gb.layout()
         layout.addWidget(self.details_panel)
 

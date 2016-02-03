@@ -16,6 +16,7 @@ Method                                                Description
 :meth:`~ProposalReviewerRow.setAssignment`            define which type of reviewer this is (0, 1, 2)
 :meth:`~ProposalReviewerRow.setValue`                 set dotProduct value as percentage
 :meth:`~ProposalReviewerRow.setEnabled`               enable/disable the checkboxes based on Reviewer eligibility
+:meth:`~ProposalReviewerRow.setNumberAssigned`        show the number of assigned proposals with given role (1 | 2)
 :meth:`~ProposalReviewerRow.dotProduct`               compute and set widget with dot product of reviewer & proposal topics
 ====================================================  ============================================================
 
@@ -91,7 +92,7 @@ class ProposalReviewerRow(QtCore.QObject):
         '''
         Build one row of the GUI panel with a reviewer for this proposal::
 
-            [ ]       [ ]         1%        I. M. A. Reviewer
+            [ ] 5    [ ] 0      1%        I. M. A. Reviewer
         
         '''
         # FIXME: on LinuxMint, checkboxes generate this error
@@ -99,15 +100,19 @@ class ProposalReviewerRow(QtCore.QObject):
         #
         # see: https://github.com/prjemian/assign_gup/issues/15
         self.primary = QtGui.QCheckBox()
+        self.num_primary = QtGui.QLabel()
         self.secondary = QtGui.QCheckBox()
+        self.num_secondary = QtGui.QLabel()
         self.percentage = QtGui.QLabel()
         self.full_name = QtGui.QLabel(self.reviewer.getFullName())
         self.setValue(-1)
 
         w = self.layout.addWidget(self.primary)
 # FIXME:         self.layout.setAlignment(w, QtCore.Qt.AlignCenter)
+        w = self.layout.addWidget(self.num_primary)
         w = self.layout.addWidget(self.secondary)
 # FIXME:         self.layout.setAlignment(w, QtCore.Qt.AlignCenter)
+        w = self.layout.addWidget(self.num_secondary)
         w = self.layout.addWidget(self.percentage)
 # FIXME:         self.layout.setAlignment(w, QtCore.Qt.AlignRight)
         w = self.layout.addWidget(self.full_name)
@@ -116,7 +121,9 @@ class ProposalReviewerRow(QtCore.QObject):
         self.secondary.setEnabled(self.enabled)
 
         self.primary.setToolTip("check to select as primary reviewer (#1)")
+        self.num_primary.setToolTip("number of proposals assigned as primary reviewer (#1)")
         self.secondary.setToolTip("check to select as secondary reviewer (#2)")
+        self.num_secondary.setToolTip("number of proposals assigned as secondary reviewer (#2)")
         self.percentage.setToolTip("computed comfort factor of this reviewer with this proposal")
 
         self.primary.released.connect(lambda: self.onCheckBoxClick(self.primary))
@@ -190,6 +197,13 @@ class ProposalReviewerRow(QtCore.QObject):
         self.onCheckBoxClick(self.primary)
         self.onCheckBoxClick(self.secondary)
 
+    def setNumberAssigned(self, number, role):
+        '''show the number of assigned proposals with given role'''
+        valid_roles = (1, 2)
+        if role not in valid_roles:
+            raise ValueError, 'unknown role: ' + str(role)
+        (self.num_primary, self.num_secondary)[role-1].setText(str(number))
+
     def setValue(self, percentage):
         '''
         set the percentage value
@@ -244,8 +258,9 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
     display and manage the assignment checkboxes and reported percentages for each reviewer on this proposal
     '''
     
-    def __init__(self, parent):
+    def __init__(self, parent, agup):
         self.parent = parent
+        self.agup = agup
         self.proposal = None
         self.reviewers = None
 
@@ -258,31 +273,36 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         self.setColumnStretch(0, 1)
         self.setColumnStretch(1, 1)
         self.setColumnStretch(2, 1)
-        self.setColumnStretch(3, 3)
+        self.setColumnStretch(3, 1)
+        self.setColumnStretch(4, 1)
+        self.setColumnStretch(5, 3)
         self.addWidget(QtGui.QLabel('R1', styleSheet='background: #888; color: white'))
+        self.addWidget(QtGui.QLabel('#1', styleSheet='background: #888; color: white'))
         self.addWidget(QtGui.QLabel('R2', styleSheet='background: #888; color: white'))
+        self.addWidget(QtGui.QLabel('#2', styleSheet='background: #888; color: white'))
         self.addWidget(QtGui.QLabel('%', styleSheet='background: #888; color: white'))
         self.addWidget(QtGui.QLabel('Reviewer Name', styleSheet='background: #888; color: white'))
-        self.rvrw_widgets = {}
+        self.rvwr_widgets = {}
     
     def addReviewer(self, rvwr):
         '''
         add this reviewer object for display
         '''
         row_widget = ProposalReviewerRow(self.parent, self, rvwr, self.proposal)
-        
         row_widget.custom_signals.checkBoxGridChanged.connect(lambda: self.onCheck(row_widget))
+        row_widget.setNumberAssigned(0, 1)
+        row_widget.setNumberAssigned(0, 2)
         return row_widget
 
     def addReviewers(self, reviewers):
         '''
         add a list of reviewers
         '''
-        self.rvrw_widgets = {}
+        self.rvwr_widgets = {}
         self.reviewers = reviewers
         for rvwr in reviewers:
             if rvwr is not None:
-                self.rvrw_widgets[rvwr.getSortName()] = self.addReviewer(rvwr)
+                self.rvwr_widgets[rvwr.getSortName()] = self.addReviewer(rvwr)
 
     def setReviewersValues(self, reviewers):
         '''
@@ -292,13 +312,18 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
             if self.proposal is None or rvwr is None:
                 if rvwr is not None:
                     sort_name = rvwr.getSortName()
-                    row_widget = self.rvrw_widgets[sort_name]
+                    row_widget = self.rvwr_widgets[sort_name]
                     row_widget.setEnabled(False)
                     row_widget.setAssignment(0)
+                    if self.agup is not None and self.agup.proposals is not None:
+                        n1 = rvwr.getAssignments(self.agup.proposals, 1)
+                        n2 = rvwr.getAssignments(self.agup.proposals, 2)
+                        row_widget.setNumberAssigned(len(n1), 1)
+                        row_widget.setNumberAssigned(len(n2), 2)
             else:
                 sort_name = rvwr.getSortName()
                 full_name = rvwr.getFullName()
-                row_widget = self.rvrw_widgets[sort_name]
+                row_widget = self.rvwr_widgets[sort_name]
                 row_widget.setProposal(self.proposal)
                 eligible = full_name in self.proposal.eligible_reviewers
                 row_widget.setEnabled(eligible)
@@ -323,13 +348,13 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         :param str sort_name: reviewer's identifying key
         :param int code: integer code (0 | 1 | 2)
         '''
-        self.rvrw_widgets[sort_name].setAssignment(code)
+        self.rvwr_widgets[sort_name].setAssignment(code)
     
     def setValue(self, sort_name, percentage):
         '''
         set the percentage value
         '''
-        widget = self.rvrw_widgets[sort_name]
+        widget = self.rvwr_widgets[sort_name]
         widget.setValue(percentage)
 
     def onCheck(self, row_widget):
@@ -338,7 +363,7 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         '''
         assignment = row_widget.getAssignment()
         if assignment > 0:
-            for row in self.rvrw_widgets.values():
+            for row in self.rvwr_widgets.values():
                 if row != row_widget:
                     {1: row.setPrimaryState, 
                      2: row.setSecondaryState}[assignment](False)
@@ -357,12 +382,12 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         All eligible Reviewers are enabled.
         Reviewers become ineligible when they are named as part of the Proposal team.
         '''
-        widget = self.rvrw_widgets[sort_name]
+        widget = self.rvwr_widgets[sort_name]
         widget.setEnabled(state)
         widget.dotProduct()
     
     def calcDotProducts(self):
-        for widget in self.rvrw_widgets.values():
+        for widget in self.rvwr_widgets.values():
             widget.dotProduct()
 
 
@@ -370,14 +395,14 @@ def developer_main():
     '''
         create QGroupBox + QGridLayout and run the panel
 
-        ====   ====   =======   =========================
-        R1     R2     %         Reviewer Name
-        ====   ====   =======   =========================
-        [x]    [ ]    100%      Joe User
-        [ ]    [x]    80%       Second Reviewer
-        [ ]    [ ]    22%       Some Panel Member
-        [ ]    [ ]    1%        Another Panel Member
-        ====   ====   =======   =========================
+        ===    ===   ===   ===   ====   =========================
+        R1     #1    R2    #2    %      Reviewer Name
+        ===    ===   ===   ===   ====   =========================
+        [x]    1     [ ]   0     100%   Joe User
+        [ ]    0     [x]   1     80%    Second Reviewer
+        [ ]    0     [ ]   0     22%    Some Panel Member
+        [ ]    0     [ ]   0     1%     Another Panel Member
+        ===    ===   ===   ===   ====   =========================
     '''
     import sys
     import os
@@ -392,8 +417,9 @@ def developer_main():
     app = QtGui.QApplication(sys.argv)
     grid = QtGui.QGroupBox('prop_revu_grid demo')
 
-    layout = ReviewerAssignmentGridLayout(grid)
+    layout = ReviewerAssignmentGridLayout(grid, agup)
     layout.addReviewers(agup.reviewers)
+    layout.setReviewersValues(agup.reviewers)
     
     timer = QtCore.QTimer()
     timer.singleShot(2000, _onDelay1)

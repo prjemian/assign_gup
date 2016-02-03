@@ -40,11 +40,12 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     QtGui widget to edit one Proposal instance
     '''
 
-    def __init__(self, parent=None, settings=None):
+    def __init__(self, parent=None, settings=None, agup=None):
         '''
         '''
         self.parent = parent
         self.settings = settings
+        self.agup = agup
 
         QtGui.QWidget.__init__(self, parent)
         resources.loadUi(UI_FILE, self)
@@ -56,7 +57,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.reviewer_list = []
         self.reviewer_widgets = {}
 
-        layout = prop_revu_grid.ReviewerAssignmentGridLayout(None)
+        layout = prop_revu_grid.ReviewerAssignmentGridLayout(None, self.agup)
         self.reviewers_gb.setLayout(layout)
         layout.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
 
@@ -207,7 +208,7 @@ def project_main():
     agup.openPrpFile(testfile)
     proposal = agup.proposals.proposals[test_gup_id]
 
-    mw = AGUP_ProposalDetails()
+    mw = AGUP_ProposalDetails(agup=agup)
     mw.addTopics(agup.topics.getTopicList())
     mw.addReviewers(agup.reviewers)
     mw.setupProposal(proposal)
