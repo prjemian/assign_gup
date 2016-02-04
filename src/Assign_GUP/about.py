@@ -20,6 +20,7 @@ import resources
 
 UI_FILE = 'about.ui'
 DOCS_URL = 'http://Assign_GUP.readthedocs.org'
+ISSUES_URL = 'https://github.com/prjemian/assign_gup/issues'
 LICENSE_FILE = 'LICENSE'
 
 
@@ -37,7 +38,8 @@ class InfoBox(QtGui.QDialog):
         
         self.version.setText('software version: ' + str(__init__.__version__))
 
-        self.docs_pb.clicked.connect(self.doUrl)
+        self.docs_pb.clicked.connect(self.doDocsUrl)
+        self.issues_pb.clicked.connect(self.doIssuesUrl)
         self.license_pb.clicked.connect(self.doLicense)
         self.setModal(False)
 
@@ -49,10 +51,17 @@ class InfoBox(QtGui.QDialog):
             self.license_box.close()
         event.accept() # let the window close
 
-    def doUrl(self):
+    def doDocsUrl(self):
         '''opening documentation URL in default browser'''
         history.addLog('opening documentation URL in default browser')
         url = QtCore.QUrl(DOCS_URL)
+        service = QtGui.QDesktopServices()
+        service.openUrl(url)
+
+    def doIssuesUrl(self):
+        '''opening issues URL in default browser'''
+        history.addLog('opening issues URL in default browser')
+        url = QtCore.QUrl(ISSUES_URL)
         service = QtGui.QDesktopServices()
         service.openUrl(url)
 

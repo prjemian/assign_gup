@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>196</height>
+    <width>662</width>
+    <height>289</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,7 +116,14 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+         <item>
+          <widget class="QPushButton" name="issues_pb">
+           <property name="text">
+            <string>Issues ...</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="docs_pb">
            <property name="text">
