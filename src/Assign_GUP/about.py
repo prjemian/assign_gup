@@ -51,19 +51,21 @@ class InfoBox(QtGui.QDialog):
             self.license_box.close()
         event.accept() # let the window close
 
+    def doUrl(self, url):
+        '''opening URL in default browser'''
+        url = QtCore.QUrl(url)
+        service = QtGui.QDesktopServices()
+        service.openUrl(url)
+
     def doDocsUrl(self):
         '''opening documentation URL in default browser'''
         history.addLog('opening documentation URL in default browser')
-        url = QtCore.QUrl(DOCS_URL)
-        service = QtGui.QDesktopServices()
-        service.openUrl(url)
+        self.doUrl(DOCS_URL)
 
     def doIssuesUrl(self):
         '''opening issues URL in default browser'''
         history.addLog('opening issues URL in default browser')
-        url = QtCore.QUrl(ISSUES_URL)
-        service = QtGui.QDesktopServices()
-        service.openUrl(url)
+        self.doUrl(ISSUES_URL)
 
     def doLicense(self):
         '''show the license'''
