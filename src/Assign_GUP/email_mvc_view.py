@@ -211,6 +211,8 @@ class AGUP_Emails_View(QtGui.QWidget):
 
         fmt = 'APS General User Proposal Review Assignments for %s Cycle'
         self.email.subject = fmt % fields['REVIEW_CYCLE']
+        if 'CC' not in fields:
+            fields['CC'] = email_template.DEFAULT_TEMPLATE_FIELDS['CC']
         self.email.cc = fields['CC']
         self.email.to = '%s <%s>' % (full_name, fields['EMAIL'])
 
