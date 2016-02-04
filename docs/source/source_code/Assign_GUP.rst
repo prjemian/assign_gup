@@ -16,6 +16,7 @@ Submodules
    agup_data
    auto_assignment
    editor_email_template
+   email_mvc_view
    email_template
    event_filters
    general_mvc_model
