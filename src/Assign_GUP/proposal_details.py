@@ -58,7 +58,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.topic_list = []
         self.topic_widgets = {}
         self.reviewer_list = []
-        self.reviewer_widgets = {}
+        # self.reviewer_widgets = {}    # not used
 
         layout = prop_revu_grid.ReviewerAssignmentGridLayout(None, self.agup)
         self.reviewers_gb.setLayout(layout)
@@ -195,6 +195,11 @@ class AGUP_ProposalDetails(QtGui.QWidget):
     def restoreSplitterDetails(self):
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
+    
+    def update(self):
+        history.addLog(self.__class__.__name__ + '.update()', False)
+        grid = self.reviewers_gb.layout()
+        grid.update()
 
 
 def project_main():

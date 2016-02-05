@@ -240,8 +240,8 @@ class AGUP_Emails_View(QtGui.QWidget):
         self.email.send()
     
     def update(self):
-        self.showReviewerEmail()
         history.addLog(self.__class__.__name__ + '.update()', False)
+        self.showReviewerEmail()
 
 
 def main():

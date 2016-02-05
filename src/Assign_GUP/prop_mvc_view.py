@@ -184,3 +184,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         '''
         if self.settings is not None:
             self.settings.restoreWindowGeometry(self)
+    
+    def update(self):
+        history.addLog(self.__class__.__name__ + '.update()', False)
+        self.details_panel.update()

@@ -252,6 +252,10 @@ class ProposalReviewerRow(QtCore.QObject):
         else:
             dot = 0.0
         self.setValue(int(100*dot+0.5))
+    
+    def update(self):
+        # TODO: update the checkboxes
+        history.addLog(self.__class__.__name__ + '.update()', False)
 
 
 class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
@@ -405,6 +409,10 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
     def calcDotProducts(self):
         for widget in self.rvwr_widgets.values():
             widget.dotProduct()
+    
+    def update(self):
+        history.addLog(self.__class__.__name__ + '.update()', False)
+        self.setReviewersValues(self.reviewers)
 
 
 def developer_main():

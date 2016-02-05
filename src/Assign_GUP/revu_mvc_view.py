@@ -223,6 +223,10 @@ class AGUP_Reviewers_View(QtGui.QWidget):
         '''
         if self.settings is not None:
             self.settings.restoreWindowGeometry(self)
+    
+    def update(self):
+        # not called
+        history.addLog(self.__class__.__name__ + '.update()', False)
 
 
 def main():
