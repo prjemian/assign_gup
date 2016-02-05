@@ -122,6 +122,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         history.addLog('selected proposal: ' + str(prop_id))
     
     def selectFirstListItem(self):
+        ''' '''
         idx = self.listView.indexAt(QtCore.QPoint(0,0))
         self.listView.setCurrentIndex(idx)
         return idx
@@ -146,6 +147,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.editProposal(prop_id, prev)
         
     def setModel(self, model):
+        ''' '''
         self.proposals = model
         self.proposals_model = general_mvc_model.AGUP_MVC_Model(self.proposals, parent=self)
         self.listView.setModel(self.proposals_model)
@@ -156,6 +158,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         self.selectModelByIndex(idx, None)
     
     def isProposalListModified(self):
+        ''' '''
         return self.details_panel.modified
 
     def recalc(self):
@@ -166,6 +169,7 @@ class AGUP_Proposals_View(QtGui.QWidget):
         rvwr_grid.calcDotProducts()
 
     def closeEvent(self, event):
+        '''in response to user requesting the window be closed'''
         self.saveWindowGeometry()
         self.details_panel.saveSplitterDetails()
         event.accept()
@@ -186,5 +190,6 @@ class AGUP_Proposals_View(QtGui.QWidget):
             self.settings.restoreWindowGeometry(self)
     
     def update(self):
+        ''' '''
         history.addLog(self.__class__.__name__ + '.update()', False)
-        self.details_panel.update()
+#         self.details_panel.update()

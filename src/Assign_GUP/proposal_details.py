@@ -197,9 +197,10 @@ class AGUP_ProposalDetails(QtGui.QWidget):
             self.settings.restoreSplitterDetails(self)
     
     def update(self):
+        ''' '''
         history.addLog(self.__class__.__name__ + '.update()', False)
         grid = self.reviewers_gb.layout()
-        grid.update()
+#         grid.update()
 
 
 def project_main():
