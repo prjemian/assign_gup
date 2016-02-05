@@ -93,3 +93,4 @@ class Auto_Assign(object):
         if counter > 1:
             msg += 's'
         history.addLog(msg)
+        return counter

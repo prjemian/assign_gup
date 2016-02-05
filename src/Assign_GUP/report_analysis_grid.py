@@ -35,7 +35,6 @@ class Report(plainTextEdit.TextWindow):
                                           self.settings)
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
-        self.show()
     
     def makeText(self):
         '''
@@ -68,4 +67,4 @@ class Report(plainTextEdit.TextWindow):
         '''
         text = self.makeText()
         self.setText(text)
-        self.show()
+        history.addLog(self.__class__.__name__ + '.update()', False)

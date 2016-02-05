@@ -241,6 +241,7 @@ class AGUP_Emails_View(QtGui.QWidget):
     
     def update(self):
         self.showReviewerEmail()
+        history.addLog(self.__class__.__name__ + '.update()', False)
 
 
 def main():

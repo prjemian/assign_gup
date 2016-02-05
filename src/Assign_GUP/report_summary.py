@@ -37,6 +37,7 @@ if on_rtd:
 else:
     from PyQt4 import QtGui
 
+import history
 import plainTextEdit
 
 
@@ -97,3 +98,4 @@ class Report(plainTextEdit.TextWindow):
     def update(self):
         text = self.makeText()
         self.setText(text)
+        history.addLog(self.__class__.__name__ + '.update()', False)

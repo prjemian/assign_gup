@@ -34,8 +34,8 @@ AGUP_filters = ';;'.join( ('AGUP PRP Project (*.agup)',
 AGUP_OPEN_FILTER = 'AGUP PRP Project (*.agup *.prp *.xml)'
 
 UI_FILE = 'main_window.ui'
-LOG_MINOR_DETAILS = False
-# LOG_MINOR_DETAILS = True        # developer use
+# LOG_MINOR_DETAILS = False
+LOG_MINOR_DETAILS = True        # developer use
 
 
 class AGUP_MainWindow(QtGui.QMainWindow):
@@ -568,6 +568,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         self.modified = True
         self.adjustMainWindowTitle()
+        windows_to_update = (self.summary_window,
+                             self.email_report_window,
+                             self.assignment_window,
+                             self.analysisGrid_window,
+                             )
+        for win in windows_to_update:
+            if win is not None:
+                win.update()
         self.custom_signals.checkBoxGridChanged.emit()
     
     def onTopicValuesChanged(self, *args, **kw):
@@ -583,9 +591,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         make automated assignments of reviewers to proposals
         '''
         auto_assign = auto_assignment.Auto_Assign(self.agup)
-        auto_assign.simpleAssignment()
+        number_changed = auto_assign.simpleAssignment()
         history.addLog('doAutomatedAssignment() complete', False)
-        self.onAssignmentsChanged()
+        if number_changed > 0:
+            self.onAssignmentsChanged()
 
     def doUnassignProposals(self):
         '''
@@ -659,6 +668,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.assignment_window = report_assignments.Report(None, 
                                                                self.agup, 
                                                                self.settings)
+            self.assignment_window.show()
             self.custom_signals.checkBoxGridChanged.connect(self.assignment_window.update)
         else:
             self.assignment_window.update()
@@ -672,10 +682,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('doAnalysis_gridReport() requested', False)
         if self.analysisGrid_window is None:
             self.analysisGrid_window = report_analysis_grid.Report(None, self.agup, self.settings)
+            self.analysisGrid_window.show()
             self.custom_signals.checkBoxGridChanged.connect(self.analysisGrid_window.update)
             self.custom_signals.topicValueChanged.connect(self.analysisGrid_window.update)
         else:
             self.analysisGrid_window.update()
+            self.analysisGrid_window.show()
     
     def doEditEmailTemplate(self):
         '''
