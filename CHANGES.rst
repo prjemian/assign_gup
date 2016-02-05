@@ -3,7 +3,7 @@
 History of Source Code Changes
 ==============================
 
-:2016.0205.0: (`#19 <https://github.com/prjemian/assign_gup/issues/19>`_) reports update after auto-assign
+:2016.0205.0: (`#44 <https://github.com/prjemian/assign_gup/issues/44>`_) reports update after auto-assign
 :2016.0203.2: fixes (`issue #36 <https://github.com/prjemian/assign_gup/issues/36>`_)
 :2016.0203.1: fixes (`issue #21 <https://github.com/prjemian/assign_gup/issues/21>`_)
 :2016.0203.0: fixes (`issue #19 <https://github.com/prjemian/assign_gup/issues/19>`_),
