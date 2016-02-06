@@ -8,8 +8,8 @@ add label, slider, value to a QGridLayout
 Coordinate the action of a slider with the topic value::
 
   label   value   slider                 
-  bio     0.7     -|---|---|---|[-]|---|-
-  phys    0.2     -|--[|]--|---|---|---|-
+  bio     0.7     |---|---|---|[-]|---|
+  phys    0.2     |--[|]--|---|---|---|
 
 ======  =========  ====================================================
 widget  type       description
@@ -34,6 +34,14 @@ proposed experiment.
 Each reviewer will have a strength value assigned for
 each topic, indicating the strength of that reviewer 
 in the particular topic.
+
+The strength values will be constrained to the range [0 .. 1].
+A QValidator() object will be used to color the background of 
+the QLineEdit to indicate whether or not the entered text is 
+acceptable.  The value of the slider will update with 
+acceptable values from the text entry.
+The validator will also constrain the input to a precision
+of 2 decimal places.
 
 ---------
 '''
@@ -72,6 +80,10 @@ class AGUP_TopicSlider(QtCore.QObject):
 
         self.value_widget = QtGui.QLineEdit(str(value))
         self.value_widget.setMaximumWidth(self.slider_factor)
+        self.validator = QtGui.QDoubleValidator()
+        self.validator.setRange(0.0, 1.0)
+        self.validator.setDecimals(2)
+        self.value_widget.setValidator(self.validator)
         
         self.label = label
         self.parent = parent
@@ -87,11 +99,13 @@ class AGUP_TopicSlider(QtCore.QObject):
         self.value_widget.textEdited.connect(self.onValueChange)
     
     def onSliderChange(self, value):
+        ''' '''
         self.setValue(str(value / float(self.slider_factor)))
     
     def onValueChange(self, value):
-        if value == '.':
-            value = 0
+        ''' '''
+#         if value == '.':
+#             value = 0
         try:
             float_value = float(value)
             if 0 <= float_value <= 1.0:
@@ -101,7 +115,10 @@ class AGUP_TopicSlider(QtCore.QObject):
             history.addLog(traceback.format_exc())
 
     def getValue(self):
+        ''' '''
         # if can't convert, get value from slider
+        #txt = self.value_widget.text()
+        #_a = self.validator.validate(txt, 0)
         try:
             value = float(self.value_widget.text())
         except ValueError, exc:
@@ -119,6 +136,7 @@ class AGUP_TopicSlider(QtCore.QObject):
         self.value_widget.setText(str(value))
     
     def getSliderValue(self):
+        ''' '''
         value = self.slider.value()
         return value
     

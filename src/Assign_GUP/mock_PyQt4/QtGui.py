@@ -15,6 +15,7 @@ class QColor(QMockObject): pass
 class QDesktopServices(QMockObject): pass
 class QDesktopWidget(QMockObject): pass
 class QDialog(QMockObject): pass
+class QDoubleValidator(QMockObject): pass
 class QFileDialog(QMockObject): pass
 class QGridLayout(QMockObject): pass
 class QGroupBox(QMockObject): pass
