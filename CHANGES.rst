@@ -3,7 +3,7 @@
 History of Source Code Changes
 ==============================
 
-:future: (`#33 <https://github.com/prjemian/assign_gup/issues/33>`_) validate number entry in topic slider
+:2016.0208.0: (`#33 <https://github.com/prjemian/assign_gup/issues/33>`_) validate number entry in topic slider
 :2016.0205.0: (`#44 <https://github.com/prjemian/assign_gup/issues/44>`_) reports update after auto-assign
 :2016.0203.2: fixes (`issue #36 <https://github.com/prjemian/assign_gup/issues/36>`_)
 :2016.0203.1: fixes (`issue #21 <https://github.com/prjemian/assign_gup/issues/21>`_)

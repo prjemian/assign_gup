@@ -39,7 +39,9 @@ The strength values will be constrained to the range [0 .. 1].
 A QValidator() object will be used to color the background of 
 the QLineEdit to indicate whether or not the entered text is 
 acceptable.  The value of the slider will update with 
-acceptable values from the text entry.
+acceptable values from the text entry.  The background color
+indicates acceptable or invalid input.  The slider will be updated
+for acceptable values.
 The validator will also constrain the input to a precision
 of 2 decimal places.
 
@@ -93,35 +95,40 @@ class AGUP_TopicSlider(QtCore.QObject):
         parent.addWidget(self.value_widget, row, 1)
         parent.addWidget(self.slider, row, 2)
         
+        self.value_changing = False # issue #33: avoid changing value text while editing value
+        
         # connect slider changes with value_widget and vice versa
         self.slider.valueChanged.connect(self.onSliderChange)
         self.slider.sliderMoved.connect(self.onSliderChange)
         self.value_widget.textEdited.connect(self.onValueChange)
     
     def onSliderChange(self, value):
-        ''' '''
-        self.setValue(str(value / float(self.slider_factor)))
+        '''update the QLineEdit when the slider is changed'''
+        if not self.value_changing: # but not while editing the value text
+            self.setValue(str(value / float(self.slider_factor)))
     
     def onValueChange(self, value):
-        ''' '''
-#         if value == '.':
-#             value = 0
-        try:
-            float_value = float(value)
-            if 0 <= float_value <= 1.0:
-                self.setSliderValue(int(float_value*self.slider_factor + .5))
-        except ValueError, exc:
-            history.addLog('problem with Topic: ' + str(self.label))
-            history.addLog(traceback.format_exc())
+        '''update the QSlider when the value is changed'''
+        state = self.validator.validate(self.value_widget.text(), 0)[0]
+        color = 'white'
+        if state == QtGui.QValidator.Acceptable:
+            self.value_changing = True
+            self.setSliderValue(int(float(value)*self.slider_factor + .5))
+            self.value_changing = False
+        elif state == QtGui.QValidator.Intermediate:
+            color = 'yellow'
+        else:
+            color = 'red'
+        self.value_widget.setStyleSheet('background-color: ' + color)
 
     def getValue(self):
         ''' '''
         # if can't convert, get value from slider
-        #txt = self.value_widget.text()
-        #_a = self.validator.validate(txt, 0)
-        try:
-            value = float(self.value_widget.text())
-        except ValueError, exc:
+        text = self.value_widget.text()
+        state = self.validator.validate(text, 0)[0]
+        if state == QtGui.QValidator.Acceptable:
+            value = float(text)
+        else:
             value = self.getSliderValue() / float(self.slider_factor)
         return value
     
