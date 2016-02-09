@@ -21,6 +21,7 @@ else:
     from PyQt4 import QtGui
 import pyRestTable
 
+import history
 import plainTextEdit
 
 

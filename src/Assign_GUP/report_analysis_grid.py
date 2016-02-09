@@ -14,6 +14,7 @@ if on_rtd:
 else:
     from PyQt4 import QtGui
 
+import history
 import plainTextEdit
 import pyRestTable
 
