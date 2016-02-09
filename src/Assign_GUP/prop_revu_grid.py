@@ -111,6 +111,7 @@ class ProposalReviewerRow(QtCore.QObject):
         w = self.layout.addWidget(self.primary)
 # FIXME:         self.layout.setAlignment(w, QtCore.Qt.AlignCenter)
         w = self.layout.addWidget(self.num_primary)
+        # self.num_primary.setStyleSheet('text-align: center;')
         w = self.layout.addWidget(self.secondary)
 # FIXME:         self.layout.setAlignment(w, QtCore.Qt.AlignCenter)
         w = self.layout.addWidget(self.num_secondary)
@@ -282,7 +283,7 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         self.setColumnStretch(3, 1)
         self.setColumnStretch(4, 1)
         self.setColumnStretch(5, 3)
-        style = 'background: #888; color: white;' #  margin: auto; width: 50%;
+        style = 'background: #888; color: white;' #  margin: auto; width: 50%; text-align: center;
         self.addWidget(QtGui.QLabel('R1', styleSheet=style))
         self.addWidget(QtGui.QLabel('#1', styleSheet=style))
         self.addWidget(QtGui.QLabel('R2', styleSheet=style))
