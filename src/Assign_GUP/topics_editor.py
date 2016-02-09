@@ -88,9 +88,11 @@ class AGUP_TopicsEditor(QtGui.QDialog):
             self.topics.remove(str(curr.text()))
     
     def onCloseButton(self, event):
+        ''' '''
         self.close()
     
     def closeEvent(self, event):
+        ''' '''
         self.custom_signals.closed.emit()   # this window is closing - needed?
         self.saveWindowGeometry()
         event.accept()

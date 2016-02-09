@@ -127,6 +127,7 @@ class AGUP_Proposal_Data(object):
         return r
     
     def getKey(self, key):
+        ''' '''
         return self.db[key]
     
     def getSubjects(self):

@@ -29,6 +29,7 @@ class Topics(object):
             yield key
 
     def inOrder(self):
+        ''' '''
         return sorted(self.topics)
     
     def valueOrder(self):

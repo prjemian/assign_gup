@@ -47,6 +47,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.custom_signals = signals.CustomSignals()
     
     def onTopicValueChanged(self, topic):
+        ''' '''
         value = self.topic_widgets[topic].getValue()
         history.addLog("topic (" + topic + ") value changed: " + str(value))
         self.modified = True
@@ -54,6 +55,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.custom_signals.topicValueChanged.emit(sort_name, str(topic), value)
     
     def addTopic(self, topic, value):
+        ''' '''
         if topic not in self.topic_list:
             self.topic_list.append(topic)
         row = self.topic_list.index(topic)
@@ -68,6 +70,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
             self.addTopic(topic, topics.DEFAULT_TOPIC_VALUE)
 
     def setTopic(self, key, value):
+        ''' '''
         if key not in self.topic_list:
             raise KeyError, 'unknown Topic: ' + key
         topics.checkTopicValueRange(value)
@@ -76,31 +79,40 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.modified = True
     
     def getFullName(self):
+        ''' '''
         return str(self.full_name.text())
     
     def getSortName(self):
+        ''' '''
         return str(self.sort_name.text())
     
     def getPhone(self):
+        ''' '''
         return str(self.phone.text())
     
     def getEmail(self):
+        ''' '''
         return str(self.email.text())
     
     def getJoined(self):
+        ''' '''
         return str(self.joined.text())
     
     def getUrl(self):
+        ''' '''
         return str(self.url.text())
     
     def getNotes(self):
+        ''' '''
         return str(self.notes.toPlainText())
     
     def setFullName(self, value):
+        ''' '''
         self.full_name.setText(value)
         self.modified = True
     
     def setSortName(self, value):
+        ''' '''
         # sort_name is used as a key in many places
         # this is a read-only field, cannot modify in the GUI
         # that would break all sorts of code
@@ -108,30 +120,37 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
         self.modified = True
     
     def setPhone(self, value):
+        ''' '''
         self.phone.setText(value)
         self.modified = True
     
     def setEmail(self, value):
+        ''' '''
         self.email.setText(value)
         self.modified = True
     
     def setJoined(self, value):
+        ''' '''
         self.joined.setText(value)
         self.modified = True
     
     def setUrl(self, value):
+        ''' '''
         self.url.setText(value or '')
         self.modified = True
     
     def setNotes(self, value):
+        ''' '''
         self.notes.setPlainText(value)
         self.modified = True
 
     def saveSplitterDetails(self):
+        ''' '''
         if self.settings is not None:
             self.settings.saveSplitterDetails(self)
 
     def restoreSplitterDetails(self):
+        ''' '''
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
 

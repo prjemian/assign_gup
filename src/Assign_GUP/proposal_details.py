@@ -79,8 +79,7 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         self.custom_signals.checkBoxGridChanged.emit()
     
     def onTopicValueChanged(self, topic):
-        '''
-        '''
+        ''' '''
         value = self.topic_widgets[topic].getValue()
         history.addLog("topic (" + topic + ") value changed: " + str(value))
         self.modified = True
@@ -162,37 +161,46 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         layout.setProposal(proposal)
 
     def getProposalId(self):
+        ''' '''
         return self.proposal_id.text()
 
     def setProposalId(self, value):
+        ''' '''
         self.proposal_id.setText(value)
         self.modified = True
     
     def setProposalTitle(self, value):
+        ''' '''
         self.proposal_title.setPlainText(value)
         self.modified = True
 
     def setReviewPeriod(self, value):
+        ''' '''
         self.review_period.setText(value)
         self.modified = True
 
     def setSpkName(self, value):
+        ''' '''
         self.spk_name.setText(value)
         self.modified = True
 
     def setFirstChoiceBl(self, value):
+        ''' '''
         self.first_choice_bl.setText(value)
         self.modified = True
 
     def setSubjects(self, value):
+        ''' '''
         self.subjects.setPlainText(value)
         self.modified = True
 
     def saveSplitterDetails(self):
+        ''' '''
         if self.settings is not None:
             self.settings.saveSplitterDetails(self)
 
     def restoreSplitterDetails(self):
+        ''' '''
         if self.settings is not None:
             self.settings.restoreSplitterDetails(self)
     

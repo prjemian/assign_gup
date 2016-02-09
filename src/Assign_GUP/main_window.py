@@ -489,6 +489,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('imported topics from: ' + filename)
 
     def doRecalc(self):
+        ''' '''
         if self.windows['proposal_view'] is not None:
             self.windows['proposal_view'].recalc()
 
@@ -703,6 +704,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             self.windows['email_template_editor'].show()
 
     def onTemplateChanged(self):
+        ''' '''
         self.modified = True
         self.adjustMainWindowTitle()
 
@@ -723,18 +725,22 @@ class AGUP_MainWindow(QtGui.QMainWindow):
     # widget getters and setters
 
     def setPrpFileText(self, text):
+        ''' '''
         self.prp_file.setText(text)
         self.settings.setPrpFile(text)
         self.adjustMainWindowTitle()
 
     def setRcFileText(self, text):
+        ''' '''
         self.rcfile.setText(text)
         self.adjustMainWindowTitle()
 
     def getReviewCycleText(self):
+        ''' '''
         return str(self.review_cycle.text())
     
     def setReviewCycleText(self, text):
+        ''' '''
         self.review_cycle.setText(text or '')
         self.settings.setReviewCycle(text)
         self.adjustMainWindowTitle()
@@ -747,15 +753,19 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         return text
 
     def setNumTopicsWidget(self, number):
+        ''' '''
         self.num_topics.setText(self._num_to_text_(number))
 
     def setNumReviewersWidget(self, number):
+        ''' '''
         self.num_reviewers.setText(self._num_to_text_(number))
 
     def setNumProposalsWidget(self, number):
+        ''' '''
         self.num_proposals.setText(self._num_to_text_(number))
     
     def setIndicators(self):
+        ''' '''
         self.setNumTopicsWidget(len(self.agup.topics))
         self.setNumReviewersWidget(len(self.agup.reviewers))
         self.setNumProposalsWidget(len(self.agup.proposals))

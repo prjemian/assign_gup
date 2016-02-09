@@ -48,9 +48,11 @@ class AGUP_Reviewers_List(QtCore.QObject):
             yield self.reviewers[item]
 
     def inOrder(self):
+        ''' '''
         return sorted(self.reviewers.values())
 
     def keyOrder(self):
+        ''' '''
         return sorted(self.reviewers.keys())
 
     def exists(self, sort_name):
@@ -100,6 +102,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
         return self.getReviewer(sort_name)
 
     def getByIndex(self, index):
+        ''' '''
         if not 0 <= index < len(self.reviewer_sort_list):
             raise IndexError, 'Index not found: ' + str(index)
         return self.reviewer_sort_list[index]

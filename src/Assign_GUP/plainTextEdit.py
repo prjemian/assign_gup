@@ -49,17 +49,21 @@ class TextWindow(QtGui.QWidget):
         return group + '_geometry'
 
     def setText(self, text):
+        ''' '''
         self.plainTextEdit.setPlainText(text)
 
     def setTitle(self, title):
+        ''' '''
         self.setWindowTitle(title)
 
     def closeEvent(self, event):
+        ''' '''
         self.saveWindowGeometry()
         event.accept()
         self.close()
 
     def moveEvent(self, event):
+        ''' '''
         self.saveWindowGeometry()
         event.accept()      # TODO: should we?
     

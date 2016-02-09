@@ -42,6 +42,7 @@ import plainTextEdit
 
 
 class Report(plainTextEdit.TextWindow):
+    ''' '''
     
     def __init__(self, parent, agup, settings):
         self.settings = settings
@@ -96,6 +97,7 @@ class Report(plainTextEdit.TextWindow):
         return '\n'.join(text)
     
     def update(self):
+        ''' '''
         text = self.makeText()
         self.setText(text)
         history.addLog(self.__class__.__name__ + '.update()', False)

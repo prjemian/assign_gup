@@ -119,17 +119,21 @@ class ApplicationQSettings(QtCore.QSettings):
             self.updateTimeStamp()
  
     def getReviewCycle(self):
+        ''' '''
         return str(self.getKey(GLOBAL_GROUP + '/review_cycle')) or ''
  
     def setReviewCycle(self, review_cycle):     # redundant, treat as non-authoritative
+        ''' '''
         key = GLOBAL_GROUP + '/review_cycle'
         self.remove(key)
         self.setKey(key, str(review_cycle))
  
     def getPrpFile(self):
+        ''' '''
         return str(self.getKey(GLOBAL_GROUP + '/prp_file')).strip() or ''
  
     def setPrpFile(self, prp_file):
+        ''' '''
         key = GLOBAL_GROUP + '/prp_file'
         self.remove(key)
         self.setKey(key, str(prp_file))
@@ -143,6 +147,7 @@ class ApplicationQSettings(QtCore.QSettings):
         self.init_global_keys()
     
     def updateTimeStamp(self):
+        ''' '''
         self.setKey('timestamp', str(datetime.datetime.now()))
 
     def saveEmailKeywords(self, keyword_dict):

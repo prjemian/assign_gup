@@ -29,13 +29,16 @@ class AGUP_MVC_Model(QtCore.QAbstractListModel):
         self.data_object = data_object
 
     def columnCount(self, parent):
+        ''' '''
         #return len(self.headerdata)     # table
         return 1        # list
 
     def rowCount(self, parent):
+        ''' '''
         return len(self.data_object)
 
     def data(self, index, role):
+        ''' '''
         if not index.isValid():
             return None
             # For the foreground role you will need to edit this to suit your data

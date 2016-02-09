@@ -282,12 +282,13 @@ class ReviewerAssignmentGridLayout(QtGui.QGridLayout):
         self.setColumnStretch(3, 1)
         self.setColumnStretch(4, 1)
         self.setColumnStretch(5, 3)
-        self.addWidget(QtGui.QLabel('R1', styleSheet='background: #888; color: white'))
-        self.addWidget(QtGui.QLabel('#1', styleSheet='background: #888; color: white'))
-        self.addWidget(QtGui.QLabel('R2', styleSheet='background: #888; color: white'))
-        self.addWidget(QtGui.QLabel('#2', styleSheet='background: #888; color: white'))
-        self.addWidget(QtGui.QLabel('%', styleSheet='background: #888; color: white'))
-        self.addWidget(QtGui.QLabel('Reviewer Name', styleSheet='background: #888; color: white'))
+        style = 'background: #888; color: white;' #  margin: auto; width: 50%;
+        self.addWidget(QtGui.QLabel('R1', styleSheet=style))
+        self.addWidget(QtGui.QLabel('#1', styleSheet=style))
+        self.addWidget(QtGui.QLabel('R2', styleSheet=style))
+        self.addWidget(QtGui.QLabel('#2', styleSheet=style))
+        self.addWidget(QtGui.QLabel('%', styleSheet=style))
+        self.addWidget(QtGui.QLabel('Reviewer Name', styleSheet=style))
         self.rvwr_widgets = {}
     
     def addReviewer(self, rvwr):

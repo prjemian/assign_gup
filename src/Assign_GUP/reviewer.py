@@ -76,12 +76,15 @@ class AGUP_Reviewer_Data(object):
         self.topics.writeXml(specified_node)
     
     def getSortName(self):
+        ''' '''
         return self.getKey('name')
     
     def getFullName(self):
+        ''' '''
         return self.getKey('full_name')
     
     def getKey(self, key):
+        ''' '''
         return self.db[key]
     
     def setKey(self, key, value):

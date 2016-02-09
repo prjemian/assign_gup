@@ -97,6 +97,7 @@ class Logger(object):
         return text
 
     def first_logs(self):
+        ''' '''
         user = os.environ.get('LOGNAME', None) or os.environ.get('USERNAME', None)
         if self.level == NO_LOGGING:
             interest = 'no logging'
@@ -133,4 +134,5 @@ def logMinorDetails(choice):
 
 
 def _now():
+    ''' '''
     return datetime.datetime.now()
