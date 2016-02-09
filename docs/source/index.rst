@@ -45,3 +45,7 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+-------------
+
+:version: |version|
+:published: |today|
