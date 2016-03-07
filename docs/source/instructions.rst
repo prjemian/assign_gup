@@ -76,29 +76,29 @@ List of Proposals
 
 #. Login to your panel's proposal review web site,
    and click the "Download the list in XML" link.
-     Each panel has a slightly different URL   
-     Consult the following table or contact the APS User Office:
+   Each panel has a slightly different URL.
+   Consult the following table or contact the APS User Office:
      
-     ===============  ====================================================
-     panel            URL
-     ===============  ====================================================
-     small-angle      https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2411-PNL5
-     spectroscopy     https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2412-PNL6
-     proposal system  https://www1.aps.anl.gov/Users-Information/About-Proposals/Apply-for-Time
-     ===============  ====================================================
-
-     .. sidebar:: Be prompt! 
-     
-        Do this just after the proposal deadline.
-        Assignments should be received within just a few days.
-        Assigned reviewers must have sufficient to make their reviews.
+   ===============  ====================================================
+   panel            URL
+   ===============  ====================================================
+   small-angle      https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2411-PNL5
+   spectroscopy     https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2412-PNL6
+   proposal system  https://www1.aps.anl.gov/Users-Information/About-Proposals/Apply-for-Time
+   ===============  ====================================================
    
-     You might also consider using the "Print All Proposals" link
-     to generate a single PDF file containing all the proposals and attachments.
-     Any problem attachments will be noted on separate pages at the end of
-     the document.
-     Be sure to save that on-screen image to a file or it will go away 
-     when you close your browser.
+   .. sidebar:: Be prompt! 
+   
+     Do this just after the proposal deadline.
+     Assignments should be received within just a few days.
+     Assigned reviewers must have sufficient to make their reviews.
+   
+   You might also consider using the "Print All Proposals" link
+   to generate a single PDF file containing all the proposals and attachments.
+   Any problem attachments will be noted on separate pages at the end of
+   the document.
+   Be sure to save that on-screen image to a file or it will go away 
+   when you close your browser.
 #. When that page appears, it will look unformatted and not like XML.  
    Don't worry, underneath the page is XML but is rendered poorly.
 #. In your browser, choose "view source" (Control-U on Firefox)
