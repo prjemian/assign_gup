@@ -80,9 +80,18 @@ List of Proposals
    Assignments should be received within just a few days.
    Assigned reviewers must have sufficient to make their reviews.
 
-#. Login to the Proposal review web site,
-   (https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2411-PNL5),
+#. Login to your panel's proposal review web site,
    and click the "Download the list in XML" link.
+     Each panel has a slightly different URL   
+     Consult the following table or contact the APS User Office:
+     
+     ===============  ====================================================
+     panel            URL
+     ===============  ====================================================
+     small-angle      https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2411-PNL5
+     spectroscopy     https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2412-PNL6
+     proposal system  https://www1.aps.anl.gov/Users-Information/About-Proposals/Apply-for-Time
+     ===============  ====================================================
    
      You might also consider using the "Print All Proposals" link
      to generate a single PDF file containing all the proposals and attachments.
