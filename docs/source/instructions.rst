@@ -74,12 +74,6 @@ List of Reviewers
 List of Proposals
 ~~~~~~~~~~~~~~~~~
 
-.. sidebar:: Be prompt! 
-
-   Do this just after the proposal deadline.
-   Assignments should be received within just a few days.
-   Assigned reviewers must have sufficient to make their reviews.
-
 #. Login to your panel's proposal review web site,
    and click the "Download the list in XML" link.
      Each panel has a slightly different URL   
@@ -92,6 +86,12 @@ List of Proposals
      spectroscopy     https://beam.aps.anl.gov/pls/apsweb/gup0008.panel_start_page?i_attrib=246B2412-PNL6
      proposal system  https://www1.aps.anl.gov/Users-Information/About-Proposals/Apply-for-Time
      ===============  ====================================================
+
+     .. sidebar:: Be prompt! 
+     
+        Do this just after the proposal deadline.
+        Assignments should be received within just a few days.
+        Assigned reviewers must have sufficient to make their reviews.
    
      You might also consider using the "Print All Proposals" link
      to generate a single PDF file containing all the proposals and attachments.
