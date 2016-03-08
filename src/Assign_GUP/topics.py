@@ -189,10 +189,9 @@ class Topics(object):
         :param str filename: name of XML file with Topics
         :param bool read_values: import topic values?
         '''
-        doc = xml_utility.readValidXmlDoc(xmlFile, 
-                                          agup_data.AGUP_MASTER_ROOT_TAG, 
-                                          agup_data.AGUP_XML_SCHEMA_FILE,
-                                          )
+        root_tag = agup_data.AGUP_MASTER_ROOT_TAG
+        xsd_file = agup_data.AGUP_XML_SCHEMA_FILE
+        doc = xml_utility.readValidXmlDoc(xmlFile, root_tag, xsd_file)
         self.clearAll()
         self.importXmlTopics(doc.getroot(), read_values)
     
