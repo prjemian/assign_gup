@@ -308,21 +308,27 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         edit the list of Proposals
         '''
-        if self.windows['proposal_view'] is None:
-            self.windows['proposal_view'] = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
-            self.windows['proposal_view'].custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
-            self.windows['proposal_view'].custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
-        self.windows['proposal_view'].show()
+        window_key = 'proposal_view'
+        win = self.windows[window_key]
+        if win is None:
+            win = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
+            win.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
+            win.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
+            self.windows[window_key] = win
+        win.show()
 
     def doEditReviewers(self):
         '''
         edit the list of Reviewers
         '''
-        if self.windows['reviewer_view'] is None:
-            self.windows['reviewer_view'] = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
-            self.windows['reviewer_view'].custom_signals.recalc.connect(self.doRecalc)
-            self.windows['reviewer_view'].custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
-        self.windows['reviewer_view'].show()
+        window_key = 'reviewer_view'
+        win = self.windows['reviewer_view']
+        if win is None:
+            win = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
+            win.custom_signals.recalc.connect(self.doRecalc)
+            win.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
+            self.windows[window_key] = win
+        win.show()
 
     def doEditTopics(self):
         '''
