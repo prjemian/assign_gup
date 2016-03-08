@@ -54,7 +54,7 @@ def readValidXmlDoc(filename, expected_root_tag, XML_Schema_file, alt_root_tag='
 
     try:
         doc = etree.parse(filename)
-    except etree.XMLSyntaxError, exc:
+    except (etree.XMLSyntaxError, etree.ParseError), exc:
         raise XmlSyntaxError, str(exc)
 
     try:
