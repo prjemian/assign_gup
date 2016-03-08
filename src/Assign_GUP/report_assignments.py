@@ -52,6 +52,8 @@ class Report(plainTextEdit.TextWindow):
             prop_id = prop.getKey('proposal_id')
             prop_title = prop.getKey('proposal_title')
             r1, r2 = prop.getAssignedReviewers()
+            r1 = r1 or ''
+            r2 = r2 or ''
             excluded = prop.getExcludedReviewers(self.agup.reviewers)
             tbl.rows.append([prop_id, r1, r2, ', '.join(excluded), prop_title])
         return tbl.reST()
