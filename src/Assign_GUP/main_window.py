@@ -635,13 +635,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import report_summary
         history.addLog('doSummaryReport() requested', False)
-        if self.windows['summary_report'] is None:
+        window_key = 'summary_report'
+        win = self.windows[window_key]
+        if win is None:
             win = report_summary.Report(None, self.agup, self.settings)
+            self.windows[window_key] = win
             self.custom_signals.checkBoxGridChanged.connect(win.update)
-            self.windows['summary_report'] = win
         else:
-            self.windows['summary_report'].update()
-            self.windows['summary_report'].show()
+            win.update()
+            win.show()
 
     def doLettersReport(self):
         '''
@@ -649,14 +651,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import email_mvc_view
         history.addLog('doLettersReport() requested', False)
-        if self.windows['email_report'] is None:
+        window_key = 'email_report'
+        win = self.windows[window_key]
+        if win is None:
             win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+            self.windows[window_key] = win
             win.show()
             self.custom_signals.checkBoxGridChanged.connect(win.update)
-            self.windows['email_report'] = win
         else:
-            self.windows['email_report'].update()
-            self.windows['email_report'].show()
+            win.update()
+            win.show()
 
     def doAssignmentsReport(self):
         '''
@@ -665,15 +669,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         import report_assignments
         # TODO: issue #52 is about here
         history.addLog('doAssignmentsReport() requested', False)
-        if self.windows['assignment_report'] is None:
-            self.windows['assignment_report'] = report_assignments.Report(None, 
-                                                               self.agup, 
-                                                               self.settings)
-            self.windows['assignment_report'].show()
-            self.custom_signals.checkBoxGridChanged.connect(self.windows['assignment_report'].update)
+        window_key = 'assignment_report'
+        win = self.windows[window_key]
+        if win is None:
+            win = report_assignments.Report(None, self.agup, self.settings)
+            self.windows[window_key] = win
+            win.show()
+            self.custom_signals.checkBoxGridChanged.connect(win.update)
         else:
-            self.windows['assignment_report'].update()
-            self.windows['assignment_report'].show()
+            win.update()
+            win.show()
 
     def doAnalysis_gridReport(self):
         '''
@@ -681,14 +686,17 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import report_analysis_grid
         history.addLog('doAnalysis_gridReport() requested', False)
-        if self.windows['analysisGrid_report'] is None:
-            self.windows['analysisGrid_report'] = report_analysis_grid.Report(None, self.agup, self.settings)
-            self.windows['analysisGrid_report'].show()
-            self.custom_signals.checkBoxGridChanged.connect(self.windows['analysisGrid_report'].update)
-            self.custom_signals.topicValueChanged.connect(self.windows['analysisGrid_report'].update)
+        window_key = 'analysisGrid_report'
+        win = self.windows[window_key]
+        if win is None:
+            win = report_analysis_grid.Report(None, self.agup, self.settings)
+            self.windows[window_key] = win
+            win.show()
+            self.custom_signals.checkBoxGridChanged.connect(win.update)
+            self.custom_signals.topicValueChanged.connect(win.update)
         else:
-            self.windows['analysisGrid_report'].update()
-            self.windows['analysisGrid_report'].show()
+            win.update()
+            win.show()
     
     def doEditEmailTemplate(self):
         '''
@@ -696,13 +704,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import editor_email_template
         history.addLog('doEditEmailTemplate() requested', False)
-        if self.windows['email_template_editor'] is None:
-            self.windows['email_template_editor'] = editor_email_template.Editor(None, 
-                                                                      self.agup, 
-                                                                      self.settings)
-            self.windows['email_template_editor'].signals.changed.connect(self.onTemplateChanged)
+        window_key = 'email_template_editor'
+        win = self.windows[window_key]
+        if win is None:
+            win = editor_email_template.Editor(None, self.agup, self.settings)
+            self.windows[window_key] = win
+            win.custom_signals.changed.connect(self.onTemplateChanged)
         else:
-            self.windows['email_template_editor'].show()
+            win.show()
 
     def onTemplateChanged(self):
         ''' '''
