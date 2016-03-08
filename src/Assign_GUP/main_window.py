@@ -663,6 +663,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         show a read-only text page with assignments for each proposal
         '''
         import report_assignments
+        # TODO: issue #52 is about here
         history.addLog('doAssignmentsReport() requested', False)
         if self.windows['assignment_report'] is None:
             self.windows['assignment_report'] = report_assignments.Report(None, 
