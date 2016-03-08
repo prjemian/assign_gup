@@ -50,7 +50,10 @@ class Report(plainTextEdit.TextWindow):
         tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
         for prop in self.agup.proposals:
             prop_id = prop.getKey('proposal_id')
-            prop_title = prop.getKey('proposal_title').decode('ascii', 'ignore').strip()
+            try:
+                prop_title = prop.getKey('proposal_title').decode('ascii', 'ignore').strip()
+            except UnicodeEncodeError, _exc:
+                prop_title = 'This proposal has a non-ASCII character that causes trouble for Assign_GUP'
             r1, r2 = prop.getAssignedReviewers()
             r1 = r1 or ''
             r2 = r2 or ''
