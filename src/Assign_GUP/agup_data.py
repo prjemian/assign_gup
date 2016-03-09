@@ -30,6 +30,7 @@ AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_MASTER_VERSION = '1.0'
 #XML_CODEPAGE = 'UTF-8'
 XML_CODEPAGE = 'ISO-8859-1'
+ENCODE_OPTIONS = dict(encoding=XML_CODEPAGE, errors='ignore')
 
 
 class AGUP_Data(QtCore.QObject):

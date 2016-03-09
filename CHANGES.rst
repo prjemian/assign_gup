@@ -3,7 +3,7 @@
 History of Source Code Changes
 ==============================
 
-:2016.0308.3: (fixes `#55 <https://github.com/prjemian/assign_gup/issues/55>`_) unhandled non-ASCII character(s)
+:2016.0308.4: (fixes `#55 <https://github.com/prjemian/assign_gup/issues/55>`_) unhandled non-ASCII character(s)
 :2016.0209.0: added missing imports
 :2016.0208.0: (`#33 <https://github.com/prjemian/assign_gup/issues/33>`_) validate number entry in topic slider
 :2016.0205.0: (`#44 <https://github.com/prjemian/assign_gup/issues/44>`_) reports update after auto-assign
