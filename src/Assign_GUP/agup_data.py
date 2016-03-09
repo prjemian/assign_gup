@@ -28,6 +28,8 @@ UI_FILE = 'main_window.ui'
 AGUP_MASTER_ROOT_TAG = 'AGUP_Review_Session'
 AGUP_XML_SCHEMA_FILE = resources.resource_file('agup_review_session.xsd')
 AGUP_MASTER_VERSION = '1.0'
+#XML_CODEPAGE = 'UTF-8'
+XML_CODEPAGE = 'ISO-8859-1'
 
 
 class AGUP_Data(QtCore.QObject):
@@ -90,7 +92,7 @@ class AGUP_Data(QtCore.QObject):
         
         self.email.writeXmlNode(root)
 
-        s = etree.tostring(doc, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+        s = etree.tostring(doc, pretty_print=True, xml_declaration=True, encoding=XML_CODEPAGE)
         open(filename, 'w').write(s)
     
     def importProposals(self, xmlFile):

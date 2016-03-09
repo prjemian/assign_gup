@@ -7,6 +7,8 @@ Data for one General User Proposal
 '''
 
 from lxml import etree
+
+from agup_data import XML_CODEPAGE
 import topics
 import xml_utility
 
@@ -39,7 +41,8 @@ class AGUP_Proposal_Data(object):
         :param proposal_node: lxml node of the Proposal
         '''
         for key in self.tagList:
-            self.db[key] = xml_utility.getXmlText(proposal_node, key)
+            text = xml_utility.getXmlText(proposal_node, key)
+            self.db[key] = text.encode(encoding=XML_CODEPAGE, errors='replace')
         subject_node = proposal_node.find('subject')
         if subject_node is not None:
             subjects = [node.text.strip() for node in subject_node.findall('name')]

@@ -7,9 +7,11 @@ Data for one Reviewer of General User Proposals
 '''
 
 from lxml import etree
+
+from agup_data import XML_CODEPAGE
+import proposal
 import topics
 import xml_utility
-import proposal
 
 
 class AGUP_Reviewer_Data(object):
@@ -52,7 +54,8 @@ class AGUP_Reviewer_Data(object):
         '''
         self.db['name'] = reviewer.attrib['name'].strip()
         for k in self.tagList:
-            self.db[k] = xml_utility.getXmlText(reviewer, k)
+            text = xml_utility.getXmlText(reviewer, k)
+            self.db[k] = text.encode(encoding=XML_CODEPAGE, errors='replace')
         self.topics = topics.Topics()
         node = reviewer.find('Topics')
         if node is not None:
