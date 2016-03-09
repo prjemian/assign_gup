@@ -644,7 +644,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         window_key = 'summary_report'
         win = self.windows[window_key]
         if win is None:
-            win = report_summary.Report(None, self.agup, self.settings)
+            try:
+                win = report_summary.Report(None, self.agup, self.settings)
+            except Exception:
+                history.addLog(traceback.format_exc())
             self.windows[window_key] = win
             self.custom_signals.checkBoxGridChanged.connect(win.update)
         else:
@@ -660,7 +663,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         window_key = 'email_report'
         win = self.windows[window_key]
         if win is None:
-            win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+            try:
+                win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+            except Exception:
+                history.addLog(traceback.format_exc())
             self.windows[window_key] = win
             win.show()
             self.custom_signals.checkBoxGridChanged.connect(win.update)
@@ -673,12 +679,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         show a read-only text page with assignments for each proposal
         '''
         import report_assignments
-        # TODO: issue #52 is about here
         history.addLog('doAssignmentsReport() requested', False)
         window_key = 'assignment_report'
         win = self.windows[window_key]
         if win is None:
-            win = report_assignments.Report(None, self.agup, self.settings)
+            try:
+                win = report_assignments.Report(None, self.agup, self.settings)
+            except Exception:
+                history.addLog(traceback.format_exc())
             self.windows[window_key] = win
             win.show()
             self.custom_signals.checkBoxGridChanged.connect(win.update)
@@ -695,7 +703,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         window_key = 'analysisGrid_report'
         win = self.windows[window_key]
         if win is None:
-            win = report_analysis_grid.Report(None, self.agup, self.settings)
+            try:
+                win = report_analysis_grid.Report(None, self.agup, self.settings)
+            except Exception:
+                history.addLog(traceback.format_exc())
             self.windows[window_key] = win
             win.show()
             self.custom_signals.checkBoxGridChanged.connect(win.update)
@@ -713,7 +724,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         window_key = 'email_template_editor'
         win = self.windows[window_key]
         if win is None:
-            win = editor_email_template.Editor(None, self.agup, self.settings)
+            try:
+                win = editor_email_template.Editor(None, self.agup, self.settings)
+            except Exception:
+                history.addLog(traceback.format_exc())
             self.windows[window_key] = win
             win.custom_signals.changed.connect(self.onTemplateChanged)
         else:
