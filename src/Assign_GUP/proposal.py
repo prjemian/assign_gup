@@ -165,7 +165,7 @@ class AGUP_Proposal_Data(object):
     
     def addTopic(self, topic, value=None):
         '''
-        declare a new topic and give it an initial value
+        declare a new topic and give it an initial value (default value=0.0)
         
         topic must not exist or KeyError exception will be raised
         '''

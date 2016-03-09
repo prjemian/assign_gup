@@ -31,6 +31,7 @@ AGUP_MASTER_VERSION = '1.0'
 #XML_CODEPAGE = 'UTF-8'
 XML_CODEPAGE = 'ISO-8859-1'
 ENCODE_OPTIONS = dict(encoding=XML_CODEPAGE, errors='ignore')
+SUBJECT_STRENGTH_FULL = 1.0
 
 
 class AGUP_Data(QtCore.QObject):
@@ -151,7 +152,7 @@ class AGUP_Data(QtCore.QObject):
         for prop in props:
             prop.addTopics(subjects)        # proposal gets all the known topics
             for subject in prop.getSubjects():
-                prop.setTopic(subject, 1.0)     # this subject was selected byproposer
+                prop.setTopic(subject, SUBJECT_STRENGTH_FULL)     # this subject was selected by proposer
     
     def _restore_assignments(self, props):
         '''restore any assessments or assignments'''
@@ -175,6 +176,13 @@ class AGUP_Data(QtCore.QObject):
                     # assign the reviewer's role
                     rvwr = self.reviewers.getByFullName(full_name)
                     new_proposal.setAssignedReviewer(rvwr, role)
+
+            if len(new_proposal.getTopicList()) == 0:
+                subject_list = new_proposal.getSubjects()
+                new_proposal.addTopics(self.topics.getTopicList())
+                for subject in subject_list:
+                    if self.topics.exists(subject):
+                        new_proposal.setTopic(subject, SUBJECT_STRENGTH_FULL)
     
     def importReviewers(self, xmlFile):
         '''

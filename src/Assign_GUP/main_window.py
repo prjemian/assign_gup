@@ -251,7 +251,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                 return
 
         self.closeSubwindows()
-        self.agup.clearAllData()
+        #self.agup.clearAllData()        # TODO: Why not make a new self.agup object?
+        self.agup = agup_data.AGUP_Data(self.settings)
         self.modified = False
         self.setPrpFileText('')
         self.setIndicators()
