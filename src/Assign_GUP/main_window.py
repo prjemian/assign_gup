@@ -179,10 +179,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         close all other windows created by this code
         '''
-        for window in self.windows.values():
+        for window_name, window in self.windows.items():
             if window is not None:
                 window.close()
                 window.destroy()
+                self.windows[window_name] = None
 
     def doClose(self, *args, **kw):
         '''
@@ -290,6 +291,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Opening PRP file: ' + filename)
         self.closeSubwindows()
+        self.agup = agup_data.AGUP_Data(self.settings)
         
         try:
             self.agup.openPrpFile(filename)
