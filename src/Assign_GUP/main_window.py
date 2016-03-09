@@ -646,10 +646,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if win is None:
             try:
                 win = report_summary.Report(None, self.agup, self.settings)
+                self.windows[window_key] = win
+                self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
                 history.addLog(traceback.format_exc())
-            self.windows[window_key] = win
-            self.custom_signals.checkBoxGridChanged.connect(win.update)
         else:
             win.update()
             win.show()
@@ -665,11 +665,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if win is None:
             try:
                 win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
+                self.windows[window_key] = win
+                win.show()
+                self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
                 history.addLog(traceback.format_exc())
-            self.windows[window_key] = win
-            win.show()
-            self.custom_signals.checkBoxGridChanged.connect(win.update)
         else:
             win.update()
             win.show()
@@ -685,11 +685,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if win is None:
             try:
                 win = report_assignments.Report(None, self.agup, self.settings)
+                self.windows[window_key] = win
+                win.show()
+                self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
                 history.addLog(traceback.format_exc())
-            self.windows[window_key] = win
-            win.show()
-            self.custom_signals.checkBoxGridChanged.connect(win.update)
         else:
             win.update()
             win.show()
@@ -705,12 +705,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if win is None:
             try:
                 win = report_analysis_grid.Report(None, self.agup, self.settings)
+                self.windows[window_key] = win
+                win.show()
+                self.custom_signals.checkBoxGridChanged.connect(win.update)
+                self.custom_signals.topicValueChanged.connect(win.update)
             except Exception:
                 history.addLog(traceback.format_exc())
-            self.windows[window_key] = win
-            win.show()
-            self.custom_signals.checkBoxGridChanged.connect(win.update)
-            self.custom_signals.topicValueChanged.connect(win.update)
         else:
             win.update()
             win.show()
