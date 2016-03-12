@@ -3,7 +3,7 @@
 History of Source Code Changes
 ==============================
 
-:2016.0311.0: (fixes `#57 <https://github.com/prjemian/assign_gup/issues/57>`_) codepoint conflicts resolved
+:2016.0311.1: (fixes `#57 <https://github.com/prjemian/assign_gup/issues/57>`_) codepoint conflicts resolved
 :2016.0309.1: (fixes `#50 <https://github.com/prjemian/assign_gup/issues/50>`_) window objects need to be None after disposal
 :2016.0309.0: (fixes `#51 <https://github.com/prjemian/assign_gup/issues/51>`_) topic strengths not assigned automatically
 :2016.0308.4: (fixes `#55 <https://github.com/prjemian/assign_gup/issues/55>`_) unhandled non-ASCII character(s)
