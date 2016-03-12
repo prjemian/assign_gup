@@ -140,16 +140,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         mark if main window is dirty
         
         indicate in main window title when there are unsaved modifications 
-        (i.e., when self.cannotExit() is True)
+        (i.e., when self.cannotProceed() is True)
         '''
         title = self.main_window_title
-        if self.cannotExit():
+        if self.cannotProceed():
             title += ' (*)'
         self.setWindowTitle(title)
 
-    def cannotExit(self):
+    def cannotProceed(self):
         '''
-        advise if the application has unsaved changes
+        advise if the application has unsaved changes and should not do the proposed action
         '''
         if self.forced_exit:
             return False
@@ -165,8 +165,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         called when user clicks the big [X] to quit
         '''
         history.addLog('application forced quit requested', False)
-        if self.cannotExit():
-            if self.doNotQuitNow():
+        if self.cannotProceed():
+            if self.confirmAbandonChangesNotOk():
                 event.ignore()
             else:
                 self.doClose()
@@ -190,21 +190,21 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         called when user chooses exit (or quit), or from closeEvent()
         '''
         history.addLog('application exit requested', False)
-        if self.cannotExit():
-            if self.doNotQuitNow():
+        if self.cannotProceed():
+            if self.confirmAbandonChangesNotOk():
                 return
 
         self.saveWindowGeometry()
         self.closeSubwindows()
         self.close()
     
-    def doNotQuitNow(self):
+    def confirmAbandonChangesNotOk(self):
         '''
-        Ask user to save changes before exit.
+        Ask user to save changes before exit or opening another project.
         
         Return True if application should *NOT* exit.
         '''
-        ret = self.requestConfirmation('The session data has changed.', 
+        ret = self.requestConfirmation('The project data has changed.', 
                                     'Save the changes?', 
                                     QtGui.QMessageBox.Save 
                                    | QtGui.QMessageBox.Discard
@@ -212,16 +212,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
                                     QtGui.QMessageBox.Save)
 
         if ret == QtGui.QMessageBox.Save:
-            history.addLog('Save before Exit was selected')
+            history.addLog('Save before action proceeds')
             self.doSave()
         elif ret == QtGui.QMessageBox.Cancel:
-            history.addLog('Application Exit was canceled')
-            return True     # application should NOT exit
+            history.addLog('action was canceled')
+            return True     # action should NOT proceed
         elif ret == QtGui.QMessageBox.Discard:
             self.forced_exit = True
-            history.addLog('Discard Changes was chosen')
+            history.addLog('Discard Changes before action proceeds')
         else:
-            msg = 'wrong button value from confirm close dialog: ' + str(ret)
+            msg = 'wrong button value from confirmAbandonChangesNotOk dialog: ' + str(ret)
             history.addLog('ValueError: ' + msg)
             raise ValueError, msg
         return False    # application should exit
@@ -242,7 +242,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('New PRP File requested', False)
 
-        if self.cannotExit():
+        if self.cannotProceed():
             ret = self.requestConfirmation('There are unsaved changes.', 
                                         'Forget about them?', 
                                         QtGui.QMessageBox.Ok
@@ -259,12 +259,21 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.setIndicators()
         history.addLog('New PRP File')
         self.adjustMainWindowTitle()
+    
+    def getOpenFileName(self, *args, **items):
+        '''convenience wrapper for Qt open file dialog'''
+        return str(QtGui.QFileDialog.getOpenFileName(*args, **items))
 
     def doOpenPrpFile(self):
         '''
         open an existing PRP file
         '''
-        history.addLog('Open PRP File requested', False)
+        history.addLog('Open PRP File requested', True)
+        
+        if self.cannotProceed():
+            if self.confirmAbandonChangesNotOk():
+                return
+            self.forced_exit = False    # may have been set in confirmAbandonChangesNotOk()
 
         flags = QtGui.QFileDialog.DontResolveSymlinks
         title = 'Open PRP file'
@@ -275,11 +284,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             prp_path = os.path.dirname(prp_file)
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, 
-                                                     title, 
-                                                     prp_path, 
-                                                     AGUP_OPEN_FILTER)
-        filename = str(filename)
+        #open_cmd = QtGui.QFileDialog.getOpenFileName
+        #filename = str(open_cmd(None, title, prp_path, AGUP_OPEN_FILTER))
+        filename = self.getOpenFileName(None, title, prp_path, AGUP_OPEN_FILTER)
 
         if os.path.exists(filename):
             self.openPrpFile(filename)
@@ -400,11 +407,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose XML file with proposals'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, 
-                                                 title, 
-                                                 prp_path, 
-                                                 "Proposals (*.xml)")
-        path = str(path)
+        open_cmd = QtGui.QFileDialog.getOpenFileName
+        path = str(open_cmd(None, title, prp_path, "Proposals (*.xml)"))
         if os.path.exists(path):
             history.addLog('selected file: ' + path, False)
             self.importProposals(path)
@@ -442,11 +446,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file to copy its Reviewers'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        path = QtGui.QFileDialog.getOpenFileName(None, 
-                                                 title, 
-                                                 prp_path, 
-                                                 AGUP_OPEN_FILTER)
-        path = str(path)
+        open_cmd = QtGui.QFileDialog.getOpenFileName
+        path = str(open_cmd(None, title, prp_path, AGUP_OPEN_FILTER))
         if os.path.exists(path):
             self.importReviewers(path)
     
@@ -475,11 +476,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         title = 'Choose a PRP Project file to copy its Topics'
         prp_path = os.path.dirname(self.settings.getPrpFile())
 
-        filename = QtGui.QFileDialog.getOpenFileName(None, 
-                                                     title, 
-                                                     prp_path, 
-                                                     AGUP_OPEN_FILTER)
-        filename = str(filename)
+        open_cmd = QtGui.QFileDialog.getOpenFileName
+        filename = str(open_cmd(None, title, prp_path, AGUP_OPEN_FILTER))
         if os.path.exists(filename):
             self.importTopics(filename)
             history.addLog('imported Topics from: ' + filename)
@@ -606,6 +604,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if self.windows['proposal_view'] is not None:
                 self.windows['proposal_view'].close()
                 self.windows['proposal_view'] = None
+            self.modified = True
             self.onAssignmentsChanged()
 
     def doUnassignProposals(self):
@@ -636,6 +635,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             if counter > 1:
                 msg += 's'
             msg += ' removed'
+            self.modified = True
         history.addLog(msg)
         if self.windows['proposal_view'] is not None:
             self.windows['proposal_view'].close()
