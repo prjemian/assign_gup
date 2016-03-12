@@ -21,9 +21,9 @@ else:
     from PyQt4 import QtGui
 import pyRestTable
 
-import agup_data
 import history
 import plainTextEdit
+import tools
 
 
 class Report(plainTextEdit.TextWindow):
@@ -51,8 +51,8 @@ class Report(plainTextEdit.TextWindow):
         tbl.labels = ['GUP#', 'reviewer 1', 'reviewer 2', 'excluded reviewer(s)', 'title']
         for prop in self.agup.proposals:
             prop_id = prop.getKey('proposal_id')
-            text = unicode(prop.getKey('proposal_title'), agup_data.XML_CODEPAGE)
-            prop_title = text.encode(**agup_data.ENCODE_OPTIONS).strip()
+            text = prop.getKey('proposal_title')
+            prop_title = tools.text_encode(text).strip()
             r1, r2 = prop.getAssignedReviewers()
             r1 = r1 or ''
             r2 = r2 or ''

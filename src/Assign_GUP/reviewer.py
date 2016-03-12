@@ -8,8 +8,8 @@ Data for one Reviewer of General User Proposals
 
 from lxml import etree
 
-import agup_data
 import proposal
+import tools
 import topics
 import xml_utility
 
@@ -58,7 +58,7 @@ class AGUP_Reviewer_Data(object):
             if text is None:
                 self.db[k] = None
             else:
-                self.db[k] = text.encode(**agup_data.ENCODE_OPTIONS)
+                self.db[k] = tools.text_encode(text)
         self.topics = topics.Topics()
         node = reviewer.find('Topics')
         if node is not None:

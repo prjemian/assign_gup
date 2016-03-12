@@ -8,7 +8,7 @@ Data for one General User Proposal
 
 from lxml import etree
 
-import agup_data
+import tools
 import topics
 import xml_utility
 
@@ -45,7 +45,7 @@ class AGUP_Proposal_Data(object):
             if text is None:
                 self.db[key] = None
             else:
-                self.db[key] = text.encode(**agup_data.ENCODE_OPTIONS)
+                self.db[key] = tools.text_encode(text)
         subject_node = proposal_node.find('subject')
         if subject_node is not None:
             subjects = [node.text.strip() for node in subject_node.findall('name')]
@@ -133,8 +133,8 @@ class AGUP_Proposal_Data(object):
         return r
     
     def getKey(self, key):
-        ''' '''
-        return self.db[key]
+        '''get the item from self.db identified by ``key``'''
+        return tools.text_decode(self.db[key])
     
     def getSubjects(self):
         '''
