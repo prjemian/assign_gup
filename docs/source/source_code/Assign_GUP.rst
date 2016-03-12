@@ -39,6 +39,7 @@ Submodules
    revu_mvc_view
    settings
    signals
+   tools
    topic_slider
    topics
    topics_editor
