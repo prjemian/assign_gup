@@ -292,13 +292,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         history.addLog('Opening PRP file: ' + filename)
         self.closeSubwindows()
         self.agup = agup_data.AGUP_Data(self.settings)
+        self.modified = False
+        self.setPrpFileText('')
+        self.setIndicators()
         
         try:
             self.agup.openPrpFile(filename)
         except Exception:
             history.addLog(traceback.format_exc())
             self.requestConfirmation(
-                filename + ' was not an AGUP Project file',
+                filename + ' could not open as AGUP Project file',
                 'Import AGUP Project file failed'
             )
             return
@@ -511,13 +514,16 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if len(filename) == 0:
             self.doSaveAs()
         else:
-            self.agup.write(filename)
-            self.modified = False
-            for w in (self.windows['proposal_view'], self.windows['reviewer_view']):
-                if w is not None:
-                    w.details_panel.modified = False
-            self.adjustMainWindowTitle()
-            history.addLog('saved: ' + filename)
+            try:
+                self.agup.write(filename)
+                self.modified = False
+                for w in (self.windows['proposal_view'], self.windows['reviewer_view']):
+                    if w is not None:
+                        w.details_panel.modified = False
+                self.adjustMainWindowTitle()
+                history.addLog('saved: ' + filename)
+            except Exception:
+                history.addLog(traceback.format_exc())
         self.settings.saveEmailKeywords(self.agup.email.keyword_dict)
 
     def doSaveAs(self):
