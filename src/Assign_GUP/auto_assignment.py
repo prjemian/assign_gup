@@ -9,6 +9,9 @@ automatic assignment of reviewers to proposals
 
 import history
 
+SCORE_EXCLUDED = -2
+SCORE_ALREADY_ASSIGNED = -1
+
 
 class Auto_Assign(object):
     '''
@@ -19,22 +22,21 @@ class Auto_Assign(object):
     
     def __init__(self, agup):
         self.agup = agup
-        self.scores = {}
-        self.getScores()
     
-    def getScores(self):
+    def getScores(self, prop):
         '''
-        generate the table of scores
+        generate scores for this proposal
         '''
-        self.scores = {}
-        for prop in self.agup.proposals:
-            prop_id = prop.getKey('proposal_id')
-            panel = {}
-            for rvwr in self.agup.reviewers:
-                full_name = rvwr.getFullName()
+        exclusions = prop.getExcludedReviewers(self.agup.reviewers)
+        panel_scores = {}
+        for rvwr in self.agup.reviewers:
+            full_name = rvwr.getFullName()
+            if full_name in exclusions:
+                score = SCORE_EXCLUDED
+            else:
                 score = int(100.0*prop.topics.dotProduct(rvwr.topics) + 0.5)
-                panel[full_name] = score
-            self.scores[prop_id] = panel
+            panel_scores[full_name] = score
+        return panel_scores
     
     def simpleAssignment(self):
         '''
@@ -60,16 +62,17 @@ class Auto_Assign(object):
         
         counter = 0
         for prop in self.agup.proposals:
+            # check for any existing assignments
             assigned = prop.getAssignedReviewers()
             if None not in assigned:
                 continue    # all assigned, skip this proposal
-            prop_id = prop.getKey('proposal_id')
-            scores = self.scores[prop_id]
+
+            scores = self.getScores(prop)
             
             # mark existing assigned reviewers to exclude further consideration, this round
             for role, full_name in enumerate(assigned):
                 if full_name in prop.eligible_reviewers:
-                    scores[full_name] = -1
+                    scores[full_name] = SCORE_ALREADY_ASSIGNED
             
             # order the reviewers by score on this proposal
             for full_name in sort_reviewers(scores):
@@ -83,6 +86,8 @@ class Auto_Assign(object):
                 if role is not None:
                     assigned[role] = full_name
                     counter += 1
+                if None not in assigned:
+                    break    # all assigned, move to next proposal
             
             for role, full_name in enumerate(assigned):
                 prop.eligible_reviewers[full_name] = role + 1

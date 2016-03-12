@@ -168,11 +168,6 @@ class Topics(object):
             raise KeyError, 'these two lists of topics are not the same, cannot dot product'
         if len(self.getTopicList()) == 0:
             return 0.0      # trivial result and avoids div-by-zero error
-        if False:
-            value = 0.0
-            for topic in self.getTopicList():
-                value += self.get(topic) * other.get(topic)
-            return value / len(self.getTopicList())
         
         props = [self.get(topic) for topic in self.getTopicList()]      # proposals
         denominator = sum(props)
