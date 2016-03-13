@@ -432,6 +432,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             prop.addTopics(added)
             prop.removeTopics(removed)
         
+        self.modified = True
         self.setIndicators()
         history.addLog('imported Proposals from: ' + filename)
 
@@ -463,9 +464,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             )
             return
 
-        self.setNumTopicsWidget(len(self.agup.topics))
-        self.setNumReviewersWidget(len(self.agup.reviewers))
+#         self.setNumTopicsWidget(len(self.agup.topics))
+#         self.setNumReviewersWidget(len(self.agup.reviewers))
         self.onAssignmentsChanged()
+        self.modified = True
+        self.setIndicators()
         history.addLog('imported Reviewers from: ' + filename)
 
     def doImportTopics(self):
@@ -494,8 +497,10 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             )
             return
 
-        self.setNumTopicsWidget(len(self.agup.topics))
+#         self.setNumTopicsWidget(len(self.agup.topics))
         self.onTopicValuesChanged('', '', 0.0)
+        self.modified = True
+        self.setIndicators()
         history.addLog('imported topics from: ' + filename)
 
     def doRecalc(self):
@@ -804,7 +809,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.num_proposals.setText(self._num_to_text_(number))
     
     def setIndicators(self):
-        ''' '''
+        '''show the numbers of topics, reviewers, and proposals, also the cycle'''
         self.setNumTopicsWidget(len(self.agup.topics))
         self.setNumReviewersWidget(len(self.agup.reviewers))
         self.setNumProposalsWidget(len(self.agup.proposals))
