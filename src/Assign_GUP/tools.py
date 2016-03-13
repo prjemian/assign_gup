@@ -4,10 +4,15 @@
 
 '''
 common tools used in various places
+
+for more information on the various codepoints, see
+https://docs.python.org/2/library/codecs.html#standard-encodings
 '''
 
 XML_CODEPOINT = 'ISO-8859-1'
-CODEPOINT_LIST = ('cp1251', 'cp1252', 'utf8', 'iso-8859-1')
+CODEPOINT_LIST = ('utf8 ascii utf16 utf32'.split()
+                  + ['cp125'+str(i) for i in range(9)]
+                  + ['latin'+str(i+1) for i in range(10)])
 
 
 def text_decode(source):
