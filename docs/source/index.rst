@@ -3,6 +3,9 @@
 Assign_GUP (AGUP)
 -----------------
 
+:version: |version|
+:published: |today|
+
 Overview
 ========
 
@@ -38,14 +41,11 @@ Contents:
    changes
    license
 
+-------------
+
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
--------------
-
-:version: |version|
-:published: |today|
