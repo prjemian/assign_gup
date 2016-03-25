@@ -840,9 +840,9 @@ def process_command_line():
     support command-line options such as ```--help``` and ```--version```
     '''
     import argparse
-    import Assign_GUP
-    version = Assign_GUP.__version__
-    doc = Assign_GUP.__doc__
+    import __init__
+    version = __init__.__version__
+    doc = __init__.__doc__
     doc = 'v' + version + ', ' + doc.strip()
     parser = argparse.ArgumentParser(description=doc)
     parser.add_argument('-v', '--version', action='version', version=version)
