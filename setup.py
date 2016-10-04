@@ -8,7 +8,6 @@ from setuptools import setup, find_packages
 import os
 import re
 import sys
-import versioneer
 
 # pull in some definitions from the package's __init__.py file
 sys.path.insert(0, os.path.join('src', ))
@@ -21,9 +20,7 @@ long_description = open('README.rst', 'r').read()
 
 
 setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
-       version=versioneer.get_version(),
-       cmdclass=versioneer.get_cmdclass(),
-       #version          = Assign_GUP.__version__,
+       version          = Assign_GUP.__version__,
        license          = Assign_GUP.__license__,
        description      = Assign_GUP.__description__,
        long_description = long_description,
