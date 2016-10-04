@@ -3,7 +3,8 @@
 Assign_GUP (AGUP)
 -----------------
 
-:version: |version|
+:version:   |version|
+:release:   |release|
 :published: |today|
 
 Overview
