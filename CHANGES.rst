@@ -3,6 +3,7 @@
 History of Source Code Changes
 ==============================
 
+:2016.1025.0: standardize versioning kit with pyRestTable
 :2016.0312.0: fixes (`issue #58 <https://github.com/prjemian/assign_gup/issues/58>`_) excluded reviewers are not auto-assigned,
               fixes (`issue #63 <https://github.com/prjemian/assign_gup/issues/63>`_) save changes before opening another project
 :2016.0311.1: (fixes `#57 <https://github.com/prjemian/assign_gup/issues/57>`_) codepoint conflicts resolved

@@ -1,3 +1,2 @@
 include README.rst
 include CHANGES.rst
-include versioneer.py

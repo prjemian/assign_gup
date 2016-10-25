@@ -11,10 +11,14 @@ Will it be necessary to add this next line at the top of every file?
 # -*- coding: iso-8859-1 -*- 
 '''
 
+import os
+from _version import git_release
+
 __package_name__        = u'Assign_GUP'
 
-from _version import git_release
-__version__             = u'2016.0312.0'
+_path = os.path.dirname(__file__)
+_vfile = os.path.join(_path, 'VERSION')
+__version__ = open(_vfile, 'r').read()
 __release__             = git_release(__package_name__, __version__)
 
 __description__         = u'Assist in assigning APS GUPs to PRP members'

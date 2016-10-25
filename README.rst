@@ -5,10 +5,6 @@ README: Assign_GUP
 
 **Assist in assigning APS GUPs to PRP members**
 
-:version:   |version|
-:release:   |release|
-:published: |today|
-
 :author: 	Pete R. Jemian
 :email:  	jemian@anl.gov
 :copyright: 2005-2016, UChicago Argonne, LLC

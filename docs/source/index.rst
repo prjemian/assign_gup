@@ -1,7 +1,4 @@
-
------------------
-Assign_GUP (AGUP)
------------------
+.. include:: ../../README.rst
 
 :version:   |version|
 :release:   |release|
@@ -29,13 +26,13 @@ distribution of panelists amongst the proposals might have contributed)
 and the entire process was completed within a few hours.  Previously, the 
 process would take about a business day.
 
-Contents:
+Contents
+========
 
 .. toctree::
    :maxdepth: 1
    :glob:
    
-   readme
    instructions
    installation
    source_code/Assign_GUP

@@ -37,8 +37,11 @@ setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
                            # do not really need to package this mock
                            'Assign_GUP.mock_PyQt4',
                            ],
-       package_data     = dict(Assign_GUP=['resources/*', 
-                                           'LICENSE', ]),
+       package_data     = dict(Assign_GUP=[
+                                           'resources/*', 
+                                           'LICENSE', 
+                                           'VERSION', 
+                                           ]),
        classifiers      = Assign_GUP.__classifiers__,
        entry_points={
             # create & install console_scripts in <python>/bin
