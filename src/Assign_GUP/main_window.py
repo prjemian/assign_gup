@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 - 2016, UChicago Argonne, LLC.
+# Copyright (c) 2009 - 2017, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 '''
@@ -418,13 +418,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''read a proposals XML file and set the model accordingly'''
         try:
             self.agup.importProposals(filename)
-        except:
-            history.addLog(traceback.format_exc())
-            self.requestConfirmation(
-                filename + ' was not an APS Proposals file',
-                'Import Proposals failed'
-            )
-            return
+        except Exception as exc:
+            tb = traceback.format_exc()
+            history.addLog(tb)
+            summary = 'Import Proposals failed.'
+            msg = os.path.basename(filename) + ': '
+            msg += str(exc.message)
+            self.requestConfirmation(msg, summary)
 
         # ensure each imported proposal has the correct Topics
         for prop in self.agup.proposals:
