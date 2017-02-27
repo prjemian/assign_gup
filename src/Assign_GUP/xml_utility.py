@@ -1,5 +1,4 @@
-
-# Copyright (c) 2009 - 2016, UChicago Argonne, LLC.
+# Copyright (c) 2009 - 2017, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 '''
@@ -52,10 +51,10 @@ def readValidXmlDoc(filename, expected_root_tag, XML_Schema_file, alt_root_tag='
     if not os.path.exists(filename):
         raise IOError('file not found: ' + filename)
 
-    try:
-        doc = etree.parse(filename)
-    except (etree.XMLSyntaxError, etree.ParseError) as exc:
-        raise XmlSyntaxError(str(exc))
+    # *Could* edit the XML internally but that changes line number references.
+    # One problem (issue 66) is the XML file might start with a blank line.
+    # So, read the XML file as given.
+    doc = etree.parse(filename)
 
     try:
         root = doc.getroot()
