@@ -50,12 +50,12 @@ def readValidXmlDoc(filename, expected_root_tag, XML_Schema_file, alt_root_tag='
     :param str XML_Schema_file: name of XML Schema file (local to package directory)
     '''
     if not os.path.exists(filename):
-        raise IOError, 'file not found: ' + filename
+        raise IOError('file not found: ' + filename)
 
     try:
         doc = etree.parse(filename)
-    except (etree.XMLSyntaxError, etree.ParseError), exc:
-        raise XmlSyntaxError, str(exc)
+    except (etree.XMLSyntaxError, etree.ParseError) as exc:
+        raise XmlSyntaxError(str(exc))
 
     try:
         root = doc.getroot()
@@ -69,11 +69,11 @@ def readValidXmlDoc(filename, expected_root_tag, XML_Schema_file, alt_root_tag='
                 validate(doc, XML_Schema_file)
             else:
                 validate(doc, alt_schema)
-        except etree.DocumentInvalid, exc:
-            raise InvalidWithXmlSchema, str(exc)
-    except Exception, exc:
+        except etree.DocumentInvalid as exc:
+            raise InvalidWithXmlSchema(str(exc))
+    except Exception as exc:
         msg = 'In ' + filename + ': ' + traceback.format_exc()
-        raise Exception, msg
+        raise Exception(msg)
     
     return doc
 
