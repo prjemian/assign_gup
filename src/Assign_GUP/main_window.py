@@ -37,7 +37,14 @@ UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
 # LOG_MINOR_DETAILS = True        # developer use
 
+ANALYSISGRID_REPORT = 'analysisGrid_report'
+ASSIGNMENT_REPORT = 'assignment_report'
+EMAIL_REPORT = 'email_report'
+EMAIL_TEMPLATE_EDITOR = 'email_template_editor'
+PROPOSAL_VIEW = 'proposal_view'
 REVIEWER_VIEW = 'reviewer_view'
+SUMMARY_REPORT = 'summary_report'
+
 
 class AGUP_MainWindow(QtGui.QMainWindow):
     '''
@@ -58,15 +65,14 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.forced_exit = False
 
         # keep these objects in a dictionary to simplify admin
-        self.windows = dict(
-            analysisGrid_report = None,
-            assignment_report = None,
-            email_report = None,
-            email_template_editor = None,
-            proposal_view = None,
-            summary_report = None,
-        )
+        self.windows = {}
+        self.windows[ANALYSISGRID_REPORT] = None
+        self.windows[ASSIGNMENT_REPORT] = None
+        self.windows[EMAIL_REPORT] = None
+        self.windows[EMAIL_TEMPLATE_EDITOR] = None
+        self.windows[PROPOSAL_VIEW] = None
         self.windows[REVIEWER_VIEW] = None
+        self.windows[SUMMARY_REPORT] = None
 
         self._init_history_()
         history.addLog('loaded "' + UI_FILE + '"', False)
@@ -155,8 +161,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         if self.forced_exit:
             return False
         decision = self.modified
-        if self.windows['proposal_view'] is not None:
-            decision |= self.windows['proposal_view'].isProposalListModified()
+        if self.windows[PROPOSAL_VIEW] is not None:
+            decision |= self.windows[PROPOSAL_VIEW].isProposalListModified()
         if self.windows[REVIEWER_VIEW] is not None:
             decision |= self.windows[REVIEWER_VIEW].isReviewerListModified()
         return decision
@@ -322,13 +328,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         edit the list of Proposals
         '''
-        window_key = 'proposal_view'
-        win = self.windows[window_key]
+        win = self.windows[PROPOSAL_VIEW]
         if win is None:
             win = prop_mvc_view.AGUP_Proposals_View(self, self.agup, self.settings)
             win.custom_signals.checkBoxGridChanged.connect(self.onAssignmentsChanged)
             win.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
-            self.windows[window_key] = win
+            self.windows[PROPOSAL_VIEW] = win
         win.show()
 
     def doEditReviewers(self):
@@ -505,8 +510,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def doRecalc(self):
         ''' '''
-        if self.windows['proposal_view'] is not None:
-            self.windows['proposal_view'].recalc()
+        if self.windows[PROPOSAL_VIEW] is not None:
+            self.windows[PROPOSAL_VIEW].recalc()
 
     def doSave(self):
         '''
@@ -520,7 +525,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             try:
                 self.agup.write(filename)
                 self.modified = False
-                for w in (self.windows['proposal_view'], self.windows[REVIEWER_VIEW]):
+                for w in (self.windows[PROPOSAL_VIEW], self.windows[REVIEWER_VIEW]):
                     if w is not None:
                         w.details_panel.modified = False
                 self.adjustMainWindowTitle()
@@ -567,7 +572,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.agup.write(filename)
         self.setPrpFileText(filename)
         self.modified = False
-        for w in (self.windows['proposal_view'], self.windows[REVIEWER_VIEW]):
+        for w in (self.windows[PROPOSAL_VIEW], self.windows[REVIEWER_VIEW]):
             if w is not None:
                 w.details_panel.modified = False
         history.addLog('saved: ' + filename)
@@ -608,9 +613,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         number_changed = auto_assign.simpleAssignment()
         history.addLog('doAutomatedAssignment() complete', False)
         if number_changed > 0:
-            if self.windows['proposal_view'] is not None:
-                self.windows['proposal_view'].close()
-                self.windows['proposal_view'] = None
+            if self.windows[PROPOSAL_VIEW] is not None:
+                self.windows[PROPOSAL_VIEW].close()
+                self.windows[PROPOSAL_VIEW] = None
             self.modified = True
             self.onAssignmentsChanged()
 
@@ -644,9 +649,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             msg += ' removed'
             self.modified = True
         history.addLog(msg)
-        if self.windows['proposal_view'] is not None:
-            self.windows['proposal_view'].close()
-            self.windows['proposal_view'] = None
+        if self.windows[PROPOSAL_VIEW] is not None:
+            self.windows[PROPOSAL_VIEW].close()
+            self.windows[PROPOSAL_VIEW] = None
         self.onAssignmentsChanged()
 
     def doSummaryReport(self):
@@ -657,12 +662,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import report_summary
         history.addLog('doSummaryReport() requested', False)
-        window_key = 'summary_report'
-        win = self.windows[window_key]
+        win = self.windows[SUMMARY_REPORT]
         if win is None:
             try:
                 win = report_summary.Report(None, self.agup, self.settings)
-                self.windows[window_key] = win
+                self.windows[SUMMARY_REPORT] = win
                 self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
                 history.addLog(traceback.format_exc())
@@ -676,12 +680,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import email_mvc_view
         history.addLog('doLettersReport() requested', False)
-        window_key = 'email_report'
-        win = self.windows[window_key]
+        win = self.windows[EMAIL_REPORT]
         if win is None:
             try:
                 win = email_mvc_view.AGUP_Emails_View(None, self.agup, self.settings)
-                self.windows[window_key] = win
+                self.windows[EMAIL_REPORT] = win
                 win.show()
                 self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
@@ -696,12 +699,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import report_assignments
         history.addLog('doAssignmentsReport() requested', False)
-        window_key = 'assignment_report'
-        win = self.windows[window_key]
+        win = self.windows[ASSIGNMENT_REPORT]
         if win is None:
             try:
                 win = report_assignments.Report(None, self.agup, self.settings)
-                self.windows[window_key] = win
+                self.windows[ASSIGNMENT_REPORT] = win
                 win.show()
                 self.custom_signals.checkBoxGridChanged.connect(win.update)
             except Exception:
@@ -716,12 +718,11 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import report_analysis_grid
         history.addLog('doAnalysis_gridReport() requested', False)
-        window_key = 'analysisGrid_report'
-        win = self.windows[window_key]
+        win = self.windows[ANALYSISGRID_REPORT]
         if win is None:
             try:
                 win = report_analysis_grid.Report(None, self.agup, self.settings)
-                self.windows[window_key] = win
+                self.windows[ANALYSISGRID_REPORT] = win
                 win.show()
                 self.custom_signals.checkBoxGridChanged.connect(win.update)
                 self.custom_signals.topicValueChanged.connect(win.update)
@@ -737,14 +738,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         import editor_email_template
         history.addLog('doEditEmailTemplate() requested', False)
-        window_key = 'email_template_editor'
         win = self.windows[window_key]
         if win is None:
             try:
                 win = editor_email_template.Editor(None, self.agup, self.settings)
             except Exception:
                 history.addLog(traceback.format_exc())
-            self.windows[window_key] = win
+            self.windows[EMAIL_TEMPLATE_EDITOR] = win
             win.custom_signals.changed.connect(self.onTemplateChanged)
         else:
             win.show()
