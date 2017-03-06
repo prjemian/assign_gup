@@ -18,6 +18,7 @@ else:
 import StringIO
 import traceback
 
+import main_window
 import prop_mvc_data
 import resources
 import reviewer
@@ -37,10 +38,11 @@ class AGUP_Data(QtCore.QObject):
     Complete data for a PRP review session
     '''
 
-    def __init__(self, config = None):
+    def __init__(self, parent_window = None, config = None):
         import settings
         QtCore.QObject.__init__(self)
 
+        self.parent_window = parent_window
         self.settings = config or settings.ApplicationQSettings()
         self.clearAllData()
         self.modified = False
@@ -201,6 +203,16 @@ class AGUP_Data(QtCore.QObject):
             for topic in self.topics:
                 if not reviewer.topics.exists(topic):
                     rvwrs.addTopic(topic)
+
+        # this gets complicated
+        # TODO: remove those not in new set, 
+        # merge those also in old set and new
+
+        # list of reviewers has changed, update the model
+        if self.parent_window is not None:
+            win = self.parent_window.windows[main_window.REVIEWER_VIEW]
+            if win is not None:
+                win.setModel(rvwrs)
 
         self.reviewers = rvwrs
     

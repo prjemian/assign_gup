@@ -37,6 +37,7 @@ UI_FILE = 'main_window.ui'
 LOG_MINOR_DETAILS = False
 # LOG_MINOR_DETAILS = True        # developer use
 
+REVIEWER_VIEW = 'reviewer_view'
 
 class AGUP_MainWindow(QtGui.QMainWindow):
     '''
@@ -45,7 +46,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         self.settings = settings.ApplicationQSettings()
-        self.agup = agup_data.AGUP_Data(self.settings)
+        self.agup = agup_data.AGUP_Data(self, self.settings)
 
         QtGui.QMainWindow.__init__(self)
         resources.loadUi(UI_FILE, baseinstance=self)
@@ -63,9 +64,9 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             email_report = None,
             email_template_editor = None,
             proposal_view = None,
-            reviewer_view = None,
             summary_report = None,
         )
+        self.windows[REVIEWER_VIEW] = None
 
         self._init_history_()
         history.addLog('loaded "' + UI_FILE + '"', False)
@@ -156,8 +157,8 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         decision = self.modified
         if self.windows['proposal_view'] is not None:
             decision |= self.windows['proposal_view'].isProposalListModified()
-        if self.windows['reviewer_view'] is not None:
-            decision |= self.windows['reviewer_view'].isReviewerListModified()
+        if self.windows[REVIEWER_VIEW] is not None:
+            decision |= self.windows[REVIEWER_VIEW].isReviewerListModified()
         return decision
 
     def closeEvent(self, event):
@@ -253,7 +254,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
 
         self.closeSubwindows()
         #self.agup.clearAllData()        # TODO: Why not make a new self.agup object?
-        self.agup = agup_data.AGUP_Data(self.settings)
+        self.agup = agup_data.AGUP_Data(self, self.settings)
         self.modified = False
         self.setPrpFileText('')
         self.setIndicators()
@@ -298,7 +299,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         history.addLog('Opening PRP file: ' + filename)
         self.closeSubwindows()
-        self.agup = agup_data.AGUP_Data(self.settings)
+        self.agup = agup_data.AGUP_Data(self, self.settings)
         self.modified = False
         self.setPrpFileText('')
         self.setIndicators()
@@ -334,13 +335,12 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         edit the list of Reviewers
         '''
-        window_key = 'reviewer_view'
-        win = self.windows['reviewer_view']
+        win = self.windows[REVIEWER_VIEW]
         if win is None:
             win = revu_mvc_view.AGUP_Reviewers_View(self, self.agup, self.settings)
             win.custom_signals.recalc.connect(self.doRecalc)
             win.custom_signals.topicValueChanged.connect(self.onTopicValuesChanged)
-            self.windows[window_key] = win
+            self.windows[REVIEWER_VIEW] = win
         win.show()
 
     def doEditTopics(self):
@@ -456,13 +456,13 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''read Reviewers from a PRP Project file and set the model accordingly'''
         try:
             self.agup.importReviewers(filename)
-        except Exception:
-            history.addLog(traceback.format_exc())
-            self.requestConfirmation(
-                filename + ' was not an AGUP Project file',
-                'Import Reviewers failed'
-            )
-            return
+        except Exception as exc:
+            tb = traceback.format_exc()
+            history.addLog(tb)
+            summary = 'Import Reviewers failed.'
+            msg = os.path.basename(filename) + ': '
+            msg += str(exc.message)
+            self.requestConfirmation(msg, summary)
 
 #         self.setNumTopicsWidget(len(self.agup.topics))
 #         self.setNumReviewersWidget(len(self.agup.reviewers))
@@ -520,7 +520,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
             try:
                 self.agup.write(filename)
                 self.modified = False
-                for w in (self.windows['proposal_view'], self.windows['reviewer_view']):
+                for w in (self.windows['proposal_view'], self.windows[REVIEWER_VIEW]):
                     if w is not None:
                         w.details_panel.modified = False
                 self.adjustMainWindowTitle()
@@ -567,7 +567,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         self.agup.write(filename)
         self.setPrpFileText(filename)
         self.modified = False
-        for w in (self.windows['proposal_view'], self.windows['reviewer_view']):
+        for w in (self.windows['proposal_view'], self.windows[REVIEWER_VIEW]):
             if w is not None:
                 w.details_panel.modified = False
         history.addLog('saved: ' + filename)
@@ -579,13 +579,15 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         '''
         self.modified = True
         self.adjustMainWindowTitle()
-        windows_to_update = (self.windows['summary_report'],
-                             self.windows['email_report'],
-                             self.windows['assignment_report'],
-                             self.windows['analysisGrid_report'],
-                             self.windows['proposal_view'],
-                             )
-        for win in windows_to_update:
+        windows_to_update = '''
+            summary_report 
+            email_report
+            assignment_report
+            analysisGrid_report
+            proposal_view
+            reviewer_view'''.split()
+        for window_name in windows_to_update:
+            win = self.windows[window_name]
             if win is not None:
                 win.update()
         self.custom_signals.checkBoxGridChanged.emit()
