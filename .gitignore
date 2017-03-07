@@ -3,3 +3,6 @@
 /Assign_GUP.egg-info
 /dist
 /src/.DS_Store
+/build/
+/src/Assign_GUP/project/
+/src/Assign_GUP/issue*/
