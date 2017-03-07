@@ -156,6 +156,7 @@ class AGUP_Data(QtCore.QObject):
     
     def _restore_assignments(self, props):
         '''restore any assessments or assignments'''
+        queue_remove_reviewers = []
         for new_proposal in props:
             prop_id = new_proposal.getKey('proposal_id')
             if self.proposals.exists(prop_id):
@@ -165,13 +166,17 @@ class AGUP_Data(QtCore.QObject):
                 for full_name, role in existing_prop.eligible_reviewers.items():
                     if full_name in ('', None):
                         continue
+                    if role is None:
+                        if full_name not in new_proposal.eligible_reviewers:
+                            if full_name not in queue_remove_reviewers:
+                                queue_remove_reviewers.append(full_name)
+                        continue
     
-                    # check that assigned reviewer is listed as an eligible reviewer
-                    # TODO: issue69 - https://github.com/prjemian/assign_gup/issues/69
                     if full_name not in new_proposal.eligible_reviewers:
                         msg = 'Reviewer "' + str(full_name)
-                        msg += '" assigned to proposal "' + prop_id
-                        msg += '" is not on the list of reviewers for that proposal'
+                        msg += ' has assigned role of ' + str(role)
+                        msg += ' on proposal ' + prop_id
+                        msg += ' but is not on the list of reviewers for that proposal.'
                         raise ValueError(msg)
     
                     # assign the reviewer's role
@@ -184,6 +189,10 @@ class AGUP_Data(QtCore.QObject):
                 for subject in subject_list:
                     if self.topics.exists(subject):
                         new_proposal.setTopic(subject, SUBJECT_STRENGTH_FULL)
+        
+        for full_name in queue_remove_reviewers:
+            self.reviewers.removeReviewer(full_name)
+            self.setReviewersModel(self.reviewers)
     
     def importReviewers(self, xmlFile):
         '''
@@ -210,12 +219,18 @@ class AGUP_Data(QtCore.QObject):
         # merge those also in old set and new
 
         # list of reviewers has changed, update the model
+        self.setReviewersModel(rvwrs)
+
+        self.reviewers = rvwrs
+    
+    def setReviewersModel(self, rvwrs):
+        '''
+        set the data model for the list of reviewers
+        '''
         if self.parent_window is not None:
             win = self.parent_window.windows[main_window.REVIEWER_VIEW]
             if win is not None:
                 win.setModel(rvwrs)
-
-        self.reviewers = rvwrs
     
     def importTopics(self, xmlFile):
         '''

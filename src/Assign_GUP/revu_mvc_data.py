@@ -178,3 +178,13 @@ class AGUP_Reviewers_List(QtCore.QObject):
         '''
         for item in key_list:
             self.removeTopic(item)
+    
+    def removeReviewer(self, full_name):
+        '''
+        remove named reviewer
+        '''
+        rvwr = self.getByFullName(full_name)
+        if rvwr is not None:
+            key = rvwr.getSortName()
+            del self.reviewers[key]
+            self.reviewer_sort_list = [r.getSortName() for r in self.inOrder()]

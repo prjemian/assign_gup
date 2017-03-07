@@ -42,9 +42,9 @@ class AGUP_Reviewer_Data(object):
         '''
         Canonical string representation
         '''
-        if self.getFullName() == None or self.db['email'] == None:
+        if self.getFullName() == None or self.getKey('email') == None:
             return str(None)
-        return "%s <%s>" % (self.db['full_name'], self.db['email'])
+        return "%s <%s>" % (self.getFullName(), self.getKey('email'))
 
     def importXml(self, reviewer):
         '''
