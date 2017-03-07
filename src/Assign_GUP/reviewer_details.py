@@ -72,7 +72,7 @@ class AGUP_ReviewerDetails(QtGui.QWidget):
     def setTopic(self, key, value):
         ''' '''
         if key not in self.topic_list:
-            raise KeyError, 'unknown Topic: ' + key
+            raise KeyError('unknown Topic: ' + key)
         topics.checkTopicValueRange(value)
         self.topic_widgets[key].setValue(value)
         self.topic_widgets[key].onValueChange(value)    # sets the slider

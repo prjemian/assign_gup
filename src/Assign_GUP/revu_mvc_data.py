@@ -62,7 +62,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
     def getReviewer(self, sort_name):
         '''return reviewer selected by sort_name string'''
         if not self.exists(sort_name):
-            raise IndexError, 'Reviewer not found: ' + sort_name
+            raise IndexError('Reviewer not found: ' + sort_name)
         return self.reviewers[sort_name]
     
     def getReviewerAssignments(self, sort_name, role=None):
@@ -78,7 +78,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
                        proposal.PRIMARY_REVIEWER_ROLE, 
                        proposal.SECONDARY_REVIEWER_ROLE)
         if role not in valid_roles:
-            raise ValueError, 'unknown role specified: ' + str(role)
+            raise ValueError('unknown role specified: ' + str(role))
         rvwr = self.getReviewer(sort_name)
         if role in (None, 0, proposal.PRIMARY_REVIEWER_ROLE):
             primaries = rvwr.getAssignments(self.agup.proposals)
@@ -93,7 +93,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
     def getByFullName(self, full_name):
         '''return reviewer selected by full_name string'''
         if len(full_name) == 0:
-            raise ValueError, 'no name provided'
+            raise ValueError('no name provided')
         sort_name = None
         for rvwr in self.inOrder():
             if rvwr.getFullName() == full_name:
@@ -104,7 +104,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
     def getByIndex(self, index):
         ''' '''
         if not 0 <= index < len(self.reviewer_sort_list):
-            raise IndexError, 'Index not found: ' + str(index)
+            raise IndexError('Index not found: ' + str(index))
         return self.reviewer_sort_list[index]
 
     def importXml(self, filename):
@@ -120,7 +120,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
             reviewers_node = root.find(REVIEW_PANEL_TAG)
         else:
             reviewers_node = root    # pre-agup reviewers file
-            raise RuntimeError, 'import of panel.xml file no longer supported'
+            raise RuntimeError('import of panel.xml file no longer supported')
 
         db = {}
         self.reviewer_sort_list = []
@@ -162,7 +162,7 @@ class AGUP_Reviewers_List(QtCore.QObject):
         set the topic value on a reviewer identified by sort_name
         '''
         if sort_name not in self.reviewers:
-            raise KeyError, 'Reviewer name not found: ' + str(sort_name)
+            raise KeyError('Reviewer name not found: ' + str(sort_name))
         self.reviewers[sort_name].setTopic(topic, value)
 
     def removeTopic(self, key):

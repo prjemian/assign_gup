@@ -20,9 +20,9 @@ def text_decode(source):
     for encoding in CODEPOINT_LIST:  # walk through a list of codepoints
         try:
             return source.decode(encoding, 'replace')
-        except (ValueError, UnicodeError), _exc:
+        except (ValueError, UnicodeError) as _exc:
             continue
-        except Exception, _exc:
+        except Exception as _exc:
             continue
     return source
 

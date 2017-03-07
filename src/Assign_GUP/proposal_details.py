@@ -106,9 +106,9 @@ class AGUP_ProposalDetails(QtGui.QWidget):
         '''
         '''
         if key not in self.topic_list:
-            raise KeyError, 'unknown Topic: ' + key
+            raise KeyError('unknown Topic: ' + key)
         if value < 0 or value > 1:
-            raise ValueError, 'Topic value must be between 0 and 1, given' + str(value)
+            raise ValueError('Topic value must be between 0 and 1, given' + str(value))
         self.topic_widgets[key].setValue(value)
         self.topic_widgets[key].onValueChange(value)    # sets the slider
         self.modified = True

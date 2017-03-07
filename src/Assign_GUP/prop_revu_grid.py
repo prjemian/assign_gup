@@ -203,7 +203,7 @@ class ProposalReviewerRow(QtCore.QObject):
         '''show the number of assigned proposals with given role'''
         valid_roles = (1, 2)
         if role not in valid_roles:
-            raise ValueError, 'unknown role: ' + str(role)
+            raise ValueError('unknown role: ' + str(role))
         (self.num_primary, self.num_secondary)[role-1].setText(str(number))
 
     def setValue(self, percentage):

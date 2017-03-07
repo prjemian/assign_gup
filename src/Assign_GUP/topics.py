@@ -61,10 +61,10 @@ class Topics(object):
         define a new topic (known here as ``key``)
         '''
         if self.exists(key):
-            raise KeyError, 'This topic is already defined: ' + key
+            raise KeyError('This topic is already defined: ' + key)
         key = key.strip()
         if len(key) == 0:
-            raise KeyError, 'Must give a name for the topic'
+            raise KeyError('Must give a name for the topic')
         checkTopicValueRange(value)
         self.topics[key] = float(value)
         self._topics_string_ = ' '.join(self.getTopicList())
@@ -85,7 +85,7 @@ class Topics(object):
         topic must exist or KeyError exception will be raised
         '''
         if not self.exists(key):
-            raise KeyError, 'This topic is not defined: ' + key
+            raise KeyError('This topic is not defined: ' + key)
         return self.topics[key]
     
     def getTopicList(self):
@@ -101,7 +101,7 @@ class Topics(object):
         topic must exist or KeyError exception will be raised
         '''
         if not self.exists(key):
-            raise KeyError, 'This topic is not defined: ' + key
+            raise KeyError('This topic is not defined: ' + key)
         self.topics[key] = float(value)
 
     def clearAll(self):
@@ -120,7 +120,7 @@ class Topics(object):
         if self.exists(key):
             del self.topics[key]
         else:
-            raise KeyError, 'Cannot remove (does not exist): ' + key
+            raise KeyError('Cannot remove (does not exist): ' + key)
     
     def removeTopics(self, key_list):
         '''
@@ -165,7 +165,7 @@ class Topics(object):
         * :math:`\vec{r}` is array of topic value strengths for Reviewer
         '''
         if not self.compare(other):
-            raise KeyError, 'these two lists of topics are not the same, cannot dot product'
+            raise KeyError('these two lists of topics are not the same, cannot dot product')
         if len(self.getTopicList()) == 0:
             return 0.0      # trivial result and avoids div-by-zero error
         
@@ -231,7 +231,7 @@ def checkTopicValueRange(value):
     '''
     if not 0 <= float(value) <= 1.0:
         msg = 'value must be between 0 and 1: given=' + str(value)
-        raise ValueError, msg
+        raise ValueError(msg)
 
 
 def diffLists(new_list, old_list):

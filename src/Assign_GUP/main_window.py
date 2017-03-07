@@ -230,7 +230,7 @@ class AGUP_MainWindow(QtGui.QMainWindow):
         else:
             msg = 'wrong button value from confirmAbandonChangesNotOk dialog: ' + str(ret)
             history.addLog('ValueError: ' + msg)
-            raise ValueError, msg
+            raise ValueError(msg)
         return False    # application should exit
 
     def doResetDefaultSettings(self):

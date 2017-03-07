@@ -103,7 +103,7 @@ class AGUP_Reviewer_Data(object):
         
         '''
         if key not in self.db:
-            raise KeyError, 'unknown key: ' + key
+            raise KeyError('unknown key: ' + key)
         self.db[key] = value
     
     def getTopic(self, topic):
@@ -160,7 +160,7 @@ class AGUP_Reviewer_Data(object):
     def getAssignments(self, proposals, role):
         '''find all proposals assigned to this reviewer with the given role'''
         if role not in (proposal.PRIMARY_REVIEWER_ROLE, proposal.SECONDARY_REVIEWER_ROLE):
-            raise ValueError, 'unknown role value: ' + str(role)
+            raise ValueError('unknown role value: ' + str(role))
         my_name = self.db['full_name']
         assignments = []
         for prop_num, prop in proposals.proposals.items():

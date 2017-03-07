@@ -58,7 +58,7 @@ class AGUP_Proposals_List(QtCore.QObject):
     def getProposal(self, prop_id):
         '''return proposal selected by ID string'''
         if not self.exists(prop_id):
-            raise IndexError, 'Proposal not found: ' + prop_id
+            raise IndexError('Proposal not found: ' + prop_id)
         return self.proposals[prop_id]
 
     def getByIndex(self, index):
@@ -68,7 +68,7 @@ class AGUP_Proposals_List(QtCore.QObject):
         note:  index is *not* the proposal ID number
         '''
         if index < 0 or index >= len(self.prop_id_list):
-            raise IndexError, 'Index not found: ' + str(index)
+            raise(IndexError, 'Index not found: ' + str(index))
         return self.prop_id_list[index]
 
     def importXml(self, filename):
@@ -128,7 +128,7 @@ class AGUP_Proposals_List(QtCore.QObject):
         set the topic value on a proposal identified by GUP ID
         '''
         if prop_id not in self.proposals:
-            raise KeyError, 'Proposal ID not found: ' + str(prop_id)
+            raise KeyError('Proposal ID not found: ' + str(prop_id))
         self.proposals[prop_id].setTopic(topic, value)
 
     def removeTopic(self, key):

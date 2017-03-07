@@ -116,7 +116,7 @@ class AGUP_Data(QtCore.QObject):
         else:
             msg = 'Cannot import proposals from cycle "' + _review_cycle_proposals
             msg += '" into PRP session for cycle "' + _review_cycle_settings + '"'
-            raise KeyError, msg
+            raise KeyError(msg)
     
     def _auto_assess(self, props):
         '''
@@ -167,11 +167,12 @@ class AGUP_Data(QtCore.QObject):
                         continue
     
                     # check that assigned reviewer is listed as an eligible reviewer
+                    # TODO: issue69 - https://github.com/prjemian/assign_gup/issues/69
                     if full_name not in new_proposal.eligible_reviewers:
                         msg = 'Reviewer "' + str(full_name)
                         msg += '" assigned to proposal "' + prop_id
                         msg += '" is not on the list of reviewers for that proposal'
-                        raise ValueError, msg
+                        raise ValueError(msg)
     
                     # assign the reviewer's role
                     rvwr = self.reviewers.getByFullName(full_name)
