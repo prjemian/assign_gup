@@ -1,5 +1,5 @@
 
-# Copyright (c) 2009 - 2016, UChicago Argonne, LLC.
+# Copyright (c) 2009 - 2017, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 '''
@@ -31,7 +31,7 @@ __settings_orgName__    = u'Advanced_Photon_Source'
 __author_name__         = __author__
 __author_email__        = __email__
 
-__copyright__           = u'2011-2016, UChicago Argonne, LLC'
+__copyright__           = u'2011-2017, UChicago Argonne, LLC'
 # __license_url__         = u''
 __license__             = u'UChicago Argonne, LLC OPEN SOURCE LICENSE (see LICENSE file)'
 __url__                 = u'http://Assign_GUP.readthedocs.io'
