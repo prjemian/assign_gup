@@ -7,11 +7,7 @@ show text in a GUI window
 '''
 
 import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    from mock_PyQt4 import QtCore, QtGui
-else:
-    from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 
 import resources
 

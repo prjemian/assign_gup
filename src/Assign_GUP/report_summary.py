@@ -31,11 +31,7 @@ show a read-only text page with how many primary and secondary proposals assigne
 
 
 import os, sys
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    from mock_PyQt4 import QtGui
-else:
-    from PyQt4 import QtGui
+from PyQt4 import QtGui
 
 import history
 import plainTextEdit

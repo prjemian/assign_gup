@@ -10,11 +10,7 @@ Generic MVC Model for AGUP
 # :see: http://www.saltycrane.com/blog/2007/12/pyqt-43-qtableview-qabstracttablemodel/
 
 import os, sys
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    from mock_PyQt4 import QtCore
-else:
-    from PyQt4 import QtCore
+from PyQt4 import QtCore
 
 
 class AGUP_MVC_Model(QtCore.QAbstractListModel):

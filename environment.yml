@@ -1,0 +1,11 @@
+name: Assign_GUP
+dependencies:
+  - python=2.7.*
+  - pyqt=4.*
+  - sphinx
+  - lxml
+  - pip:
+    #- versioneer
+    - sphinx_rtd_theme
+    - pyRestTable
+    

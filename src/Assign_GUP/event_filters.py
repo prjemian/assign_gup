@@ -7,11 +7,7 @@ event filters for certain MVC widgets such as QListView
 '''
 
 import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    from mock_PyQt4 import QtCore
-else:
-    from PyQt4 import QtCore
+from PyQt4 import QtCore
 
 NAVIGATOR_KEYS = (QtCore.Qt.Key_Down, QtCore.Qt.Key_Up)
 
