@@ -3,6 +3,11 @@
 History of Source Code Changes
 ==============================
 
+:2017.4.0: 
+
+    * `#72 <https://github.com/prjemian/pvMail/issues/72>`_
+      build for RTD in conda virtual environment 
+
 :2017.3.1: fixes (`issue #69 <https://github.com/prjemian/assign_gup/issues/69>`_) resolve conflicting reviewer assignments on XML import
 :2017.3.0: fixes (`issue #67 <https://github.com/prjemian/assign_gup/issues/67>`_) call setModel() after importing reviewers
 :2016.1025.0: standardize versioning kit with pyRestTable
