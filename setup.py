@@ -20,36 +20,38 @@ verbose=1
 long_description = open('README.rst', 'r').read()
 
 
-setup (name             = Assign_GUP.__package_name__,        # Assign_GUP
+setup (
+    name             = Assign_GUP.__package_name__,        # Assign_GUP
     version          = versioneer.get_version(),
     cmdclass         = versioneer.get_cmdclass(),
-       license          = Assign_GUP.__license__,
-       description      = Assign_GUP.__description__,
-       long_description = long_description,
-       author           = Assign_GUP.__author_name__,
-       author_email     = Assign_GUP.__author_email__,
-       url              = Assign_GUP.__url__,
-       download_url     = Assign_GUP.__download_url__,
-       keywords         = Assign_GUP.__keywords__,
-       install_requires = requires,
-       platforms        = 'any',
-       package_dir      = {'Assign_GUP': 'src/Assign_GUP'},
-       #packages         = find_packages(),
-       packages         = [str(Assign_GUP.__package_name__), 
-                           # do not really need to package this mock
-                           'Assign_GUP.mock_PyQt4',
-                           ],
-       package_data     = dict(Assign_GUP=[
-                                           'resources/*', 
-                                           'LICENSE', 
-                                           'VERSION', 
-                                           ]),
-       classifiers      = Assign_GUP.__classifiers__,
-       entry_points={
-            # create & install console_scripts in <python>/bin
-            # 'console_scripts': [
-            #   'Assign_GUP=Assign_GUP.main:main', 
-            # ],
-            'gui_scripts': ['Assign_GUP=Assign_GUP.main_window:main'],
-      },
-  )
+    license          = Assign_GUP.__license__,
+    description      = Assign_GUP.__description__,
+    long_description = long_description,
+    author           = Assign_GUP.__author_name__,
+    author_email     = Assign_GUP.__author_email__,
+    url              = Assign_GUP.__url__,
+    download_url     = Assign_GUP.__download_url__,
+    keywords         = Assign_GUP.__keywords__,
+    install_requires = requires,
+    platforms        = 'any',
+    package_dir      = {'Assign_GUP': 'src/Assign_GUP'},
+    #packages         = find_packages(),
+    packages         = [
+        str(Assign_GUP.__package_name__), 
+        ],
+    package_data     = dict(
+        Assign_GUP=[
+            'resources/*', 
+            'LICENSE', 
+            'VERSION', 
+        ]
+    ),
+    classifiers      = Assign_GUP.__classifiers__,
+    entry_points={
+         # create & install console_scripts in <python>/bin
+         # 'console_scripts': [
+         #   'Assign_GUP=Assign_GUP.main:main', 
+         # ],
+         'gui_scripts': ['Assign_GUP=Assign_GUP.main_window:main'],
+    },
+)
