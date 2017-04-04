@@ -14,8 +14,6 @@ import versioneer
 sys.path.insert(0, os.path.join('src', ))
 import Assign_GUP
 
-requires = Assign_GUP.__requires__
-packages = find_packages()
 verbose=1
 long_description = open('README.rst', 'r').read()
 
@@ -32,7 +30,7 @@ setup (
     url              = Assign_GUP.__url__,
     download_url     = Assign_GUP.__download_url__,
     keywords         = Assign_GUP.__keywords__,
-    install_requires = requires,
+    install_requires = Assign_GUP.__requires__,
     platforms        = 'any',
     package_dir      = {'Assign_GUP': 'src/Assign_GUP'},
     #packages         = find_packages(),
