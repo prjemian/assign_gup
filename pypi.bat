@@ -2,4 +2,4 @@
 
 REM post this project to PyPI
 
-python setup.py register bdist_wheel upload
+python setup.py sdist bdist_wheel upload
