@@ -12,14 +12,11 @@ Will it be necessary to add this next line at the top of every file?
 '''
 
 import os
-from _version import git_release
 
 __package_name__        = u'Assign_GUP'
 
 _path = os.path.dirname(__file__)
 _vfile = os.path.join(_path, 'VERSION')
-__version__ = open(_vfile, 'r').read()
-__release__             = git_release(__package_name__, __version__)
 
 __description__         = u'Assist in assigning APS GUPs to PRP members'
 __long_description__    = __description__
@@ -57,3 +54,8 @@ __credits__ = u'author: ' + __author__
 __credits__ += u'\nemail: ' + __email__
 __credits__ += u'\ninstitution: ' + __institution__
 __credits__ += u'\nURL: ' + __url__
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+__release__ = __version__
