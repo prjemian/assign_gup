@@ -9,5 +9,4 @@ dependencies:
   - sphinx
   - pip:
     - versioneer
-    - pyRestTable
     
