@@ -8,6 +8,5 @@ dependencies:
   - sphinx
   - pip:
     - versioneer
-    - sphinx_rtd_theme
     - pyRestTable
     
