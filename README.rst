@@ -45,11 +45,11 @@ Install and Run
 2. Activate the *conda* ``base`` environment.
 3. Create a custom conda environment::
 
-   conda create -n assign_gup \
-      python=2 lxml qt=4 pyqt pyRestTable \
-      -c defaults \
-      -c conda-forge \
-      -c aps-anl-tag
+      conda create -n assign_gup \
+         python=2 lxml qt=4 pyqt pyRestTable \
+         -c defaults \
+         -c conda-forge \
+         -c aps-anl-tag
 
 4. Activate the new environment: ``conda activate assign_gup``
 5. Install: ``pip install --no-deps Assign_GUP``
