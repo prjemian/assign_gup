@@ -1,12 +1,11 @@
 name: Assign_GUP
 dependencies:
   - python=2.7
-  - qt=4.*
+  - qt=<5
   - pyqt
   - lxml
   - pip
-  - pyRestTable
   - sphinx
   - pip:
     - versioneer
-    
+    - pyRestTable
