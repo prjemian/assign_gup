@@ -6,3 +6,6 @@
 /build/
 /src/Assign_GUP/project/
 /src/Assign_GUP/issue*/
+
+# Microsoft VisualStudio Code editor
+.vscode/
