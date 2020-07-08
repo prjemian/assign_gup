@@ -23,11 +23,13 @@ The major package requirements are:
 Python
 ******
 
-It is suggested to use the Anaconda Python 2.7 distribution [#]_ as it
+Use the Anaconda Python 2.7 distribution [#]_ as it
 contains most of the packages used by this program.
 
 1. Download an installer: https://www.anaconda.com/downloads (for your OS)
 2. Install on your computer.
+
+.. [#] https://www.anaconda.com
 
 *Assign_GUP*
 ************
