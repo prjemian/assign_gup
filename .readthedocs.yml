@@ -1,7 +1,13 @@
-channels:
-   - defaults
-   - conda-forge
-   - aps-anl-tag
+# Required
+version: 2
+
+python:
+   version: 2.7
+
 
 conda:
    file: environment.yml
+   channels:
+      - defaults
+      - conda-forge
+      - aps-anl-tag
