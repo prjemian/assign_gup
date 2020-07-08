@@ -4,6 +4,7 @@ dependencies:
   - pyqt=4.*
   - sphinx
   - lxml
+  - pip
   - pip:
     - versioneer
     - sphinx_rtd_theme

@@ -1,2 +1,7 @@
+channels:
+   - defaults
+   - conda-forge
+   - aps-anl-tag
+
 conda:
    file: environment.yml
