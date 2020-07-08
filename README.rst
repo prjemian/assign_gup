@@ -42,7 +42,7 @@ Install and Run
 ---------------
 
 1. Install Anaconda Python (https://anaconda.com/downloads)
-2. Activate the *conda* ``base`` environment.
+2. Activate the *conda* ``base`` environment. (advice: https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html)
 3. Create a custom conda environment::
 
       conda create -n assign_gup \
