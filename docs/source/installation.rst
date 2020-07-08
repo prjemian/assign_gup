@@ -48,7 +48,8 @@ and python version (2.7).
         -c conda-forge \
         -c aps-anl-tag
 
-3. install Assign_GUP: ``pip install --no-deps Assign_GUP``
+3. Activate the new environment: ``conda activate assign_gup``
+4. install Assign_GUP: ``pip install --no-deps Assign_GUP``
 
 .. [#] activate: https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html
 

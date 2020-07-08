@@ -37,3 +37,20 @@ README: Assign_GUP
    .. image:: https://badges.gitter.im/assign_gup/Lobby.svg
       :alt: Join the chat at https://gitter.im/assign_gup/Lobby
       :target: https://gitter.im/assign_gup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
+Install and Run
+---------------
+
+1. Install Anaconda Python (https://anaconda.com/downloads)
+2. Activate the *conda* ``base`` environment.
+3. Create a custom conda environment::
+
+   conda create -n assign_gup \
+      python=2 lxml qt=4 pyqt pyRestTable \
+      -c defaults \
+      -c conda-forge \
+      -c aps-anl-tag
+
+4. Activate the new environment: ``conda activate assign_gup``
+5. Install: ``pip install --no-deps Assign_GUP``
+6. Run: ``Assign_GUP``
