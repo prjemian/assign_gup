@@ -26,35 +26,30 @@ Python
 It is suggested to use the Anaconda Python 2.7 distribution [#]_ as it
 contains most of the packages used by this program.
 
-#. use a web browser and visit: https://www.continuum.io/downloads
-#. select the distribution for your operating system 
-#. make sure to follow links for *Python 2.7*
-#. download the installer file
-#. follow the instructions to install on your computer
-
-.. [#] Anaconda Python 2.7: https://www.continuum.io
+1. Download an installer: https://www.anaconda.com/downloads (for your OS)
+2. Install on your computer.
 
 *Assign_GUP*
 ************
 
-Install this program from the Python Package Index (PyPI) 
-using the *pip* command::
+Install *Assign_GUP* from the Python Package Index (PyPI) 
+using the *pip* command after creating and activating a 
+custom conda environment with the required libraries
+and python version (2.7).
 
-    pip install pyRestTable
-    pip install --no-deps Assign_GUP
+1. Activate [#]_ the conda *base* environment.
+2. create a new conda environment::
 
-The ``--no-deps`` option tells *pip* not to download and attempt 
-to build newer versions of other required packages such as *lxml*.
+    conda create -n assign_gup \
+        python=2.7 lxml qt=4 pyqt pyRestTable \
+        -c defaults \
+        -c conda-forge \
+        -c aps-anl-tag
 
-It *may* be necessary to install the *lxml* package if your distribution
-does not already have it installed.  You can view all the installed
-packages using this command::
+3. install Assign_GUP: ``pip install --no-deps Assign_GUP``
 
-    pip list
+.. [#] activate: https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html
 
-The list may have dozens or more items.  To install *lxml*::
-
-    pip install lxml
 
 Updating *Assign_GUP*
 ---------------------
